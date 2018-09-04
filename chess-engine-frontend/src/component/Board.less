@@ -1,0 +1,28 @@
+
+
+.cell{
+  border-radius: 0px;
+  border-style: solid;
+  border-width: 1px;
+
+  width: 12%;
+  height: 100px;
+  flex-grow: 1;
+  display: block;
+  
+  &-bg-dark{
+    &:extend(.cell);
+    background-color: #f0d9b5;
+  }
+  &-bg-light{
+    &:extend(.cell);
+    background-color: #b58863;
+  }
+}
+
+
+.board{
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
