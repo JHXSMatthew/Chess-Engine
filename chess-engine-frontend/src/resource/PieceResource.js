@@ -38,5 +38,6 @@ export const PiecesSVG = omap((a)=> <ReactSVG src={a}></ReactSVG>,
   q: whiteQueen,
   Q: blackQueen,
   r: whiteRook,
-  R: blackRook
+  R: blackRook,
+  EMPTY: ""
 })
