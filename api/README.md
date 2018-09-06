@@ -12,3 +12,11 @@ curl 127.0.0.1:8080/greeting
 ```
 curl -H "Content-Type: application/json" -X POST -d '{"state": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR","start": 8,"end": 22}' http://localhost:8080/move
 ```
+Sample Output:
+```
+{
+    "state":"xxxxxxx",
+    "start": x,
+    "end" : y
+}
+```
