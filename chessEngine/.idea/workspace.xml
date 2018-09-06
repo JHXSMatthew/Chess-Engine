@@ -18,17 +18,31 @@
       <file leaf-file-name="Position.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Position.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="1" selection-start-line="1" selection-end-line="1" />
+            <state relative-caret-position="255">
+              <caret line="17" column="5" lean-forward="true" selection-start-line="17" selection-start-column="5" selection-end-line="17" selection-end-column="5" />
+              <folding>
+                <element signature="e#70#71#0" expanded="true" />
+                <element signature="e#108#109#0" expanded="true" />
+                <element signature="e#144#145#0" expanded="true" />
+                <element signature="e#177#178#0" expanded="true" />
+                <element signature="e#61#62#0" expanded="true" />
+                <element signature="e#104#105#0" expanded="true" />
+                <element signature="e#143#144#0" expanded="true" />
+                <element signature="e#194#195#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Piece.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Piece.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Piece.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="1" selection-start-line="1" selection-end-line="1" />
+            <state relative-caret-position="45">
+              <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
+              <folding>
+                <element signature="e#294#295#0" expanded="true" />
+                <element signature="e#338#339#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -42,11 +56,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Game.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Game.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Game.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="2" column="10" lean-forward="true" selection-start-line="2" selection-start-column="10" selection-end-line="2" selection-end-column="17" />
+            <state relative-caret-position="45">
+              <caret line="3" selection-start-line="3" selection-end-line="3" />
             </state>
           </provider>
         </entry>
@@ -72,9 +86,9 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/Position.java" />
-        <option value="$PROJECT_DIR$/src/Piece.java" />
         <option value="$PROJECT_DIR$/src/Game.java" />
+        <option value="$PROJECT_DIR$/src/Piece.java" />
+        <option value="$PROJECT_DIR$/src/Position.java" />
       </list>
     </option>
   </component>
@@ -220,17 +234,27 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/Position.java">
+    <entry file="file://$PROJECT_DIR$/src/Game.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" selection-start-line="1" selection-end-line="1" />
+        <state relative-caret-position="45">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Piece.java">
+    <entry file="file://$PROJECT_DIR$/src/Position.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" selection-start-line="1" selection-end-line="1" />
+        <state relative-caret-position="255">
+          <caret line="17" column="5" lean-forward="true" selection-start-line="17" selection-start-column="5" selection-end-line="17" selection-end-column="5" />
+          <folding>
+            <element signature="e#70#71#0" expanded="true" />
+            <element signature="e#108#109#0" expanded="true" />
+            <element signature="e#144#145#0" expanded="true" />
+            <element signature="e#177#178#0" expanded="true" />
+            <element signature="e#61#62#0" expanded="true" />
+            <element signature="e#104#105#0" expanded="true" />
+            <element signature="e#143#144#0" expanded="true" />
+            <element signature="e#194#195#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -241,10 +265,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Game.java">
+    <entry file="file://$PROJECT_DIR$/src/Piece.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="10" lean-forward="true" selection-start-line="2" selection-start-column="10" selection-end-line="2" selection-end-column="17" />
+        <state relative-caret-position="45">
+          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
+          <folding>
+            <element signature="e#294#295#0" expanded="true" />
+            <element signature="e#338#339#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
