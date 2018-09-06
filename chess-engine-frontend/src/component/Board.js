@@ -13,14 +13,14 @@ export default class Board extends React.Component{
   }
 
   render(){
-    const {rep} = this.props;
+    const {rep,onCellClick} = this.props;
     
     let boardRep = [];
     for(let i = 0 ; i < 64 ; i ++){
       boardRep.push(
-      <Cell className={this.getCellStyle(i)} key={i}>
+      <div className={this.getCellStyle(i)} key={i} onClick={()=>{onCellClick(i)}}>
         {PiecesSVG[rep[i]]}
-      </Cell>)
+      </div>)
     }
     return (
       <div className="board">
@@ -30,19 +30,3 @@ export default class Board extends React.Component{
     
   }
 }
-
-
-class Cell extends React.Component{
-  render(){
-    
-    return(
-      <div className={this.props.className}>
-        {this.props.children}
-      </div>
-    )
-  }
-}
-
-
-
-
