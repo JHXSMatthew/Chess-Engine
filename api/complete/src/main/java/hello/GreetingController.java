@@ -73,6 +73,7 @@ public class GreetingController {
         }
         returnMe = returnMe.replaceAll("0","");
         returnMe = returnMe.substring(0,returnMe.length()-1);
+        System.out.println(returnMe);
         return new Move(returnMe,0,0);
     }
 
