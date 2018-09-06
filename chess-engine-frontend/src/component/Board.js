@@ -1,6 +1,7 @@
 import React from 'react'
 
-import Style from './Board.less';
+import { PiecesSVG } from '../resource/PieceResource'
+import './Board.less';
 
 
 export default class Board extends React.Component{
@@ -12,11 +13,14 @@ export default class Board extends React.Component{
   }
 
   render(){
-    const {pieces} = this.props;
-
+    const {rep} = this.props;
+    
     let boardRep = [];
-    for(let i = 0 ; i < 64 ; i ++){     
-      boardRep.push(<Cell className={this.getCellStyle(i)} key={i} />)
+    for(let i = 0 ; i < 64 ; i ++){
+      boardRep.push(
+      <Cell className={this.getCellStyle(i)} key={i}>
+        {PiecesSVG[rep[i]]}
+      </Cell>)
     }
     return (
       <div className="board">
@@ -33,19 +37,12 @@ class Cell extends React.Component{
     
     return(
       <div className={this.props.className}>
-        <Piece></Piece>
+        {this.props.children}
       </div>
     )
   }
 }
 
-class Piece extends React.Component{
-  render(){
-    return (
-      <div>
-        P
-      </div>
-    )
-  }
-}
+
+
 

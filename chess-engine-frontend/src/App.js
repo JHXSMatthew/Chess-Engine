@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 
-import Board from './component/Board'
+import Game from './module/Game/ChessGame'
 
 class App extends Component {
   render() {
     return (
-      <div style={{width: "800px", height: "800px"}}>
-        <Board></Board>
-
-      </div>
+      <Game></Game>
     );
   }
 }
