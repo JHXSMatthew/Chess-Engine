@@ -12,14 +12,31 @@ import blackPawn from './blackPawn.svg'
 import blackQueen from './blackQueen.svg'
 import blackRook from './blackRook.svg'
 
+import React from 'react'
+import ReactSVG from 'react-svg'
 
 
+const omap = (f,o) => {
+  const t = {}
+  for(let i in o ){
+    t[i] = f(o[i])
+  }
+  return t;
+}
 
 
-
-const piecesSvg = {
+export const PiecesSVG = omap((a)=> <ReactSVG src={a}></ReactSVG>, 
+{
   p: whitePawn,
   P: blackPawn,
-  
-
-}
+  b: whiteBishop,
+  B: blackBishop,
+  n: whiteKnight,
+  N: blackKnight,
+  k: whiteKing,
+  K: blackKing,
+  q: whiteQueen,
+  Q: blackQueen,
+  r: whiteRook,
+  R: blackRook
+})

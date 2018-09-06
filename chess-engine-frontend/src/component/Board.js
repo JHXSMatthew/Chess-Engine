@@ -3,8 +3,7 @@ import ReactSVG from 'react-svg'
 
 import Style from './Board.less';
 
-import whitePawn from '../resource/whitePawn.svg'
-
+import { PiecesSVG } from '../resource/PieceResource'
 
 export default class Board extends React.Component{
 
@@ -47,15 +46,10 @@ class Cell extends React.Component{
 class Piece extends React.Component{
   render(){
     return (
-       piecesSvg.p   
+      PiecesSVG.p   
     )
   }
 }
 
 
 
-const piecesSvg = {
-  p: <ReactSVG src={whitePawn}></ReactSVG>
-  
-
-}
