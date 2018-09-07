@@ -1,5 +1,6 @@
 package hello;
 
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -19,18 +20,6 @@ import org.springframework.web.bind.annotation.*;
 //	from: integer,
 //	availableMove: [integer, integer, integer ….]
 //}
-//
-//POST /game/move
-//Body:
-//{
-//	state: string,
-//	from: integer,
-//	to: integer
-//}
-//Response:
-//{
-//	state: string,
-//}
 
 @CrossOrigin
 @RestController
@@ -38,7 +27,6 @@ public class GreetingController {
 
     private static final String template = "Hello, %s!";
     private final AtomicLong counter = new AtomicLong();
-    private static final String MoveState = "{\"state\": \"%s\"}";
 
     @CrossOrigin(origins = "*")
     @RequestMapping("/greeting")
@@ -73,13 +61,25 @@ public class GreetingController {
         }
         returnMe = returnMe.replaceAll("0","");
         returnMe = returnMe.substring(0,returnMe.length()-1);
+        System.out.println(returnMe);
         return new Move(returnMe,0,0);
     }
 
+    //rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/availableMove", method=RequestMethod.POST)
-    public availableMove move(@RequestBody availableMove am) throws JSONException {
-        return new availableMove();
+    public allAvailable move(@RequestBody availableMove am){
+        String initState = am.getState();
+        int currentPos = am.getFrom();
+        ArrayList<Integer> result = new ArrayList<>();
+        // I've no idea about the role, so I assume currently it can move to anywhere
+        for(int i = 0; i < 64; ++i){
+            if(i != currentPos){
+                result.add(i);
+            }
+        }
+        System.out.println(result);
+        return new allAvailable(currentPos,result);
     }
 
     private String processString(String s){
