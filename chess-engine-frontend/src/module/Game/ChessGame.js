@@ -13,9 +13,9 @@ import {
 class Game extends React.Component{
 
   checkMove = (state,select)=>{
-    if(select.length == 2){
+    if(select.length === 2){
       //select a piece and not selecting itself twice
-      if(state[select[0]] && select[0] != select[1]){
+      if(state[select[0]] && select[0] !== select[1]){
         this.props.move(select[0], select[1])
 
       }
@@ -30,12 +30,13 @@ class Game extends React.Component{
 
 
   render(){
-    const { boardRep,onCellClick } = this.props
-
+    const { boardRep,onCellClick, select, boardHightLight } = this.props
     return (
       <div style={{width: "600px", height: "600px"}}>
         <Board 
         rep={boardRep}
+        select={select}
+        highlight={boardHightLight}
         onCellClick={onCellClick} />
     </div>
     )

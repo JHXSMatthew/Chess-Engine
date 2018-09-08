@@ -32,9 +32,23 @@ export const gameReducer  = (state = initState, action)=>{
       })
     case ON_SELECT_CELL:
       //a "pair" using array 
-      const newSelectListRep = state.select.concat([action.index])
+
+      // 3 cases:
+      // if clicked on a piece, then highlight that square.
+      // if clicked on a piece previouly, and clicked anywhere else, move that piece from -> to.
+      // if clicked on empty squere initially, do nothing
+      var newSelectListRep = [];
+      if (state.select.length === 0 && state.boardRep[action.index]){
+        newSelectListRep = state.select.concat([action.index])
+      } else if (state.select.length === 1) {
+        newSelectListRep = state.select.concat([action.index])
+      } else {
+        // piece selected is not valid, then do nothing,
+      }
+      
       return Object.assign({}, state, {
-        select: newSelectListRep.length > 2 ? newSelectListRep.slice(1): newSelectListRep
+        select: newSelectListRep,
+        boardHightLight: []
       })
     default:
       return state;

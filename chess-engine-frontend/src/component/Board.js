@@ -7,18 +7,21 @@ import './Board.less';
 export default class Board extends React.Component{
 
 
-  getCellStyle = (index)=>{
+  getCellStyle = (index, selected)=>{
     const f = (Math.floor(index/8 % 2) === 0 ) ? (a,b)=> a===b : (a,b)=> a!==b;
-    return f (index % 2 ,0)  ? "cell-bg-dark" : "cell-bg-light"
+    if (selected.length > 0 && index === selected[0]){
+      return "cell-bg-highlight";
+    }
+    return f (index % 2 ,0)  ? "cell-bg-dark" : "cell-bg-light";
   }
 
   render(){
-    const {rep,onCellClick} = this.props;
+    const {rep,select,onCellClick} = this.props;
     
     let boardRep = [];
     for(let i = 0 ; i < 64 ; i ++){
       boardRep.push(
-      <div className={this.getCellStyle(i)} key={i} onClick={()=>{onCellClick(i)}}>
+      <div className={this.getCellStyle(i, select)} key={i} onClick={()=>{onCellClick(i)}}>
         {PiecesSVG[rep[i]]}
       </div>)
     }
