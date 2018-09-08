@@ -1,6 +1,5 @@
-import { regMove } from './move'
+import { regMove, } from './move';
 
 export const init = (server)=>{
   regMove(server);
-  
 }

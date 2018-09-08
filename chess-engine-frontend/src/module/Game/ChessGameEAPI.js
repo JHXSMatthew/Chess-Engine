@@ -10,7 +10,10 @@ import axios from 'axios'
     });
   },
   postAvaliableMove : (state, from) =>{
-
+  	return axios.post("api/availableMove", {
+  		state,
+  		from
+  	})
   }
 }
 

@@ -8,7 +8,9 @@ import {
   actionLoadInitState,
   actionSelectCell,
   actionClearSelect,
-  actionMove} from './ChessGameReducer'
+  actionMove,
+  actionAvailableMove
+} from './ChessGameReducer'
 
 class Game extends React.Component{
 
@@ -30,14 +32,15 @@ class Game extends React.Component{
 
 
   render(){
-    const { boardRep,onCellClick, select, boardHightLight } = this.props
+    const { boardRep,onCellClick,availableMove, select, highlight } = this.props
     return (
       <div style={{width: "600px", height: "600px"}}>
         <Board 
         rep={boardRep}
         select={select}
-        highlight={boardHightLight}
-        onCellClick={onCellClick} />
+        highlight={highlight}
+        onCellClick={onCellClick}
+        availableMove={availableMove} />
     </div>
     )
   }
@@ -47,7 +50,8 @@ class Game extends React.Component{
 const mapStateToProps = state =>{
   return {
     boardRep: state.game.boardRep,
-    select: state.game.select
+    select: state.game.select,
+    highlight: state.game.boardHightLight
   }
 }
 
@@ -60,6 +64,7 @@ const mapDispatchToProps = dispatch => {
       dispatch(actionMove(from, to));
     },
     onCellClick: (index) => dispatch(actionSelectCell(index)),
+    availableMove: (from) => dispatch(actionAvailableMove(from)),
     clearSelect: ()=> dispatch(actionClearSelect())
   }
 }
