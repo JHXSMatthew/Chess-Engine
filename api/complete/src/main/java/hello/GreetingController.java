@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import jdk.nashorn.internal.parser.JSONParser;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 //POST /game/availableMove
@@ -80,6 +81,21 @@ public class GreetingController {
         }
         System.out.println(result);
         return new allAvailable(currentPos,result);
+    }
+
+    @Autowired
+    private MoveHistoryRepository mhr;
+    public String addStateToDb(Integer id, String state, String user){
+        MoveHistory mh = new MoveHistory();
+        mh.setUserName(user);
+        mh.setId(id);
+        mh.setState(state);
+        mhr.save(mh);
+        return "Success";
+    }
+
+    public Iterable<MoveHistory> getAllMoveHistory(){
+        return mhr.findAll();
     }
 
     private String processString(String s){

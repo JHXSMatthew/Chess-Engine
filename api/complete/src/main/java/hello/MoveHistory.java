@@ -10,6 +10,15 @@ public class MoveHistory {
 
     private Integer id;
     private String state;
+    private String userName;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public Integer getId(){
         return this.id;
