@@ -57,10 +57,6 @@ export const gameReducer  = (state = initState, action)=>{
       return Object.assign({}, state, {
         boardHightLight: action.available
       })
-    case SAVE_LOCAL_GAME:
-      const {boardStr} = state;
-      localStorage.setItem(LOCAL_SAVED_GAME_INDEX, boardStr);
-      return state;
     default:
       return state;
   }
@@ -140,10 +136,11 @@ export const actionHighlightAvailable = (available)=>{
 }
 
 
-const SAVE_LOCAL_GAME  = "SAVE_LOCAL_GAME"
+export const SAVE_LOCAL_GAME  = "SAVE_LOCAL_GAME"
 export const actionSaveLocalGame = ()=>{
   return {
-    type: SAVE_LOCAL_GAME
+    type: SAVE_LOCAL_GAME,
+    index: LOCAL_SAVED_GAME_INDEX
   }
 }
 
@@ -159,6 +156,22 @@ const LOAD_SAVED_GAME_FAIL = "LOAD_SAVED_GAME_FAIL"
 export const actionLoadSavedGameFail = (message)=>{
   return {
     type: LOAD_SAVED_GAME_FAIL,
+    message
+  }
+}
+
+const SAVE_GAME_SUCCESS = "SAVE_GAME_SUCCESS"
+export const actionSaveGameSuccess = (message) =>{
+  return {
+    type: SAVE_GAME_SUCCESS,
+    message
+  }
+}
+
+const SAVE_GAME_FAIL = "SAVE_GAME_FAIL"
+export const actionSaveGameFail = (message) =>{
+  return {
+    type: SAVE_GAME_FAIL,
     message
   }
 }
