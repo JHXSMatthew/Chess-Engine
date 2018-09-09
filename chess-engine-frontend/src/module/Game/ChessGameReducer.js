@@ -1,7 +1,7 @@
 import {boardStrToRepArray} from './Utils'
 
 const INIT_BOARD_STATE_STR = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
-
+const LOCAL_SAVED_GAME_INDEX = "savedLocalGame"
 
 
 //reducer
@@ -58,26 +58,11 @@ export const gameReducer  = (state = initState, action)=>{
         boardHightLight: action.available
       })
     case SAVE_LOCAL_GAME:
-    case LOAD_LOCAL_GAME:
-    case LOAD_LOCAL_GAME_LIST:
-      return Object.assign({}, state, gameSaveLoadReducer(state, action))
+      const {boardStr} = state;
+      localStorage.setItem(LOCAL_SAVED_GAME_INDEX, boardStr);
+      return state;
     default:
       return state;
-  }
-}
-
-const gameSaveLoadReducer = (state = [], action) =>{
-  switch(action.type){
-    case SAVE_LOCAL_GAME:
-
-      return state
-    case LOAD_LOCAL_GAME_LIST:
-      let game = localStorage.getItem('savedLocalChessGame');
-      return game ? Object.assign({}, state, {
-        savedGameList: (JSON.parse(game))
-      }) : state
-    default:
-      return state
   }
 }
  
@@ -155,26 +140,25 @@ export const actionHighlightAvailable = (available)=>{
 }
 
 
-
 const SAVE_LOCAL_GAME  = "SAVE_LOCAL_GAME"
-export const actionSaveLocalGame = (state)=>{
+export const actionSaveLocalGame = ()=>{
   return {
-    type: SAVE_LOCAL_GAME,
-    state
+    type: SAVE_LOCAL_GAME
   }
 }
 
-const LOAD_LOCAL_GAME_LIST  = "LOAD_LOCAL_GAME_LIST"
-export const actionLoadLocalGameList = ()=>{
+export const LOAD_LOCAL_SAVED_GAME = "LOAD_LOCAL_SAVED_GAME"
+export const actionLoadLocalSavedGame = () =>{
   return {
-    type: LOAD_LOCAL_GAME_LIST
+    type: LOAD_LOCAL_SAVED_GAME,
+    index: LOCAL_SAVED_GAME_INDEX
   }
 }
 
-const LOAD_LOCAL_GAME = "LOAD_LOCAL_GAME"
-export const actionLoadLocalGame = (index) =>{
+const LOAD_SAVED_GAME_FAIL = "LOAD_SAVED_GAME_FAIL"
+export const actionLoadSavedGameFail = (message)=>{
   return {
-    type: LOAD_LOCAL_GAME,
-    index
+    type: LOAD_SAVED_GAME_FAIL,
+    message
   }
 }

@@ -5,7 +5,9 @@ import {
   AVAILABLE_MOVE_REQUEST,
   actionUpdateStateSuccess, 
   actionMoveFail,
-  actionHighlightAvailable
+  actionHighlightAvailable,
+  actionLoadSavedGameFail,
+  LOAD_LOCAL_SAVED_GAME
 } from './ChessGameReducer'
 
 import Api from './ChessGameEAPI'
@@ -14,6 +16,7 @@ import Api from './ChessGameEAPI'
 export function* gameSaga(){
   yield takeEvery(MOVE_REQUEST, MoveRequest);
   yield takeEvery(AVAILABLE_MOVE_REQUEST, AvailableMoveRequest);
+  yield takeEvery(LOAD_LOCAL_SAVED_GAME, LoadLocalSavedGame)
 }
 
 
@@ -24,6 +27,19 @@ function* MoveRequest(action){
     yield put(actionUpdateStateSuccess(newState.data.state))
   }catch(e){
     yield put(actionMoveFail(e.message))
+  }
+}
+
+function* LoadLocalSavedGame(action){
+  try{
+    let game = localStorage.getItem(action.index);
+    if(game){
+      yield put(actionUpdateStateSuccess(game))
+    }else{
+      yield put(actionLoadSavedGameFail("no saved game!"))
+    }
+  }catch(e){
+    yield put(actionLoadSavedGameFail(e.message))
   }
 }
 

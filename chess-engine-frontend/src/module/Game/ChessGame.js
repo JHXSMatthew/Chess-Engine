@@ -11,7 +11,10 @@ import {
   actionSelectCell,
   actionClearSelect,
   actionMove,
-  actionAvailableMove
+  actionAvailableMove,
+  actionSaveLocalGame,
+  actionLoadLocalSavedGame,
+  actionUpdateStateSuccess
 } from './ChessGameReducer'
 
 
@@ -47,7 +50,12 @@ class Game extends React.Component{
           availableMove={availableMove} />
         </div>
         <div className="game-right">
-            
+          <div>
+            <button className='btn btn-primary' onClick={this.props.saveGame}> Save </button>
+            <button className='btn btn-secondary ml-2' onClick={this.props.loadGame}> Load </button>
+
+          </div>
+           
         </div>
       </div>
       
@@ -73,7 +81,9 @@ const mapDispatchToProps = dispatch => {
     },
     onCellClick: (index) => dispatch(actionSelectCell(index)),
     availableMove: (from) => dispatch(actionAvailableMove(from)),
-    clearSelect: ()=> dispatch(actionClearSelect())
+    clearSelect: ()=> dispatch(actionClearSelect()),
+    saveGame: () => dispatch(actionSaveLocalGame()),
+    loadGame: () => dispatch(actionLoadLocalSavedGame())
   }
 }
 
