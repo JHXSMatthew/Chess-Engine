@@ -8,14 +8,16 @@ import {
   actionLoadInitState,
   actionSelectCell,
   actionClearSelect,
-  actionMove} from './ChessGameReducer'
+  actionMove,
+  actionAvailableMove
+} from './ChessGameReducer'
 
 class Game extends React.Component{
 
   checkMove = (state,select)=>{
-    if(select.length == 2){
+    if(select.length === 2){
       //select a piece and not selecting itself twice
-      if(state[select[0]] && select[0] != select[1]){
+      if(state[select[0]] && select[0] !== select[1]){
         this.props.move(select[0], select[1])
 
       }
@@ -30,13 +32,15 @@ class Game extends React.Component{
 
 
   render(){
-    const { boardRep,onCellClick } = this.props
-
+    const { boardRep,onCellClick,availableMove, select, highlight } = this.props
     return (
       <div style={{width: "600px", height: "600px"}}>
         <Board 
         rep={boardRep}
-        onCellClick={onCellClick} />
+        select={select}
+        highlight={highlight}
+        onCellClick={onCellClick}
+        availableMove={availableMove} />
     </div>
     )
   }
@@ -46,19 +50,20 @@ class Game extends React.Component{
 const mapStateToProps = state =>{
   return {
     boardRep: state.game.boardRep,
-    select: state.game.select
+    select: state.game.select,
+    highlight: state.game.boardHightLight
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     loadInitState: () => dispatch(actionLoadInitState()),
-    getHint: (loc)=> dispatch({ type: "I AM WORKING ON IT"}),
     move: (from, to)=> { 
       dispatch(actionClearSelect());
       dispatch(actionMove(from, to));
     },
     onCellClick: (index) => dispatch(actionSelectCell(index)),
+    availableMove: (from) => dispatch(actionAvailableMove(from)),
     clearSelect: ()=> dispatch(actionClearSelect())
   }
 }

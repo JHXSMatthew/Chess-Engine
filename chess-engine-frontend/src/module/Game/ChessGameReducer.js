@@ -18,6 +18,7 @@ export const gameReducer  = (state = initState, action)=>{
       return Object.assign({}, state, {
         boardStr: action.newState,
         boardRep: boardStrToRepArray(action.newState),
+        boardHightLight: []
       });
     case UPDATE_BOARD_STATE_FAIL:
       return state;
@@ -32,9 +33,29 @@ export const gameReducer  = (state = initState, action)=>{
       })
     case ON_SELECT_CELL:
       //a "pair" using array 
-      const newSelectListRep = state.select.concat([action.index])
+
+      // 3 cases:
+      // if clicked on a piece, then highlight that square.
+      // if clicked on a piece previouly, and clicked anywhere else, move that piece from -> to.
+      // if clicked on empty squere initially, do nothing
+      var newSelectListRep = [];
+      var highlight = state.boardHightLight;
+      if (state.select.length === 0 && state.boardRep[action.index]){
+        newSelectListRep = state.select.concat([action.index])
+      } else if (state.select.length === 1 && state.select[0] !== action.index) {
+        newSelectListRep = state.select.concat([action.index])
+      } else {
+        // Empty square initially, or deselect piece
+        highlight = []
+      }
+      
       return Object.assign({}, state, {
-        select: newSelectListRep.length > 2 ? newSelectListRep.slice(1): newSelectListRep
+        select: newSelectListRep,
+        boardHightLight: highlight
+      })
+    case HIGHLIGHT_AVAILABLE:
+      return Object.assign({}, state, {
+        boardHightLight: action.available
       })
     default:
       return state;
@@ -51,6 +72,7 @@ export const actionClearSelect = ()=>{
 
 const ON_SELECT_CELL  = "SELECT_CELL"
 export const actionSelectCell = (index)=>{
+
   return {
     type: ON_SELECT_CELL,
     index
@@ -89,10 +111,26 @@ export const actionMove = (from, to)=>{
   }
 }
 
+export const AVAILABLE_MOVE_REQUEST = "AVAILABLE_MOVE_REQUEST"
+export const actionAvailableMove = (from)=>{
+  return {
+    type: AVAILABLE_MOVE_REQUEST,
+    from
+  }
+}
+
 const MOVE_FAIL = "MOVE_FAIL"
 export const actionMoveFail = (message)=>{
   return {
     type: MOVE_FAIL,
     message
+  }
+}
+
+const HIGHLIGHT_AVAILABLE = "HIGHLIGHT_AVAILABLE"
+export const actionHighlightAvailable = (available)=>{
+  return {
+    type: HIGHLIGHT_AVAILABLE,
+    available
   }
 }
