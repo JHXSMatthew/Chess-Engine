@@ -15,7 +15,7 @@ export default class Board extends React.Component{
     if (highlight[index]) {
       return "cell-bg-highlight";
     }
-    return f (index % 2 ,0)  ? "cell-bg-dark" : "cell-bg-light";
+    return f (index % 2 ,0)  ? "cell-bg-light" : "cell-bg-dark";
   }
 
   render(){
@@ -25,7 +25,7 @@ export default class Board extends React.Component{
       boardRep.push(
       <div className={this.getCellStyle(i, select, highlight)} key={i} 
         onClick={()=>{onCellClick(i); if(rep[i] && select.length === 0){availableMove(i)}}}>
-        {PiecesSVG[rep[i]]}
+          {PiecesSVG[rep[i]]}
       </div>)
     }
     return (

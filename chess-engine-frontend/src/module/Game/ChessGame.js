@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 
 import Board from '../../component/Board'
 
+import Style from "./Game.less"
+
 import {
   actionLoadInitState,
   actionSelectCell,
@@ -34,14 +36,20 @@ class Game extends React.Component{
   render(){
     const { boardRep,onCellClick,availableMove, select, highlight } = this.props
     return (
-      <div style={{width: "600px", height: "600px"}}>
-        <Board 
-        rep={boardRep}
-        select={select}
-        highlight={highlight}
-        onCellClick={onCellClick}
-        availableMove={availableMove} />
-    </div>
+      <div className='game-area'>
+        <div style={{width: "600px", height: "600px"}}>
+          <Board 
+          rep={boardRep}
+          select={select}
+          highlight={highlight}
+          onCellClick={onCellClick}
+          availableMove={availableMove} />
+        </div>
+        <div className="game-right">
+          hello
+        </div>
+      </div>
+      
     )
   }
 }

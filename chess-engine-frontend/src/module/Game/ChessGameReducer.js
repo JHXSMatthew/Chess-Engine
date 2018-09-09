@@ -57,8 +57,27 @@ export const gameReducer  = (state = initState, action)=>{
       return Object.assign({}, state, {
         boardHightLight: action.available
       })
+    case SAVE_LOCAL_GAME:
+    case LOAD_LOCAL_GAME:
+    case LOAD_LOCAL_GAME_LIST:
+      return Object.assign({}, state, gameSaveLoadReducer(state, action))
     default:
       return state;
+  }
+}
+
+const gameSaveLoadReducer = (state = [], action) =>{
+  switch(action.type){
+    case SAVE_LOCAL_GAME:
+
+      return state
+    case LOAD_LOCAL_GAME_LIST:
+      let game = localStorage.getItem('savedLocalChessGame');
+      return game ? Object.assign({}, state, {
+        savedGameList: (JSON.parse(game))
+      }) : state
+    default:
+      return state
   }
 }
  
@@ -132,5 +151,30 @@ export const actionHighlightAvailable = (available)=>{
   return {
     type: HIGHLIGHT_AVAILABLE,
     available
+  }
+}
+
+
+
+const SAVE_LOCAL_GAME  = "SAVE_LOCAL_GAME"
+export const actionSaveLocalGame = (state)=>{
+  return {
+    type: SAVE_LOCAL_GAME,
+    state
+  }
+}
+
+const LOAD_LOCAL_GAME_LIST  = "LOAD_LOCAL_GAME_LIST"
+export const actionLoadLocalGameList = ()=>{
+  return {
+    type: LOAD_LOCAL_GAME_LIST
+  }
+}
+
+const LOAD_LOCAL_GAME = "LOAD_LOCAL_GAME"
+export const actionLoadLocalGame = (index) =>{
+  return {
+    type: LOAD_LOCAL_GAME,
+    index
   }
 }
