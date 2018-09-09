@@ -20,7 +20,6 @@ export function* gameSaga(){
 function* MoveRequest(action){
   try{
     const currentBoardState = yield select((state) => state.game.boardStr )
-    console.log(currentBoardState)
     const newState = yield call(Api.postMove, currentBoardState ,action.from, action.to)
     yield put(actionUpdateStateSuccess(newState.data.state))
   }catch(e){

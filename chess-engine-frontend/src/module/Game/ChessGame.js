@@ -58,7 +58,6 @@ const mapStateToProps = state =>{
 const mapDispatchToProps = dispatch => {
   return {
     loadInitState: () => dispatch(actionLoadInitState()),
-    getHint: (loc)=> dispatch({ type: "I AM WORKING ON IT"}),
     move: (from, to)=> { 
       dispatch(actionClearSelect());
       dispatch(actionMove(from, to));
