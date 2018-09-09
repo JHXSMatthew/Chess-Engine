@@ -14,6 +14,7 @@ import {
   actionAvailableMove
 } from './ChessGameReducer'
 
+
 class Game extends React.Component{
 
   checkMove = (state,select)=>{
@@ -36,8 +37,8 @@ class Game extends React.Component{
   render(){
     const { boardRep,onCellClick,availableMove, select, highlight } = this.props
     return (
-      <div className='game-area'>
-        <div style={{width: "600px", height: "600px"}}>
+      <div className='game'>
+        <div className='game-left'>
           <Board 
           rep={boardRep}
           select={select}
@@ -46,7 +47,7 @@ class Game extends React.Component{
           availableMove={availableMove} />
         </div>
         <div className="game-right">
-          hello
+            
         </div>
       </div>
       
