@@ -85,15 +85,14 @@ public class GreetingController {
 
     @Autowired
     private MoveHistoryRepository mhr;
-    public String addStateToDb(Integer id, String state, String user){
-        MoveHistory mh = new MoveHistory();
-        mh.setUserName(user);
-        mh.setId(id);
-        mh.setState(state);
+
+    @PostMapping(path="/addState")
+    public String addStateToDb(@RequestBody MoveHistory mh){
         mhr.save(mh);
         return "Success";
     }
 
+    @GetMapping("/getHistory")
     public Iterable<MoveHistory> getAllMoveHistory(){
         return mhr.findAll();
     }

@@ -1,15 +1,21 @@
 package hello;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 
 @Entity
-public class MoveHistory {
+@Table(name = "MoveHistory")
+public class MoveHistory implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @NotBlank
+    @Column(nullable = false)
     private String state;
+    @NotBlank
+    @Column(nullable = false)
     private String userName;
 
     public String getUserName() {
