@@ -22,6 +22,9 @@ import { gameSaga} from './module/Game/ChessGameESaga'
 import { Server } from 'react-mock'
 import { init } from './mock/mock'
 
+//router
+import { BrowserRouter } from 'react-router-dom';
+
 
 const saga = createSaga(); 
 
@@ -37,7 +40,9 @@ saga.run(gameSaga);
 
 ReactDOM.render(
 <Provider store={store}>
-  <App />
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
 </Provider>, document.getElementById('root'));
 
 

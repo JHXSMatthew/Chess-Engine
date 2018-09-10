@@ -1,7 +1,7 @@
 import {boardStrToRepArray} from './Utils'
 
 const INIT_BOARD_STATE_STR = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
-
+const LOCAL_SAVED_GAME_INDEX = "savedLocalGame"
 
 
 //reducer
@@ -132,5 +132,46 @@ export const actionHighlightAvailable = (available)=>{
   return {
     type: HIGHLIGHT_AVAILABLE,
     available
+  }
+}
+
+
+export const SAVE_LOCAL_GAME  = "SAVE_LOCAL_GAME"
+export const actionSaveLocalGame = ()=>{
+  return {
+    type: SAVE_LOCAL_GAME,
+    index: LOCAL_SAVED_GAME_INDEX
+  }
+}
+
+export const LOAD_LOCAL_SAVED_GAME = "LOAD_LOCAL_SAVED_GAME"
+export const actionLoadLocalSavedGame = () =>{
+  return {
+    type: LOAD_LOCAL_SAVED_GAME,
+    index: LOCAL_SAVED_GAME_INDEX
+  }
+}
+
+const LOAD_SAVED_GAME_FAIL = "LOAD_SAVED_GAME_FAIL"
+export const actionLoadSavedGameFail = (message)=>{
+  return {
+    type: LOAD_SAVED_GAME_FAIL,
+    message
+  }
+}
+
+const SAVE_GAME_SUCCESS = "SAVE_GAME_SUCCESS"
+export const actionSaveGameSuccess = (message) =>{
+  return {
+    type: SAVE_GAME_SUCCESS,
+    message
+  }
+}
+
+const SAVE_GAME_FAIL = "SAVE_GAME_FAIL"
+export const actionSaveGameFail = (message) =>{
+  return {
+    type: SAVE_GAME_FAIL,
+    message
   }
 }

@@ -11,6 +11,7 @@ import blackKnight from './blackKnight.svg'
 import blackPawn from './blackPawn.svg'
 import blackQueen from './blackQueen.svg'
 import blackRook from './blackRook.svg'
+import dummy from './dummy.svg'
 
 import React from 'react'
 import ReactSVG from 'react-svg'
@@ -25,7 +26,7 @@ const omap = (f,o) => {
 }
 
 
-export const PiecesSVG = omap((a)=> <ReactSVG src={a}></ReactSVG>, 
+export const PiecesSVG = omap((a)=> <img width="100%" src={a}></img>, 
 {
   p: whitePawn,
   P: blackPawn,
@@ -39,5 +40,5 @@ export const PiecesSVG = omap((a)=> <ReactSVG src={a}></ReactSVG>,
   Q: blackQueen,
   r: whiteRook,
   R: blackRook,
-  EMPTY: ""
+  0: dummy
 })
