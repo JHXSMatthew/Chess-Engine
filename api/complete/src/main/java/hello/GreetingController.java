@@ -1,6 +1,7 @@
 package hello;
 
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -95,6 +96,19 @@ public class GreetingController {
     @GetMapping("/getHistory")
     public Iterable<MoveHistory> getAllMoveHistory(){
         return mhr.findAll();
+    }
+
+    private GameRoomRepository grr;
+    @GetMapping("/newGame")
+    public UUID newGame(){
+        String initState = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+        UUID gameId = UUID.randomUUID();
+        GameRoom gr = new GameRoom();
+        gr.setRoomId(gameId);
+        gr.setNumOfUser(0);
+        gr.setState(initState);
+        grr.save(gr);
+        return gameId;
     }
 
     private String processString(String s){
