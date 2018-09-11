@@ -10,7 +10,8 @@ import {
   LOAD_LOCAL_SAVED_GAME,
   actionSaveGameSuccess,
   actionSaveGameFail,
-  SAVE_LOCAL_GAME
+  SAVE_LOCAL_GAME,
+  actionHighlightLastMove
 } from './ChessGameReducer'
 
 import Api from './ChessGameEAPI'
@@ -30,6 +31,7 @@ function* MoveRequest(action){
     const currentBoardState = yield select((state) => state.game.boardStr )
     const newState = yield call(Api.postMove, currentBoardState ,action.from, action.to)
     yield put(actionUpdateStateSuccess(newState.data.state))
+    yield put(actionHighlightLastMove([action.from, action.to]))
   }catch(e){
     yield put(actionMoveFail(e.message))
   }

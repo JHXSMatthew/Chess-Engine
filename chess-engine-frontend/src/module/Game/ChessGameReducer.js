@@ -9,6 +9,7 @@ const initState = {
   boardStr: INIT_BOARD_STATE_STR,
   boardRep: boardStrToRepArray(INIT_BOARD_STATE_STR),
   boardHightLight: [],
+  lastMovePair: [],
   select: []
 }
 
@@ -56,6 +57,10 @@ export const gameReducer  = (state = initState, action)=>{
     case HIGHLIGHT_AVAILABLE:
       return Object.assign({}, state, {
         boardHightLight: action.available
+      })
+    case HIGHLIGHT_LAST_MOVE:
+      return Object.assign({}, state, {
+        lastMovePair: action.lastMovePair
       })
     default:
       return state;
@@ -173,5 +178,13 @@ export const actionSaveGameFail = (message) =>{
   return {
     type: SAVE_GAME_FAIL,
     message
+  }
+}
+
+const HIGHLIGHT_LAST_MOVE = "HIGHLIGHT_LAST_MOVE"
+export const actionHighlightLastMove = (lastMovePair) =>{
+  return {
+    type: HIGHLIGHT_LAST_MOVE,
+    lastMovePair
   }
 }

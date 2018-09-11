@@ -38,7 +38,7 @@ class Game extends React.Component{
 
 
   render(){
-    const { boardRep,onCellClick,availableMove, select, highlight } = this.props
+    const { boardRep,onCellClick,availableMove, select, highlight, lastMove } = this.props
     return (
       <div className='game'>
         <div className='game-left'>
@@ -47,7 +47,8 @@ class Game extends React.Component{
           select={select}
           highlight={highlight}
           onCellClick={onCellClick}
-          availableMove={availableMove} />
+          availableMove={availableMove}
+          lastMove={lastMove} />
         </div>
         <div className="game-right">
           <div>
@@ -68,7 +69,8 @@ const mapStateToProps = state =>{
   return {
     boardRep: state.game.boardRep,
     select: state.game.select,
-    highlight: state.game.boardHightLight
+    highlight: state.game.boardHightLight,
+    lastMove: state.game.lastMovePair
   }
 }
 
