@@ -40,8 +40,11 @@ function* MoveRequest(action){
 function* LoadLocalSavedGame(action){
   try{
     let game = localStorage.getItem(action.index);
+    let lastMoveStr = localStorage.getItem(action.lastMove);
+    let lastMove = JSON.parse("[" + lastMoveStr + "]");
     if(game){
       yield put(actionUpdateStateSuccess(game))
+      yield put(actionHighlightLastMove(lastMove))
     }else{
       yield put(actionLoadSavedGameFail("no saved game!"))
     }
@@ -53,8 +56,9 @@ function* LoadLocalSavedGame(action){
 function* SaveLocalGame(action){
   try{
     const currentBoardState = yield select((state) => state.game.boardStr )
-
+    const lastMovePair = yield select((state) => state.game.lastMovePair)
     localStorage.setItem(action.index, currentBoardState);
+    localStorage.setItem(action.lastMove, lastMovePair);
     yield put(actionSaveGameSuccess());
   }catch(e){
     yield put(actionSaveGameFail(e.message));

@@ -2,6 +2,7 @@ import {boardStrToRepArray} from './Utils'
 
 const INIT_BOARD_STATE_STR = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 const LOCAL_SAVED_GAME_INDEX = "savedLocalGame"
+const LOCAL_SAVED_GAME_LASTMOVE = "savedLocalLastMove"
 
 
 //reducer
@@ -145,7 +146,8 @@ export const SAVE_LOCAL_GAME  = "SAVE_LOCAL_GAME"
 export const actionSaveLocalGame = ()=>{
   return {
     type: SAVE_LOCAL_GAME,
-    index: LOCAL_SAVED_GAME_INDEX
+    index: LOCAL_SAVED_GAME_INDEX,
+    lastMove: LOCAL_SAVED_GAME_LASTMOVE
   }
 }
 
@@ -153,7 +155,8 @@ export const LOAD_LOCAL_SAVED_GAME = "LOAD_LOCAL_SAVED_GAME"
 export const actionLoadLocalSavedGame = () =>{
   return {
     type: LOAD_LOCAL_SAVED_GAME,
-    index: LOCAL_SAVED_GAME_INDEX
+    index: LOCAL_SAVED_GAME_INDEX,
+    lastMove: LOCAL_SAVED_GAME_LASTMOVE
   }
 }
 
