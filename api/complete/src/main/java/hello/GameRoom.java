@@ -17,9 +17,20 @@ public class GameRoom implements Serializable {
     @NotBlank
     @Column(nullable = false)
     private Integer numOfUser;
+    @NotBlank
+    @Column(nullable = false)
+    private String status;
 
     public UUID getRoomId() {
         return roomId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public void setRoomId(UUID roomId) {

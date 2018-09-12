@@ -11,18 +11,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-//POST /game/availableMove
-//Body:
-//{
-//	state: string,
-//	from: integer
-//}
-//Response:
-//{
-//	from: integer,
-//	availableMove: [integer, integer, integer ….]
-//}
-
 @CrossOrigin
 @RestController
 public class GreetingController {
@@ -87,29 +75,49 @@ public class GreetingController {
     @Autowired
     private MoveHistoryRepository mhr;
 
+    @CrossOrigin(origins = "*")
     @PostMapping(path="/addState")
     public String addStateToDb(@RequestBody MoveHistory mh){
         mhr.save(mh);
         return "Success";
     }
 
+    @CrossOrigin(origins = "*")
     @GetMapping("/getHistory")
     public Iterable<MoveHistory> getAllMoveHistory(){
         return mhr.findAll();
     }
 
+
     private GameRoomRepository grr;
-    @GetMapping("/newGame")
+    @CrossOrigin(origins = "*")
+    @PostMapping("/game")
     public UUID newGame(){
         String initState = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
         UUID gameId = UUID.randomUUID();
         GameRoom gr = new GameRoom();
         gr.setRoomId(gameId);
-        gr.setNumOfUser(0);
+        gr.setNumOfUser(1);
         gr.setState(initState);
+        gr.setStatus("lobby");
         grr.save(gr);
         return gameId;
     }
+
+    @CrossOrigin(origins = "*")
+    @GetMapping("/game/{id}")
+    // Get status and state
+    public GameInfo getGameInfo(@RequestParam String id){
+        Iterable<GameRoom> result = grr.findAll();
+        return null;
+    }
+
+
+    //
+    //
+    //      Help function below
+    //
+    //
 
     private String processString(String s){
         String result = "";
