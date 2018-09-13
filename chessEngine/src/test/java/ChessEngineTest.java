@@ -1,4 +1,6 @@
 
+import engine.ChessEngineDummy;
+import engine.ChessEngineI;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
