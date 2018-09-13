@@ -22,7 +22,7 @@ public class Piece {
     static final int QUEEN = 4;
     static final int KING = 5;
 
-    static final int NOPIECETYPE = 6;
+    static final int NO_PIECE_TYPE = 6;
 
     static final int PAWN_VALUE = 100;
     static final int KNIGHT_VALUE = 325;
@@ -60,6 +60,21 @@ public class Piece {
                 return QUEEN_VALUE;
             case KING:
                 return KING_VALUE;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    static boolean isSliding(int pieceType) {
+        switch (pieceType) {
+            case PAWN:
+            case KNIGHT:
+            case KING:
+                return false;
+            case BISHOP:
+            case ROOK:
+            case QUEEN:
+                return true;
             default:
                 throw new IllegalArgumentException();
         }
@@ -131,7 +146,7 @@ public class Piece {
         }
     }
 
-    static int getColor(int piece) {
+    static int getColour(int piece) {
         switch (piece) {
             case WHITE_PAWN:
             case WHITE_KNIGHT:

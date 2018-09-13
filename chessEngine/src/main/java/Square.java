@@ -89,6 +89,26 @@ public class Square {
             NE, NW, SE, SW
     };
 
+    static int[] getDirection(int colour, int pieceType) {
+        switch (pieceType) {
+            case Piece.PAWN:
+                return pawnDirections[colour];
+            case Piece.KNIGHT:
+                return knightDirections;
+            case Piece.BISHOP:
+                return bishopDirections;
+            case Piece.ROOK:
+                return rookDirections;
+            case Piece.QUEEN:
+                return queenDirections;
+            case Piece.KING:
+                return kingDirections;
+            default:
+                throw new IllegalArgumentException();
+
+        }
+    }
+
     static boolean isValid(int square) {
         return (square & 0x88) == 0;
     }
