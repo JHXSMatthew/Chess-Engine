@@ -15,7 +15,21 @@ public class ChessEngineDummy implements ChessEngineI {
     }
     @Override
     public String move(String state, int from, int to) {
-        return null;
+        /*
+        0 ..        black
+        ...         ....
+        .. 63       white
+         */
+        Position p = new Position();
+        p.deserializeBoard(state);
+        Move m = new Move(from, to);
+        Boolean success = p.makeMove(m);
+        if (success) {
+            return p.serializeBoard();
+        } else {
+            return state;
+        }
+
     }
 
 }
