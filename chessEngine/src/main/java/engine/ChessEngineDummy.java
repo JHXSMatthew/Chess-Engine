@@ -13,7 +13,12 @@ public class ChessEngineDummy implements ChessEngineI {
     }
     @Override
     public int[] getMoveHint(String state, int pieceLoc) {
-        return new int[0];
+        Position p = new Position();
+        p.deserializeBoard(state);
+        MoveGenerator m = new MoveGenerator();
+
+        m.generateMoves(pieceLoc, p);
+        return m.targetSquareToArray();
     }
     @Override
     public String move(String state, int from, int to) {

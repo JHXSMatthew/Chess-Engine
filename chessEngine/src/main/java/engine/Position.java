@@ -101,10 +101,10 @@ public class Position {
         on arrival, either move piece and/or remove enemy piece
      */
     public boolean makeMove (Move m) {
-        int targetSquare = m.getTargetSquare();
-        int originSquare = m.getOriginSquare();
+        int originSquare = toSquare(m.getOriginSquare());
+        int targetSquare = toSquare(m.getTargetSquare());
         boolean success = false;
-        if (!Square.isValid(m.getTargetSquare()) || !Square.isValid(m.getOriginSquare())) {
+        if (!Square.isValid(originSquare) || !Square.isValid(targetSquare)) {
             return success;
         }
 
@@ -169,7 +169,6 @@ public class Position {
             return success;
         }
 
-        int targetPiece = m.getTargetSquare();
         board[targetSquare] = Piece.valueOf(activeColour, originPiece);
         board[originSquare] = Piece.NO_PIECE;
 
