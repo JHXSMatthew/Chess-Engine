@@ -10,7 +10,8 @@ import {
   LOAD_LOCAL_SAVED_GAME,
   actionSaveGameSuccess,
   actionSaveGameFail,
-  SAVE_LOCAL_GAME
+  SAVE_LOCAL_GAME,
+  actionHighlightLastMove
 } from './ChessGameReducer'
 
 import Api from './ChessGameEAPI'
@@ -30,6 +31,7 @@ function* MoveRequest(action){
     const currentBoardState = yield select((state) => state.game.boardStr )
     const newState = yield call(Api.postMove, currentBoardState ,action.from, action.to)
     yield put(actionUpdateStateSuccess(newState.data.state))
+    yield put(actionHighlightLastMove([action.from, action.to]))
   }catch(e){
     yield put(actionMoveFail(e.message))
   }
@@ -38,8 +40,11 @@ function* MoveRequest(action){
 function* LoadLocalSavedGame(action){
   try{
     let game = localStorage.getItem(action.index);
+    let lastMoveStr = localStorage.getItem(action.lastMove);
+    let lastMove = JSON.parse("[" + lastMoveStr + "]");
     if(game){
       yield put(actionUpdateStateSuccess(game))
+      yield put(actionHighlightLastMove(lastMove))
     }else{
       yield put(actionLoadSavedGameFail("no saved game!"))
     }
@@ -51,8 +56,9 @@ function* LoadLocalSavedGame(action){
 function* SaveLocalGame(action){
   try{
     const currentBoardState = yield select((state) => state.game.boardStr )
-
+    const lastMovePair = yield select((state) => state.game.lastMovePair)
     localStorage.setItem(action.index, currentBoardState);
+    localStorage.setItem(action.lastMove, lastMovePair);
     yield put(actionSaveGameSuccess());
   }catch(e){
     yield put(actionSaveGameFail(e.message));

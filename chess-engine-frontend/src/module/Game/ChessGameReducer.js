@@ -2,13 +2,14 @@ import {boardStrToRepArray} from './Utils'
 
 const INIT_BOARD_STATE_STR = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 const LOCAL_SAVED_GAME_INDEX = "savedLocalGame"
-
+const LOCAL_SAVED_GAME_LASTMOVE = "savedLocalLastMove"
 
 //reducer
 const initState = {
   boardStr: INIT_BOARD_STATE_STR,
   boardRep: boardStrToRepArray(INIT_BOARD_STATE_STR),
   boardHightLight: [],
+  lastMovePair: [],
   select: []
 }
 
@@ -25,7 +26,10 @@ export const gameReducer  = (state = initState, action)=>{
     case LOAD_INIT_BOARD_STATE:
       return Object.assign({}, state, {
         boardStr: INIT_BOARD_STATE_STR,
-        boardRep: boardStrToRepArray(INIT_BOARD_STATE_STR)
+        boardRep: boardStrToRepArray(INIT_BOARD_STATE_STR),
+        boardHightLight: [],
+        lastMovePair: [],
+        select: []
       })
     case CLEAR_SELECT:
       return Object.assign({}, state, {
@@ -56,6 +60,14 @@ export const gameReducer  = (state = initState, action)=>{
     case HIGHLIGHT_AVAILABLE:
       return Object.assign({}, state, {
         boardHightLight: action.available
+      })
+    case HIGHLIGHT_LAST_MOVE:
+      return Object.assign({}, state, {
+        lastMovePair: action.lastMovePair
+      })
+    case END_GAME:
+      return Object.assign({}, state, {
+
       })
     default:
       return state;
@@ -140,7 +152,8 @@ export const SAVE_LOCAL_GAME  = "SAVE_LOCAL_GAME"
 export const actionSaveLocalGame = ()=>{
   return {
     type: SAVE_LOCAL_GAME,
-    index: LOCAL_SAVED_GAME_INDEX
+    index: LOCAL_SAVED_GAME_INDEX,
+    lastMove: LOCAL_SAVED_GAME_LASTMOVE
   }
 }
 
@@ -148,7 +161,8 @@ export const LOAD_LOCAL_SAVED_GAME = "LOAD_LOCAL_SAVED_GAME"
 export const actionLoadLocalSavedGame = () =>{
   return {
     type: LOAD_LOCAL_SAVED_GAME,
-    index: LOCAL_SAVED_GAME_INDEX
+    index: LOCAL_SAVED_GAME_INDEX,
+    lastMove: LOCAL_SAVED_GAME_LASTMOVE
   }
 }
 
@@ -173,5 +187,21 @@ export const actionSaveGameFail = (message) =>{
   return {
     type: SAVE_GAME_FAIL,
     message
+  }
+}
+
+const HIGHLIGHT_LAST_MOVE = "HIGHLIGHT_LAST_MOVE"
+export const actionHighlightLastMove = (lastMovePair) =>{
+  return {
+    type: HIGHLIGHT_LAST_MOVE,
+    lastMovePair
+  }
+}
+
+const END_GAME = "END_GAME"
+export const actionEndGame = (winLose) =>{
+  return {
+    type: END_GAME,
+    winLose
   }
 }
