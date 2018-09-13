@@ -6,9 +6,11 @@
   border-width: 1px;
 
   width: 12%;
-  height: 100px;
+  height: 70px;
   flex-grow: 1;
-  display: block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   
   &-bg-dark{
     &:extend(.cell);
@@ -17,6 +19,14 @@
   &-bg-light{
     &:extend(.cell);
     background-color: #b58863;
+  }
+  &-bg-selected{
+    &:extend(.cell);
+    background-color: #3399ff;
+  }
+  &-bg-highlight{
+    &:extend(.cell);
+    background-color: #99ccff;
   }
 }
 
