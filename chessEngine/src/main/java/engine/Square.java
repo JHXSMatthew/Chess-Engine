@@ -1,3 +1,5 @@
+package engine;
+
 public class Square {
     static final int a1 = 0, a2 = 16;
     static final int b1 = 1, b2 = 17;

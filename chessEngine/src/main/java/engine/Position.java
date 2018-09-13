@@ -1,3 +1,5 @@
+package engine;
+
 public class Position {
     public int[] board = new int[128];
  //   public long[][] pieces = new long[2][6]; // first index is colour, second index is piece type
@@ -83,9 +85,9 @@ public class Position {
         }
 
         if (colour.equals("w")) {
-            activeColour = Piece.WHITE;
+            setColour(Piece.WHITE);
         } else {
-            activeColour = Piece.BLACK;
+            setColour(Piece.BLACK);
         }
     }
 
@@ -172,6 +174,88 @@ public class Position {
         board[originSquare] = Piece.NO_PIECE;
 
         return success;
+    }
+
+    public boolean isCheckMate(int color) {
+        //in check and no legal moves
+        try {
+            isChecked(color);
+        } catch (Exception e) {
+            //no more king?
+        }
+        return false;
+    }
+
+    public boolean isChecked(int colour) {
+        int kingPiece = Piece.valueOf(colour, Piece.KING);
+        for (int value: Square.values) {
+            if (board[value] == kingPiece) {
+                return isAttacked(value, Piece.oppositeColour(colour));
+            }
+        }
+        throw new IllegalArgumentException();
+    }
+
+    public boolean isAttacked(int targetSquare, int attackerColour) {
+        int pawnPiece = Piece.valueOf(attackerColour, Piece.PAWN);
+        int[] pawnDirections = Square.getDirection(attackerColour, Piece.PAWN);
+        for (int i = 1; i < pawnDirections.length; i++) {
+            int attackSquare = targetSquare - pawnDirections[i];
+            if (Square.isValid(attackSquare) && board[attackSquare] == pawnPiece) {
+                return true;
+            }
+        }
+
+        int kingPiece = Piece.valueOf(attackerColour, Piece.KING);
+        int[] kingDirections = Square.getDirection(attackerColour, Piece.KING);
+        for (int i = 0; i < kingDirections.length; i++) {
+            int attackSquare = targetSquare + kingDirections[i];
+            if (Square.isValid(attackSquare) && board[attackSquare] == kingPiece) {
+                return true;
+            }
+        }
+        int knightPiece = Piece.valueOf(attackerColour, Piece.KNIGHT);
+        int[] knightDirections = Square.getDirection(attackerColour, Piece.KNIGHT);
+        for (int i = 0; i < knightDirections.length; i++) {
+            int attackSquare = targetSquare + knightDirections[i];
+            if (Square.isValid(attackSquare) && board[attackSquare] == kingPiece) {
+                return true;
+            }
+        }
+
+        int bishopPiece = Piece.valueOf(attackerColour, Piece.BISHOP);
+        int queenPiece = Piece.valueOf(attackerColour, Piece.QUEEN); //queens move the same as a bishop and rook
+        int[] bishopDirections = Square.getDirection(attackerColour, Piece.BISHOP);
+        for (int i = 0; i < bishopDirections.length; i++) {
+            int attackSquare = targetSquare + bishopDirections[i];
+            while (Square.isValid(attackSquare)) {
+                if (Piece.isValid(board[attackSquare]) ) {
+                    if (board[attackSquare] == bishopPiece || board[attackSquare] == queenPiece) {
+                        return true;
+                    }
+                    break;
+                } else {
+                    attackSquare += bishopDirections[i];
+                }
+            }
+        }
+
+        int rookPiece = Piece.valueOf(attackerColour, Piece.ROOK);
+        int[] rookDirections = Square.getDirection(attackerColour, Piece.ROOK);
+        for (int i = 0; i < rookDirections.length; i++) {
+            int attackSquare = targetSquare + rookDirections[i];
+            while (Square.isValid(attackSquare)) {
+                if (Piece.isValid(board[attackSquare]) ) {
+                    if (board[attackSquare] == rookPiece || board[attackSquare] == queenPiece) {
+                        return true;
+                    }
+                    break;
+                } else {
+                    attackSquare += rookDirections[i];
+                }
+            }
+        }
+        return false;
     }
 
     public String serializeBoard() {

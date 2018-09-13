@@ -1,3 +1,5 @@
+package engine;
+
 import java.util.*;
 
 public class Piece {
@@ -77,6 +79,26 @@ public class Piece {
                 return true;
             default:
                 throw new IllegalArgumentException();
+        }
+    }
+
+    static boolean isValid(int piece) {
+        switch (piece) {
+            case WHITE_PAWN:
+            case WHITE_KNIGHT:
+            case WHITE_BISHOP:
+            case WHITE_ROOK:
+            case WHITE_QUEEN:
+            case WHITE_KING:
+            case BLACK_PAWN:
+            case BLACK_KNIGHT:
+            case BLACK_BISHOP:
+            case BLACK_ROOK:
+            case BLACK_QUEEN:
+            case BLACK_KING:
+                return true;
+            default:
+                return false;
         }
     }
 

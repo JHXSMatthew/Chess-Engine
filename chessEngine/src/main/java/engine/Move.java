@@ -1,3 +1,5 @@
+package engine;
+
 public class Move {
     private int type; //normal, special (en passant, castle, promotion)
     private int originSquare;
