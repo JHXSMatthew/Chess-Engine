@@ -25,6 +25,8 @@ import { init } from './mock/mock'
 //router
 import { BrowserRouter } from 'react-router-dom';
 
+//configs
+import { DEBUG } from './config'
 
 const saga = createSaga(); 
 
@@ -47,6 +49,8 @@ ReactDOM.render(
 
 
 registerServiceWorker();
+if(DEBUG){
+  init(Server);
+  Server.on();
+}
 
-init(Server);
-Server.on();

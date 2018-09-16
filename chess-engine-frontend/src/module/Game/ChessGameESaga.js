@@ -74,7 +74,9 @@ function* AvailableMoveRequest(action){
   try{
     const currentBoardState = yield select((state) => seriliaseState(state.game))
     const availableMoves = yield call(Api.postAvaliableMove, currentBoardState, action.from, 0)
-    yield put(actionHighlightAvailable(availableMoves.data.available))
+    // yield put(actionHighlightAvailable(availableMoves.data.available))
+    yield put(actionHighlightAvailable([]))
+
   }catch(e){
     console.log("AvailableMoveRequest Api Error: ", e);
   }

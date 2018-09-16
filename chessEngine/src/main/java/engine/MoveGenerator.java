@@ -9,7 +9,7 @@ public class MoveGenerator {
 
         int index = 0;
         for (Move m: moves) {
-            targetSquares[index] = Position.toIndex(m.getTargetSquare());
+            targetSquares[index] = Board.toIndex(m.getTargetSquare());
         }
         return targetSquares;
     }
@@ -18,8 +18,8 @@ public class MoveGenerator {
         this.moves = new ArrayList<Move>();
     }
 
-    public void generateMoves(int indexSquare, Position p) {
-        int originSquare = Position.toSquare(indexSquare);
+    public void generateMoves(int indexSquare, Board p) {
+        int originSquare = Board.toSquare(indexSquare);
         if (!Square.isValid(originSquare)) {
             return;
         }

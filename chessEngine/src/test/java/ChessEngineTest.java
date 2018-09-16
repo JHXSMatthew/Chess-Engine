@@ -17,4 +17,9 @@ public class ChessEngineTest {
     public void initStateTest(){
         Assert.assertEquals("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", engine.getInitState());
     }
+
+    @Test
+    public void deserializeBoard(){
+
+    }
 }

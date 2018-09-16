@@ -1,11 +1,11 @@
 package engine;
 
-public class Position {
+public class Board {
     public int[] board = new int[128];
  //   public long[][] pieces = new long[2][6]; // first index is colour, second index is piece type
     public int activeColour;
 
-    public Position () {
+    public Board() {
         for (int value: Square.values) {
             board[value] = Piece.NO_PIECE;
         }

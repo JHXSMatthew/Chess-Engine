@@ -17,7 +17,7 @@ export const regMove = (server) =>{
     })];
   });
 
-  server.mockPost("api/availableMove", (request) =>{
+  server.mockPost("api/move/available", (request) =>{
   	const body = JSON.parse(request.requestBody);
   	var a = [];
   	for (let i = 0; i < 64; i++){
