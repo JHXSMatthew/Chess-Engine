@@ -3,7 +3,7 @@ import { call, put, takeEvery, select } from 'redux-saga/effects'
 import { 
   MOVE_REQUEST, 
   AVAILABLE_MOVE_REQUEST,
-  actionUpdateStateSuccess, 
+  actionUpdateGameStateSuccess, 
   actionMoveFail,
   actionHighlightAvailable,
   actionLoadSavedGameFail,
@@ -15,6 +15,11 @@ import {
 } from './ChessGameReducer'
 
 import Api from './ChessGameEAPI'
+
+import {
+  seriliaseState,
+  deserializeState
+} from './Utils'
 
 
 export function* gameSaga(){
@@ -28,9 +33,9 @@ export function* gameSaga(){
 
 function* MoveRequest(action){
   try{
-    const currentBoardState = yield select((state) => state.game.boardStr )
+    const currentBoardState = yield select((state) => seriliaseState(state.game) )
     const newState = yield call(Api.postMove, currentBoardState ,action.from, action.to)
-    yield put(actionUpdateStateSuccess(newState.data.state))
+    yield put(actionUpdateGameStateSuccess(deserializeState(newState.data.state)))
     yield put(actionHighlightLastMove([action.from, action.to]))
   }catch(e){
     yield put(actionMoveFail(e.message))
@@ -43,7 +48,7 @@ function* LoadLocalSavedGame(action){
     let lastMoveStr = localStorage.getItem(action.lastMove);
     let lastMove = JSON.parse("[" + lastMoveStr + "]");
     if(game){
-      yield put(actionUpdateStateSuccess(game))
+      yield put(actionUpdateGameStateSuccess(deserializeState(game)))
       yield put(actionHighlightLastMove(lastMove))
     }else{
       yield put(actionLoadSavedGameFail("no saved game!"))
@@ -67,7 +72,7 @@ function* SaveLocalGame(action){
 
 function* AvailableMoveRequest(action){
   try{
-    const currentBoardState = yield select((state) => state.game.boardStr )
+    const currentBoardState = yield select((state) => seriliaseState(state.game))
     const availableMoves = yield call(Api.postAvaliableMove, currentBoardState, action.from, 0)
     yield put(actionHighlightAvailable(availableMoves.data.available))
   }catch(e){

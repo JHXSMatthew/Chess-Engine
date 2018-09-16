@@ -1,4 +1,32 @@
 
+//state string includes board string and other meta informations
+
+export const deserializeState = (stateString) =>{
+  const split = stateString.split(" ");
+  if(split.length < 6){
+    return {}
+  }
+  return {
+    boardStr: split[0],
+    currentTurn: split[1],
+    castling: split[2],
+    enPassantTarget: split[3],
+    halfMove: split[4],
+    fullMove: split[5]
+  }
+
+
+}
+
+export const seriliaseState = (stateObj) =>{
+  if(stateObj){
+    return [stateObj.boardStr, stateObj.currentTurn, stateObj.castling, stateObj.enPassantTarget, stateObj.halfMove, stateObj.fullMove].join(' ')
+  }else{
+    return "";
+  }
+}
+
+
 
 // string rep: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" & length <= 64
 // array rep : [r,n,b,q,...., N , R] & length = 64

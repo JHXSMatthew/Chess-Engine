@@ -14,7 +14,7 @@ import {
   actionAvailableMove,
   actionSaveLocalGame,
   actionLoadLocalSavedGame,
-  actionUpdateStateSuccess,
+  actionUpdateGameStateSuccess,
   actionEndGame
 } from './ChessGameReducer'
 

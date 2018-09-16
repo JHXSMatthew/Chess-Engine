@@ -6,31 +6,37 @@ const LOCAL_SAVED_GAME_LASTMOVE = "savedLocalLastMove"
 
 //reducer
 const initState = {
-  boardStr: INIT_BOARD_STATE_STR,
+  // UI states
   boardRep: boardStrToRepArray(INIT_BOARD_STATE_STR),
   boardHightLight: [],
   lastMovePair: [],
-  select: []
+  select: [],
+  //the game state obj
+  boardStr: INIT_BOARD_STATE_STR,
+  currentTurn: "w",
+  castling: "KQkq",
+  enPassantTarget: "-",
+  halfMove: "0",
+  fullMove: "1"
+
+
 }
 
 export const gameReducer  = (state = initState, action)=>{
   switch(action.type){
-    case UPDATE_BOARD_STATE_SUCCESS:
-      return Object.assign({}, state, {
-        boardStr: action.newState,
-        boardRep: boardStrToRepArray(action.newState),
-        boardHightLight: []
+    case UPDATE_GAME_STATE_SUCCESS:
+      const newGameState = action.state
+      return Object.assign({},
+        state, //old state
+        newGameState, // gamestate
+        { //UI state 
+          boardHightLight: [],
+          boardRep: boardStrToRepArray(newGameState.boardStr),
       });
     case UPDATE_BOARD_STATE_FAIL:
       return state;
     case LOAD_INIT_BOARD_STATE:
-      return Object.assign({}, state, {
-        boardStr: INIT_BOARD_STATE_STR,
-        boardRep: boardStrToRepArray(INIT_BOARD_STATE_STR),
-        boardHightLight: [],
-        lastMovePair: [],
-        select: []
-      })
+      return Object.assign({}, state, initState)
     case CLEAR_SELECT:
       return Object.assign({}, state, {
         select: []
@@ -91,11 +97,11 @@ export const actionSelectCell = (index)=>{
   }
 }
 
-const UPDATE_BOARD_STATE_SUCCESS = "UPDATE_BOARD_STATE_SUCCESS"
-export const actionUpdateStateSuccess = (newState) =>{
+const UPDATE_GAME_STATE_SUCCESS = "UPDATE_GAME_STATE_SUCCESS"
+export const actionUpdateGameStateSuccess = (state) =>{
   return {
-    type: UPDATE_BOARD_STATE_SUCCESS,
-    newState
+    type: UPDATE_GAME_STATE_SUCCESS,
+    state
   }
 }
 const UPDATE_BOARD_STATE_FAIL = "UPDATE_BOARD_STATE_FAIL"
