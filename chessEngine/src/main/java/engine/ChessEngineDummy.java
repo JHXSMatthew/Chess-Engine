@@ -16,9 +16,9 @@ public class ChessEngineDummy implements ChessEngineI {
         Position p = new Position();
         p.deserializeBoard(state);
         MoveGenerator m = new MoveGenerator();
-
+        
         m.generateMoves(pieceLoc, p);
-        return m.targetSquareToArray();
+        return m.targetSquareToIndexArray();
     }
     @Override
     public String move(String state, int from, int to) {

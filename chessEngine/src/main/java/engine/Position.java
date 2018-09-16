@@ -92,18 +92,19 @@ public class Position {
     }
 
     /*
-        The input move is not fully fleshed out.
-        All properties of the move must be tested.
-        check if still on board
-        check if piece to be moved is same as the current activecolour
-        check all directions of the piece
-        if encounter any piece along the way, fail
-        on arrival, either move piece and/or remove enemy piece
+        basic move evaluation
+        isattacked
+        ischecked
+        ischeckmate
+        psuedo legal move generation
+        special moves (en passant castle promotion)
+        draw conditions
      */
     public boolean makeMove (Move m) {
         int originSquare = toSquare(m.getOriginSquare());
         int targetSquare = toSquare(m.getTargetSquare());
         boolean success = false;
+
         if (!Square.isValid(originSquare) || !Square.isValid(targetSquare)) {
             return success;
         }
@@ -123,7 +124,7 @@ public class Position {
             }
             for (int multiplier = 1; multiplier <= max; multiplier++) {
                 int currentSquare = originSquare + directions[0] * multiplier;
-                if (currentSquare == targetSquare && board[currentSquare] != Piece.NO_PIECE) {
+                if (Square.isValid(currentSquare) && currentSquare == targetSquare && board[currentSquare] == Piece.NO_PIECE) {
                     success = true;
                     break;
                 }
@@ -131,8 +132,8 @@ public class Position {
             if (!success) {
                 for (int remainingDirections = 1; remainingDirections < 3; remainingDirections++) {
                     int currentSquare = originSquare + directions[remainingDirections];
-                    if ((currentSquare == targetSquare) &&
-                            ((board[targetSquare] != Piece.NO_PIECE && Piece.getColour(board[targetSquare]) != activeColour))) {
+                    if (Square.isValid(currentSquare) && currentSquare == targetSquare &&
+                            board[targetSquare] != Piece.NO_PIECE && Piece.getColour(board[targetSquare]) != activeColour) {
                         success = true;
                         break;
                     }
@@ -141,7 +142,7 @@ public class Position {
         } else if (!Piece.isSliding(Piece.getType(originPiece))) { //kings/knights
             for (int i = 0; i < directions.length; i++) {
                 int currentSquare = originSquare + directions[i];
-                if ((currentSquare == targetSquare) &&
+                if (Square.isValid(currentSquare) && currentSquare == targetSquare &&
                         ((board[targetSquare] == Piece.NO_PIECE) || (board[targetSquare] != Piece.NO_PIECE && Piece.getColour(board[targetSquare]) != activeColour))){
                     success = true;
                     break;
@@ -169,7 +170,7 @@ public class Position {
             return success;
         }
 
-        board[targetSquare] = Piece.valueOf(activeColour, originPiece);
+        board[targetSquare] = originPiece;
         board[originSquare] = Piece.NO_PIECE;
 
         return success;
@@ -345,7 +346,7 @@ public class Position {
         return index + (index & ~7);
     }
 
-    public int toIndex (int square) {
+    public static int toIndex (int square) {
         return (square + (square & 7)) >> 1;
     }
 }
