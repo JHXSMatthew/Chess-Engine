@@ -5,12 +5,13 @@ matrix:
         - cd chessEngine 
       script:
         - mvn install
-      after_script:
-        - cp target/*.jar ../api/src/main/resources/chess-engine.jar 
 
     - language: java
       before_script:
-        - cd api 
+        - cd chessEngine
+        - mvn install
+        - cp target/*.jar ../api/src/main/resources/chess-engine.jar
+        - cd ../api
       script:
         - mvn install 
 
