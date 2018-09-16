@@ -3,6 +3,8 @@ bin-debug/
 bin-release/
 [Oo]bj/
 [Bb]in/
+lib/
+target/
 
 # Other files and folders
 .settings/
@@ -20,3 +22,4 @@ bin-release/
 *.imi
 *.class
 *.jar
+
