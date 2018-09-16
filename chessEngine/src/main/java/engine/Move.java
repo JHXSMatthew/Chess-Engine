@@ -8,7 +8,7 @@ public class Move {
     private int targetPiece;
     private int promotion;  //promotion pieceType
 
-    public final int NORMAL = 0;
+    static final int NORMAL = 0;
 
 
     public Move(int type, int originSquare, int targetSquare, int originPiece, int targetPiece, int promotion) {
