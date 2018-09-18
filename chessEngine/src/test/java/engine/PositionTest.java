@@ -37,7 +37,6 @@ public class PositionTest {
         g.emptyMoves();*/
 
         String rookMove = engine.move("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR b KQkq - 0 1", 0, 16);
-        System.out.println(rookMove);
         Assert.assertEquals(rookMove, "1nbqkbnr/8/r7/8/8/8/8/RNBQKBNR w KQkq - 0 1");
         String rookMove1 = engine.move("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR b KQkq - 0 1", 0, 56);
         Assert.assertEquals(rookMove1, "1nbqkbnr/8/8/8/8/8/8/rNBQKBNR w KQkq - 0 1");
