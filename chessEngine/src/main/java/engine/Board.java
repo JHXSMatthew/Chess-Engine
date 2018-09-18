@@ -101,8 +101,8 @@ public class Board {
         draw conditions
      */
     public boolean makeMove (Move m) {
-        int originSquare = toSquare(m.getOriginSquare());
-        int targetSquare = toSquare(m.getTargetSquare());
+        int originSquare = m.getOriginSquare();
+        int targetSquare = m.getTargetSquare();
         boolean success = false;
 
         if (!Square.isValid(originSquare) || !Square.isValid(targetSquare)) {
@@ -114,10 +114,12 @@ public class Board {
             return success;
         }
 
-        int[] directions = Square.getDirection(activeColour, originPiece);
+        int originType = Piece.getType(originPiece);
+
+        int[] directions = Square.getDirection(activeColour, originType);
 
         //start with pawns
-        if (Piece.getType(originPiece) == Piece.PAWN) {
+        if (originType == Piece.PAWN) {
             int max = 1;
             if ((activeColour == Piece.BLACK && rank(originSquare) == 1) || (activeColour == Piece.WHITE && rank(originSquare) == 6)) {
                 max = 2;
@@ -139,7 +141,7 @@ public class Board {
                     }
                 }
             }
-        } else if (!Piece.isSliding(Piece.getType(originPiece))) { //kings/knights
+        } else if (!Piece.isSliding(originType)) { //kings/knights
             for (int i = 0; i < directions.length; i++) {
                 int currentSquare = originSquare + directions[i];
                 if (Square.isValid(currentSquare) && currentSquare == targetSquare &&
@@ -172,6 +174,7 @@ public class Board {
 
         board[targetSquare] = originPiece;
         board[originSquare] = Piece.NO_PIECE;
+        activeColour = Piece.oppositeColour(activeColour);
 
         return success;
     }
@@ -262,8 +265,10 @@ public class Board {
         String out = "";
         int fileCount = 0;
         int rankCount = 0;
-        for (int index: Square.values) {
-            if (fileCount == 8) {
+        while (rankCount < 8) {
+            if (rankCount == 7 && fileCount == 8) {
+                break;
+            } else if (fileCount == 8) {
                 out = out + "/";
                 rankCount++;
                 fileCount = 0;
@@ -272,6 +277,9 @@ public class Board {
                 int count = 1;
                 fileCount++;
                 for (int i = fileCount; i < 8; i++) {
+                    if (board[toSquare(rankCount,fileCount)] != Piece.NO_PIECE) {
+                        break;
+                    }
                     count++;
                     fileCount++;
                 }

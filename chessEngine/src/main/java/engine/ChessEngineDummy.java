@@ -32,6 +32,15 @@ public class ChessEngineDummy implements ChessEngineI {
         Move m = new Move(from, to);
         Boolean success = p.makeMove(m);
         if (success) {
+            int row = 0;
+            for (int index: Square.values) {
+                System.out.print(p.board[index] + " ");
+                row ++;
+                if (row == 8) {
+                    System.out.println(" ");
+                    row = 0;
+                }
+            }
             return p.serializeBoard();
         } else {
             return state;
