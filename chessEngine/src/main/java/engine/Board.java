@@ -95,10 +95,9 @@ public class Board {
     //Move application, everything verified ahead of this function call
     public void applyMove(Move m) {
         int originSquare = m.getOriginSquare();
-        int originPiece = board[originSquare]; //a bit hacky, might need to change
         int targetSquare = m.getTargetSquare();
 
-        board[targetSquare] = originPiece;
+        board[targetSquare] = m.getOriginPiece();
         board[originSquare] = Piece.NO_PIECE;
         activeColour = Piece.oppositeColour(activeColour);
     }
@@ -121,7 +120,8 @@ public class Board {
         special moves (en passant castle promotion)
         draw conditions
      */
-    public boolean makeMove (Move m) {
+
+    public boolean validateMove (Move m) {
         int originSquare = m.getOriginSquare();
         int targetSquare = m.getTargetSquare();
         boolean success = false;
@@ -130,7 +130,7 @@ public class Board {
             return success;
         }
 
-        int originPiece = board[originSquare];
+        int originPiece = m.getOriginPiece();
         if (originPiece == Piece.NO_PIECE || Piece.getColour(originPiece) != activeColour) {
             return success;
         }
@@ -189,35 +189,40 @@ public class Board {
                 }
             }
         }
-        if (success) {
-            applyMove(m);
-        }
         return success;
     }
 
     public boolean isCheckMate(MoveGenerator mg, int colour) {
         int kingSquare = findKing(colour);
         boolean success = false;
+        if (kingSquare == Square.NOSQUARE) {
+            return success;
+        }
+
         for (Move m: mg.getMoves()) {
             int originPiece = m.getOriginPiece();
 
             applyMove(m);
             if (Piece.getType(originPiece) == Piece.KING) {
                 if (!isChecked(colour)) {
+                    success = false;
+                } else {
                     success = true;
                 }
             } else {
                 if (!isChecked(colour, kingSquare)) {
+                    success = false;
+                } else {
                     success = true;
                 }
             }
             undoMove(m);
-            if (success) {
-                break;
+            if (!success) {
+                return success;
             }
         }
 
-        return success;
+        return true;
     }
 
     public int findKing(int colour) {
@@ -235,6 +240,9 @@ public class Board {
     }
     public boolean isChecked(int colour) {
         int kingSquare = findKing(colour);
+        if (kingSquare == Square.NOSQUARE) {
+            return false;
+        }
         return isAttacked(kingSquare, Piece.oppositeColour(colour));
     }
 

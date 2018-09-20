@@ -37,13 +37,11 @@ public class MoveGenerator {
             int originType = Piece.getType(originPiece);
             int[] directions = Square.getDirection(p.activeColour, originType);
             if (originType == Piece.PAWN) {
-                System.out.println("Pawn type");
                 int max = 1;
                 if ((p.activeColour == Piece.BLACK && p.rank(originSquare) == 1) || (p.activeColour == Piece.WHITE && p.rank(originSquare) == 6)) {
                     max = 2;
                 }
                 for (int multiplier = 1; multiplier <= max; multiplier++) {
-                    System.out.println("Multiplier = " + multiplier);
                     int currentSquare = originSquare + directions[0] * multiplier;
                     System.out.println(currentSquare);
                     if (Square.isValid(currentSquare) && p.board[currentSquare] == Piece.NO_PIECE) {
@@ -59,7 +57,6 @@ public class MoveGenerator {
                     }
                 }
             } else if (!Piece.isSliding(originType)) { //kings/knights
-                System.out.println("Moving type");
                 for (int i = 0; i < directions.length; i++) {
                     int currentSquare = originSquare + directions[i];
                     if (Square.isValid(currentSquare) && p.board[currentSquare] == Piece.NO_PIECE) {
@@ -71,7 +68,6 @@ public class MoveGenerator {
                     }
                 }
             } else { //sliding pieces
-                System.out.println("Sliding type");
                 for (int i = 0; i < directions.length; i++) {
                     int currentSquare = originSquare + directions[i];
                     while (Square.isValid(currentSquare) ) {
@@ -108,13 +104,11 @@ public class MoveGenerator {
 
         int[] directions = Square.getDirection(p.activeColour, originType);
         if (originType == Piece.PAWN) {
-            System.out.println("Pawn type");
             int max = 1;
             if ((p.activeColour == Piece.BLACK && p.rank(originSquare) == 1) || (p.activeColour == Piece.WHITE && p.rank(originSquare) == 6)) {
                 max = 2;
             }
             for (int multiplier = 1; multiplier <= max; multiplier++) {
-                System.out.println("Multiplier = " + multiplier);
                 int currentSquare = originSquare + directions[0] * multiplier;
                 System.out.println(currentSquare);
                 if (Square.isValid(currentSquare) && p.board[currentSquare] == Piece.NO_PIECE) {
@@ -130,7 +124,6 @@ public class MoveGenerator {
                 }
             }
         } else if (!Piece.isSliding(originType)) { //kings/knights
-            System.out.println("Moving type");
             for (int i = 0; i < directions.length; i++) {
                 int currentSquare = originSquare + directions[i];
                 if (Square.isValid(currentSquare) && p.board[currentSquare] == Piece.NO_PIECE) {
@@ -142,7 +135,6 @@ public class MoveGenerator {
                 }
             }
         } else { //sliding pieces
-            System.out.println("Sliding type");
             for (int i = 0; i < directions.length; i++) {
                 int currentSquare = originSquare + directions[i];
                 while (Square.isValid(currentSquare) ) {
