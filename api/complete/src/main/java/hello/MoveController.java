@@ -2,53 +2,22 @@ package hello;
 
 import java.util.ArrayList;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import engine.*;
 
 @CrossOrigin
 @RestController
-public class GreetingController {
+public class MoveController {
 
-    private static final String template = "Hello, %s!";
-    private final AtomicLong counter = new AtomicLong();
-
-    @CrossOrigin(origins = "*")
-    @RequestMapping("/greeting")
-    public Greeting greeting(@RequestParam(value="name", defaultValue="World") String name) {
-        return new Greeting(counter.incrementAndGet(),
-                            String.format(template, name));
-    }
-
+    private static ChessEngineI engine = new ChessEngineDummy();
     @CrossOrigin(origins = "*")
     @RequestMapping(value = "/move",method=RequestMethod.POST)
-    public Move move(@RequestBody Move info){
-        String initState = info.getState();
-        int initPos = info.getStart();
-        int finalPos = info.getEnd();
-        String State_str_format = initState.replaceAll("8","xxxxxxxx");
-        char[] char_array_version = State_str_format.toCharArray();
-        if (initPos % 8 == 0){
-            initPos += 1;
-        }
-        if(finalPos % 8 == 0){
-            finalPos += 1;
-        }
-        char role = char_array_version[initPos];
-        char_array_version[initPos] = 'x';
-        char_array_version[finalPos] = role;
-        String result = String.valueOf(char_array_version);
-        result = result.replaceAll("x","1");
-        String returnMe = "";
-        for(int i = 0; i <8; ++i){
-            returnMe += processString(result.split("/")[i]);
-            returnMe += "/";
-        }
-        returnMe = returnMe.replaceAll("0","");
-        returnMe = returnMe.substring(0,returnMe.length()-1);
-        System.out.println(returnMe);
-        return new Move(returnMe,0,0);
+    public Move handleMove(@RequestBody Move info){
+        String returnValue = engine.move(info.getState(), info.getStart(), info.getEnd());
+        Move container = new Move();
+        container.setState(returnValue);
+        return container;
     }
 
     //rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR
@@ -84,20 +53,23 @@ public class GreetingController {
         return mhr.findAll();
     }
 
-
+    @Autowired
     private GameRoomRepository grr;
+    private Integer id = 1;
     @CrossOrigin(origins = "*")
     @PostMapping("/game")
-    public UUID newGame(){
-        String initState = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+    public GameRoom newGame(){
+        String initState = engine.getInitState();
         UUID gameId = UUID.randomUUID();
         GameRoom gr = new GameRoom();
-        gr.setRoomId(gameId);
+        gr.setId(id);
+        id += 1;
+        gr.setRoomId(gameId.toString());
         gr.setNumOfUser(1);
         gr.setState(initState);
         gr.setStatus("lobby");
         grr.save(gr);
-        return gameId;
+        return gr;
     }
 
     @CrossOrigin(origins = "*")
