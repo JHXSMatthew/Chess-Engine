@@ -75,35 +75,40 @@ public class MoveController {
     @CrossOrigin(origins = "*")
     @GetMapping("/game/{id}")
     // Get status and state
-    public GameInfo getGameInfo(@RequestParam String id){
+    public GameInfoResponse getGameInfo(@RequestParam UUID id){
+        GameInfoResponse info = new GameInfoResponse();
         Iterable<GameRoom> result = grr.findAll();
+        for(GameRoom i : result){
+            if(i.getRoomId().equals(id.toString())){
+                info.setState(i.getState());
+                info.setStatus(i.getStatus());
+            }
+        }
+        return info;
+    }
+
+    @CrossOrigin(origins = "*")
+    @PatchMapping("/game/{id}?move={move}")
+    public StateContainer handlePatch(@RequestParam UUID id, @RequestParam String move){
+        Iterable<GameRoom> result = grr.findAll();
+        // Assume move is : "from to"
+        int from = Integer.parseInt(move.split(" ")[0]);
+        int to = Integer.parseInt(move.split(" ")[1]);
+        String resultState = "";
+        for(GameRoom i : result) {
+            if(i.getRoomId().equals(id.toString())){
+                resultState = engine.move(i.getState(),from, to);
+            }
+        }
+        StateContainer finalState = new StateContainer();
+        finalState.setCurentState(resultState);
+        return finalState;
+    }
+
+    @CrossOrigin(origins = "*")
+    @PutMapping("/game/{id}")
+    public String handlePutAction(@RequestParam UUID id){
         return null;
     }
 
-
-    //
-    //
-    //      Help function below
-    //
-    //
-
-    private String processString(String s){
-        String result = "";
-        int csum = 0;
-        char[] arrayVersion = s.toCharArray();
-        for(int i = 0; i < s.length(); ++i){
-            if(arrayVersion[i] == '1'){
-                csum += 1;
-                continue;
-            } else {
-                result += csum;
-                csum = 0;
-            }
-            result += arrayVersion[i];
-        }
-        if(csum > 0){
-            result += csum;
-        }
-        return result;
-    }
 }
