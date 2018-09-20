@@ -91,6 +91,27 @@ public class Board {
         }
     }
 
+
+    //Move application, everything verified ahead of this function call
+    public void applyMove(Move m) {
+        int originSquare = m.getOriginSquare();
+        int originPiece = board[originSquare]; //a bit hacky, might need to change
+        int targetSquare = m.getTargetSquare();
+
+        board[targetSquare] = originPiece;
+        board[originSquare] = Piece.NO_PIECE;
+        activeColour = Piece.oppositeColour(activeColour);
+    }
+
+    //might be handy?? currently not sure how to implement
+    public void undoMove(Move m) {
+        int originSquare = m.getOriginSquare();
+        int targetSquare = m.getTargetSquare();
+
+        board[targetSquare] = m.getTargetPiece();
+        board[originSquare] = m.getOriginPiece();
+        activeColour = Piece.oppositeColour(activeColour);
+    }
     /*
         basic move evaluation
         isattacked
@@ -168,35 +189,53 @@ public class Board {
                 }
             }
         }
-        if (!success) {
-            return success;
+        if (success) {
+            applyMove(m);
         }
+        return success;
+    }
 
-        board[targetSquare] = originPiece;
-        board[originSquare] = Piece.NO_PIECE;
-        activeColour = Piece.oppositeColour(activeColour);
+    public boolean isCheckMate(MoveGenerator mg, int colour) {
+        int kingSquare = findKing(colour);
+        boolean success = false;
+        for (Move m: mg.getMoves()) {
+            int originPiece = m.getOriginPiece();
+
+            applyMove(m);
+            if (Piece.getType(originPiece) == Piece.KING) {
+                if (!isChecked(colour)) {
+                    success = true;
+                }
+            } else {
+                if (!isChecked(colour, kingSquare)) {
+                    success = true;
+                }
+            }
+            undoMove(m);
+            if (success) {
+                break;
+            }
+        }
 
         return success;
     }
 
-    public boolean isCheckMate(int color) {
-        //in check and no legal moves
-        try {
-            isChecked(color);
-        } catch (Exception e) {
-            //no more king?
-        }
-        return false;
-    }
-
-    public boolean isChecked(int colour) {
+    public int findKing(int colour) {
         int kingPiece = Piece.valueOf(colour, Piece.KING);
-        for (int value: Square.values) {
-            if (board[value] == kingPiece) {
-                return isAttacked(value, Piece.oppositeColour(colour));
+        for (int index: Square.values) {
+            if (board[index] == kingPiece) {
+                return index;
             }
         }
-        throw new IllegalArgumentException();
+        return Square.NOSQUARE;
+    }
+
+    public boolean isChecked(int colour, int kingSquare) {
+        return isAttacked(kingSquare, Piece.oppositeColour(colour));
+    }
+    public boolean isChecked(int colour) {
+        int kingSquare = findKing(colour);
+        return isAttacked(kingSquare, Piece.oppositeColour(colour));
     }
 
     public boolean isAttacked(int targetSquare, int attackerColour) {

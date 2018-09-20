@@ -54,6 +54,5 @@ public class PositionTest {
         Assert.assertEquals(knightMove2, "r1bqkbnr/8/1n6/8/8/8/8/RNBQKBNR b KQkq - 0 1");
 
 
-
     }
 }

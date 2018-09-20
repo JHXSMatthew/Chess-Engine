@@ -23,11 +23,80 @@ public class MoveGenerator {
         moves.clear();
     }
 
+    public List<Move> getMoves() {
+        return moves;
+    }
+
+    //Generates all available moves for the currently activeColour
+    public void generateMoves(Board p) {
+        for (int originSquare: Square.values) {
+            int originPiece = p.board[originSquare];
+            if (!Piece.isValid(originPiece) || Piece.getColour(originPiece) != p.activeColour) {
+                continue;
+            }
+            int originType = Piece.getType(originPiece);
+            int[] directions = Square.getDirection(p.activeColour, originType);
+            if (originType == Piece.PAWN) {
+                System.out.println("Pawn type");
+                int max = 1;
+                if ((p.activeColour == Piece.BLACK && p.rank(originSquare) == 1) || (p.activeColour == Piece.WHITE && p.rank(originSquare) == 6)) {
+                    max = 2;
+                }
+                for (int multiplier = 1; multiplier <= max; multiplier++) {
+                    System.out.println("Multiplier = " + multiplier);
+                    int currentSquare = originSquare + directions[0] * multiplier;
+                    System.out.println(currentSquare);
+                    if (Square.isValid(currentSquare) && p.board[currentSquare] == Piece.NO_PIECE) {
+                        Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                        moves.add(m);
+                    }
+                }
+                for (int remainingDirections = 1; remainingDirections < 3; remainingDirections++) {
+                    int currentSquare = originSquare + directions[remainingDirections];
+                    if (Square.isValid(currentSquare) && p.board[currentSquare] != Piece.NO_PIECE && Piece.getColour(p.board[currentSquare]) != p.activeColour) {
+                        Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
+                        moves.add(m);
+                    }
+                }
+            } else if (!Piece.isSliding(originType)) { //kings/knights
+                System.out.println("Moving type");
+                for (int i = 0; i < directions.length; i++) {
+                    int currentSquare = originSquare + directions[i];
+                    if (Square.isValid(currentSquare) && p.board[currentSquare] == Piece.NO_PIECE) {
+                        Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                        moves.add(m);
+                    } else if (Square.isValid(currentSquare) && p.board[currentSquare] != Piece.NO_PIECE && Piece.getColour(p.board[currentSquare]) != p.activeColour) {
+                        Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
+                        moves.add(m);
+                    }
+                }
+            } else { //sliding pieces
+                System.out.println("Sliding type");
+                for (int i = 0; i < directions.length; i++) {
+                    int currentSquare = originSquare + directions[i];
+                    while (Square.isValid(currentSquare) ) {
+                        if (p.board[currentSquare] == Piece.NO_PIECE) {
+                            Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                            moves.add(m);
+                        } else if (p.board[currentSquare] != Piece.NO_PIECE && Piece.getColour(p.board[currentSquare]) != p.activeColour) {
+                            Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
+                            moves.add(m);
+                            break;
+                        } else if (p.board[currentSquare] != Piece.NO_PIECE) {
+                            break;
+                        }
+                        currentSquare = currentSquare + directions[i];
+                    }
+                }
+            }
+        }
+    }
+
 
     public void generateMoves(int indexSquare, Board p) {
-        System.out.println("index square: " + indexSquare);
+       // System.out.println("index square: " + indexSquare);
         int originSquare = Board.toSquare(indexSquare);
-        System.out.println("originSquare: " + originSquare);
+       // System.out.println("originSquare: " + originSquare);
         if (!Square.isValid(originSquare)) {
             return;
         }
@@ -56,7 +125,7 @@ public class MoveGenerator {
             for (int remainingDirections = 1; remainingDirections < 3; remainingDirections++) {
                 int currentSquare = originSquare + directions[remainingDirections];
                 if (Square.isValid(currentSquare) && p.board[currentSquare] != Piece.NO_PIECE && Piece.getColour(p.board[currentSquare]) != p.activeColour) {
-                    Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, Piece.NO_PIECE_TYPE, Piece.NO_PIECE);
+                    Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, p.board[currentSquare] , Piece.NO_PIECE_TYPE);
                     moves.add(m);
                 }
             }
@@ -65,10 +134,10 @@ public class MoveGenerator {
             for (int i = 0; i < directions.length; i++) {
                 int currentSquare = originSquare + directions[i];
                 if (Square.isValid(currentSquare) && p.board[currentSquare] == Piece.NO_PIECE) {
-                    Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, Piece.NO_PIECE_TYPE, Piece.NO_PIECE);
+                    Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
                     moves.add(m);
                 } else if (Square.isValid(currentSquare) && p.board[currentSquare] != Piece.NO_PIECE && Piece.getColour(p.board[currentSquare]) != p.activeColour) {
-                    Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE);
+                    Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
                     moves.add(m);
                 }
             }
@@ -78,10 +147,10 @@ public class MoveGenerator {
                 int currentSquare = originSquare + directions[i];
                 while (Square.isValid(currentSquare) ) {
                     if (p.board[currentSquare] == Piece.NO_PIECE) {
-                        Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, Piece.NO_PIECE_TYPE, Piece.NO_PIECE);
+                        Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
                         moves.add(m);
                     } else if (p.board[currentSquare] != Piece.NO_PIECE && Piece.getColour(p.board[currentSquare]) != p.activeColour) {
-                        Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE);
+                        Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
                         moves.add(m);
                         break;
                     } else if (p.board[currentSquare] != Piece.NO_PIECE) {
