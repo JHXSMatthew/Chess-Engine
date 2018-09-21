@@ -107,8 +107,8 @@ public class PositionTest {
         Assert.assertEquals(pawnMove7, "rnbqkbnr/ppp1pppp/8/8/4P3/8/PPP2PPP/RNBQKBNR b KQkq - 0 1");
 
         //Check checkmate
-        String checkmateMove = engine.move("8/8/6r1/8/8/4bq2/7K/8 b KQkq - 0 1", 44, 37);
-        Assert.assertEquals(checkmateMove, "8/8/6r1/8/5b2/5q2/7K/8 w KQkq - 0 1");
+        String checkmateMove = engine.move("k7/8/6r1/8/8/4bq2/7K/8 b KQkq - 0 1", 44, 37);
+        Assert.assertEquals(checkmateMove, "k7/8/6r1/8/5b2/5q2/7K/8 w KQkq - 0 1");
         String checkmateMove2 = engine.move("8/8/1k6/8/8/2R5/7R/5K2 w KQkq - 0 1", 55, 49);
         Assert.assertEquals(checkmateMove2, "8/8/1k6/8/8/2R5/1R6/5K2 b KQkq - 0 1");
         String checkmateMove3 = engine.move("2q5/8/7k/4n3/7K/1r6/8/8 b KQkq - 0 1", 2, 3);
