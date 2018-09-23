@@ -114,6 +114,34 @@ public class PositionTest {
         String checkmateMove3 = engine.move("2q5/8/7k/4n3/7K/1r6/8/8 b KQkq - 0 1", 2, 3);
         Assert.assertEquals(checkmateMove3, "3q4/8/7k/4n3/7K/1r6/8/8 w KQkq - 0 1");
 
+        Board b1 = new Board();
+        b1.deserializeBoard("8/8/6r1/8/5b2/5q2/7K/8 w KQkq - 0 1");
+        MoveGenerator mg = new MoveGenerator();
+        mg.generateMoves(b1);
+        Assert.assertEquals(b1.isCheckMate(mg, Piece.WHITE), true);
+        Assert.assertEquals(b1.isCheckMate(mg, Piece.BLACK), false);
+
+        Board b2 = new Board();
+        b2.deserializeBoard(engine.getInitState());
+        mg.emptyMoves();
+        mg.generateMoves(b2);
+        Assert.assertEquals(b2.isCheckMate(mg, Piece.WHITE), false);
+        Assert.assertEquals(b2.isCheckMate(mg, Piece.BLACK), false);
+
+        Board b3 = new Board();
+        b3.deserializeBoard("8/8/1k6/8/8/2R5/1R6/5K2 b KQkq - 0 1");
+        mg.emptyMoves();
+        mg.generateMoves(b3);
+        Assert.assertEquals(b3.isCheckMate(mg, Piece.BLACK), true);
+        Assert.assertEquals(b3.isCheckMate(mg, Piece.WHITE), false);
+
+        Board b4 = new Board();
+        b4.deserializeBoard("3q4/8/7k/4n3/7K/1r6/8/8 w KQkq - 0 1");
+        mg.emptyMoves();
+        mg.generateMoves(b4);
+        Assert.assertEquals(b4.isCheckMate(mg, Piece.WHITE), true);
+        Assert.assertEquals(b4.isCheckMate(mg, Piece.BLACK), false);
+
         //Check checks
         String checkMove = engine.move("8/6k1/8/4b3/8/K7/8/3q4 b KQkq - 0 1", 28, 19);
         Assert.assertEquals(checkMove, "8/6k1/3b4/8/8/K7/8/3q4 w KQkq - 0 1");
