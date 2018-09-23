@@ -1,7 +1,16 @@
-package hello;
+package hello.controller;
 
+import hello.model.GameInfoResponse;
+import hello.model.GameRoom;
+import hello.model.PutGameResponse;
+import hello.model.StateContainer;
+import hello.repository.GameRoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 import java.util.Arrays;
 import java.util.List;
@@ -80,7 +89,6 @@ public class GameController {
         }
         List<String> playerType = Arrays.asList("white", "black");
         String returnType = playerType.get(new Random().nextInt(playerType.size()));
-        PutGameResponse rep = new PutGameResponse(returnType);
-        return rep;
+        return new PutGameResponse(returnType);
     }
 }

@@ -1,5 +1,6 @@
-package hello;
+package hello.repository;
 
+import hello.model.MoveHistory;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

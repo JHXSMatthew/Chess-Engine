@@ -1,10 +1,12 @@
-package hello;
+package hello.controller;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Arrays;
-import java.util.UUID;
-import java.util.Random;
+
+import hello.model.Move;
+import hello.model.MoveHistory;
+import hello.model.allAvailable;
+import hello.model.availableMove;
+import hello.repository.MoveHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import engine.*;

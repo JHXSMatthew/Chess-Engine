@@ -1,4 +1,4 @@
-package hello;
+package hello.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.*;
