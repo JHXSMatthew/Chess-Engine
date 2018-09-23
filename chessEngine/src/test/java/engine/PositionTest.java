@@ -129,7 +129,7 @@ public class PositionTest {
         Assert.assertEquals(b2.isCheckMate(mg, Piece.BLACK), false);
 
         Board b3 = new Board();
-        b3.deserializeBoard("8/8/1k6/8/8/2R5/1R6/5K2 b KQkq - 0 1");
+        b3.deserializeBoard("8/8/1k6/8/Q7/2R5/1R6/5K2 b KQkq - 0 1");
         mg.emptyMoves();
         mg.generateMoves(b3);
         Assert.assertEquals(b3.isCheckMate(mg, Piece.BLACK), true);
@@ -149,6 +149,18 @@ public class PositionTest {
         Assert.assertEquals(checkMove2, "8/2k5/6p1/8/8/2Q5/7K/r7 b KQkq - 0 1");
         String checkMove3 = engine.move("2n5/k3p3/5Q2/1p6/p6P/P3b3/8/5K2 w KQkq - 0 1", 21, 12);
         Assert.assertEquals(checkMove3, "2n5/k3Q3/8/1p6/p6P/P3b3/8/5K2 b KQkq - 0 1");
+
+        Board b5 = new Board();
+        b5.deserializeBoard("8/6k1/3b4/8/8/K7/8/3q4 w KQkq - 0 1");
+        Assert.assertEquals(b5.isChecked(Piece.WHITE), true);
+
+        Board b6 = new Board();
+        b6.deserializeBoard("8/2k5/6p1/8/8/2Q5/7K/r7 b KQkq - 0 1");
+        Assert.assertEquals(b6.isChecked(Piece.BLACK), true);
+
+        Board b7 = new Board();
+        b7.deserializeBoard("2n5/k3Q3/8/1p6/p6P/P3b3/8/5K2 b KQkq - 0 1");
+        Assert.assertEquals(b7.isChecked(Piece.BLACK), true);
 
 
 

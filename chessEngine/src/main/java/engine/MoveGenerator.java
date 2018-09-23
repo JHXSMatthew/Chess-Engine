@@ -43,7 +43,6 @@ public class MoveGenerator {
                 }
                 for (int multiplier = 1; multiplier <= max; multiplier++) {
                     int currentSquare = originSquare + directions[0] * multiplier;
-                    System.out.println(currentSquare);
                     if (Square.isValid(currentSquare) && p.board[currentSquare] == Piece.NO_PIECE) {
                         Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
                         moves.add(m);
@@ -110,7 +109,6 @@ public class MoveGenerator {
             }
             for (int multiplier = 1; multiplier <= max; multiplier++) {
                 int currentSquare = originSquare + directions[0] * multiplier;
-                System.out.println(currentSquare);
                 if (Square.isValid(currentSquare) && p.board[currentSquare] == Piece.NO_PIECE) {
                     Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
                     moves.add(m);
