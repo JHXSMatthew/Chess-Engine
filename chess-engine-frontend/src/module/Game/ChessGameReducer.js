@@ -1,4 +1,4 @@
-import {boardStrToRepArray} from './Utils'
+import {boardStrToRepArray, indexMorphism} from './Utils'
 
 const INIT_BOARD_STATE_STR = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 const LOCAL_SAVED_GAME_INDEX = "savedLocalGame"
@@ -124,8 +124,8 @@ export const MOVE_REQUEST = "MOVE_REQUEST"
 export const actionMove = (from, to)=>{
   return {
     type: MOVE_REQUEST,
-    from,
-    to
+    from: from,
+    to: to
   }
 }
 
@@ -133,7 +133,7 @@ export const AVAILABLE_MOVE_REQUEST = "AVAILABLE_MOVE_REQUEST"
 export const actionAvailableMove = (from)=>{
   return {
     type: AVAILABLE_MOVE_REQUEST,
-    from
+    from: from
   }
 }
 

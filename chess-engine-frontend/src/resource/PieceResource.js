@@ -20,9 +20,17 @@ import ReactSVG from 'react-svg'
 const omap = (f,o) => {
   const t = {}
   for(let i in o ){
-    t[i] = f(o[i])
+    t[reverseCase(i)] = f(o[i])
   }
   return t;
+}
+
+const reverseCase = (a) =>{
+  if(a[0] == a[0].toUpperCase()){
+    return a[0].toLowerCase()
+  }else{
+    return a[0].toUpperCase()
+  }
 }
 
 
