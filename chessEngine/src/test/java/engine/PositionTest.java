@@ -173,15 +173,4 @@ public class PositionTest {
 
     }
 
-    @Test
-    public void mv(){
-        Board p = new Board();
-
-        p.deserializeBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1");
-        Assert.assertEquals(Piece.BLACK_PAWN,p.board[Board.toSquare(8)]);
-        Assert.assertEquals(Piece.NO_PIECE,p.board[Board.toSquare(16)]);
-        p.makeMove(new Move(8,16));
-        Assert.assertEquals(Piece.BLACK_PAWN,p.board[Board.toSquare(16)]);
-        Assert.assertEquals(Piece.NO_PIECE,p.board[Board.toSquare(8)]);
-    }
 }
