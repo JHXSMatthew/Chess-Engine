@@ -18,7 +18,8 @@ import {
   actionLoadLocalSavedGame,
   actionUpdateStateSuccess,
   actionEndGame,
-  actionNewLocalGame
+  actionNewLocalGame,
+  actionUndoRequest
 } from './ChessGameReducer'
 
 
@@ -44,7 +45,8 @@ class Game extends React.Component{
   render(){
     const { boardRep,onCellClick,availableMove, select, highlight, 
       lastMove, saveGame, loadGame, endGame, newLocalGame, gameType,
-      currentTurn } = this.props
+      currentTurn, undo, moveHistory } = this.props
+
     return (
       <div className='game'>
         <div className='game-left'>
@@ -65,6 +67,8 @@ class Game extends React.Component{
                     endGame={endGame}
                     newLocalGame={newLocalGame}
                     currentTurn={currentTurn}
+                    undoMove={undo}
+                    moveHistory={moveHistory}
           />
         </div>
 
@@ -98,7 +102,8 @@ const mapStateToProps = state =>{
     highlight: state.game.boardHightLight,
     lastMove: state.game.lastMovePair,
     gameType: state.game.gameType,
-    currentTurn: state.game.currentTurn
+    currentTurn: state.game.currentTurn,
+    moveHistory: state.game.moveHistory
   }
 }
 
@@ -115,7 +120,8 @@ const mapDispatchToProps = dispatch => {
     saveGame: () => dispatch(actionSaveLocalGame()),
     loadGame: () => dispatch(actionLoadLocalSavedGame()),
     newLocalGame: () => dispatch(actionNewLocalGame()),
-    endGame: (winLose) => dispatch(actionEndGame(winLose))
+    endGame: (winLose) => dispatch(actionEndGame(winLose)),
+    undo: () => dispatch(actionUndoRequest())
   }
 }
 

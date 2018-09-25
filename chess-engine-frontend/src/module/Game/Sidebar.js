@@ -6,8 +6,52 @@ import './Sidebar.less';
 
 export default class Sidebar extends React.Component{
 
+
+  getMoveHistoryView = (data)=>{
+    if(data.length <= 0){
+      return []
+    }
+    const historyShow = []
+    let last = undefined
+
+    const f = (a,b)=>{
+      return (
+        <div key={a.from + a.to} className='d-flex flex-row flex-fill'>
+          <div className='pl-3'>
+            {a.from}:{a.to}
+          </div>
+          <div className='pl-4'>
+            {b? b.from+ ":" + b.to: ""}
+          </div>
+        </div>)
+    }
+
+    for(let i in data){
+      if(last){
+        historyShow.push(
+          f(last, data[i])
+        )
+        last = undefined;
+      }else{
+        last = data[i]
+      }
+    }
+    if(data.length % 2 == 1){
+      historyShow.push(f(last, undefined))
+
+    }
+
+    return historyShow;
+  }
+
   render(){
-    const {saveGame, loadGame, endGame, newLocalGame, gameType, currentTurn} = this.props;
+    const {undoMove, saveGame, loadGame, endGame, newLocalGame, gameType, currentTurn, moveHistory} = this.props;
+
+    //TODO: a better 
+    
+    const moveHistoryView = this.getMoveHistoryView(moveHistory);
+ 
+
     if (gameType) {
       return (
         <div className="sidebar">
@@ -26,6 +70,9 @@ export default class Sidebar extends React.Component{
           <div className="d-flex flex-row flex-fill">
             <div className="p-2">Move History: </div>
           </div>
+          <div className='history'>
+            {moveHistoryView}
+          </div>
           <div className="d-flex flex-row flex-fill">
             <div className="p-2">
               <button className='btn btn-secondary ml-2' data-toggle='modal' data-target='#endGameScreen' 
@@ -33,6 +80,9 @@ export default class Sidebar extends React.Component{
             </div>
             <div className="p-2">
               <button className='btn btn-primary' onClick={saveGame}> Save </button>
+            </div>
+            <div className="p-2">
+              <button className='btn btn-danger' onClick={undoMove}> Undo </button>
             </div>
           </div>
           <div className="d-flex flex-row flex-fill">
