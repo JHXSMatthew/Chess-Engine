@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 
 import Board from '../../component/Board'
 
+import Sidebar from '../../component/Sidebar'
+
 import Style from "./Game.less"
 
 import {
@@ -52,14 +54,7 @@ class Game extends React.Component{
           lastMove={lastMove} />
         </div>
         <div className="game-right">
-          <div>
-            <button className='btn btn-primary' onClick={this.props.saveGame}> Save </button>
-            <button className='btn btn-secondary ml-2' onClick={this.props.loadGame}> Load </button>
-            
-            <button className='btn btn-secondary ml-2' data-toggle='modal' data-target='#endGameScreen' 
-                    onClick={this.props.endGame}> Resign </button>
-          </div>
-           
+          <Sidebar />
         </div>
         <div className="modal fade" id="endGameScreen" tabIndex="-1" role="dialog" aria-labelledby="endGameScreenTitle" 
              aria-hidden="true" data-backdrop="static" data-keyboard="false">
