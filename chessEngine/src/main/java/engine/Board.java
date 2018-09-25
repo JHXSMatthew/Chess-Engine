@@ -91,6 +91,26 @@ public class Board {
         }
     }
 
+
+    //Move application, everything verified ahead of this function call
+    public void applyMove(Move m) {
+        int originSquare = m.getOriginSquare();
+        int targetSquare = m.getTargetSquare();
+
+        board[targetSquare] = m.getOriginPiece();
+        board[originSquare] = Piece.NO_PIECE;
+        activeColour = Piece.oppositeColour(activeColour);
+    }
+
+    //might be handy?? currently not sure how to implement
+    public void undoMove(Move m) {
+        int originSquare = m.getOriginSquare();
+        int targetSquare = m.getTargetSquare();
+
+        board[targetSquare] = m.getTargetPiece();
+        board[originSquare] = m.getOriginPiece();
+        activeColour = Piece.oppositeColour(activeColour);
+    }
     /*
         basic move evaluation
         isattacked
@@ -100,7 +120,8 @@ public class Board {
         special moves (en passant castle promotion)
         draw conditions
      */
-    public boolean makeMove (Move m) {
+
+    public boolean validateMove (Move m) {
         int originSquare = m.getOriginSquare();
         int targetSquare = m.getTargetSquare();
         boolean success = false;
@@ -109,15 +130,17 @@ public class Board {
             return success;
         }
 
-        int originPiece = board[originSquare];
+        int originPiece = m.getOriginPiece();
         if (originPiece == Piece.NO_PIECE || Piece.getColour(originPiece) != activeColour) {
             return success;
         }
 
-        int[] directions = Square.getDirection(activeColour, Piece.getType(originPiece));
+        int originType = Piece.getType(originPiece);
+
+        int[] directions = Square.getDirection(activeColour, originType);
 
         //start with pawns
-        if (Piece.getType(originPiece) == Piece.PAWN) {
+        if (originType == Piece.PAWN) {
             int max = 1;
             if ((activeColour == Piece.BLACK && rank(originSquare) == 1) || (activeColour == Piece.WHITE && rank(originSquare) == 6)) {
                 max = 2;
@@ -139,7 +162,7 @@ public class Board {
                     }
                 }
             }
-        } else if (!Piece.isSliding(Piece.getType(originPiece))) { //kings/knights
+        } else if (!Piece.isSliding(originType)) { //kings/knights
             for (int i = 0; i < directions.length; i++) {
                 int currentSquare = originSquare + directions[i];
                 if (Square.isValid(currentSquare) && currentSquare == targetSquare &&
@@ -166,34 +189,61 @@ public class Board {
                 }
             }
         }
-        if (!success) {
-            return success;
-        }
-
-        board[targetSquare] = originPiece;
-        board[originSquare] = Piece.NO_PIECE;
-
         return success;
     }
 
-    public boolean isCheckMate(int color) {
-        //in check and no legal moves
-        try {
-            isChecked(color);
-        } catch (Exception e) {
-            //no more king?
+    public boolean isCheckMate(MoveGenerator mg, int colour) {
+        int kingSquare = findKing(colour);
+        boolean success = false;
+        if (kingSquare == Square.NOSQUARE) {
+            return success;
         }
-        return false;
-    }
 
-    public boolean isChecked(int colour) {
-        int kingPiece = Piece.valueOf(colour, Piece.KING);
-        for (int value: Square.values) {
-            if (board[value] == kingPiece) {
-                return isAttacked(value, Piece.oppositeColour(colour));
+        for (Move m: mg.getMoves()) {
+            int originPiece = m.getOriginPiece();
+
+            applyMove(m);
+            if (Piece.getType(originPiece) == Piece.KING) {
+                if (!isChecked(colour)) {
+                    success = false;
+                } else {
+                    success = true;
+                }
+            } else {
+                if (!isChecked(colour, kingSquare)) {
+                    success = false;
+                } else {
+                    success = true;
+                }
+            }
+            undoMove(m);
+            if (!success) {
+                return success;
             }
         }
-        throw new IllegalArgumentException();
+
+        return true;
+    }
+
+    public int findKing(int colour) {
+        int kingPiece = Piece.valueOf(colour, Piece.KING);
+        for (int index: Square.values) {
+            if (board[index] == kingPiece) {
+                return index;
+            }
+        }
+        return Square.NOSQUARE;
+    }
+
+    public boolean isChecked(int colour, int kingSquare) {
+        return isAttacked(kingSquare, Piece.oppositeColour(colour));
+    }
+    public boolean isChecked(int colour) {
+        int kingSquare = findKing(colour);
+        if (kingSquare == Square.NOSQUARE) {
+            return false;
+        }
+        return isAttacked(kingSquare, Piece.oppositeColour(colour));
     }
 
     public boolean isAttacked(int targetSquare, int attackerColour) {
@@ -262,8 +312,10 @@ public class Board {
         String out = "";
         int fileCount = 0;
         int rankCount = 0;
-        for (int index: Square.values) {
-            if (fileCount == 8) {
+        while (rankCount < 8) {
+            if (rankCount == 7 && fileCount == 8) {
+                break;
+            } else if (fileCount == 8) {
                 out = out + "/";
                 rankCount++;
                 fileCount = 0;
@@ -272,6 +324,9 @@ public class Board {
                 int count = 1;
                 fileCount++;
                 for (int i = fileCount; i < 8; i++) {
+                    if (board[toSquare(rankCount,fileCount)] != Piece.NO_PIECE) {
+                        break;
+                    }
                     count++;
                     fileCount++;
                 }
