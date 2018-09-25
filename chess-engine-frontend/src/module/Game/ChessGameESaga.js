@@ -33,7 +33,7 @@ export function* gameSaga(){
 
 function* MoveRequest(action){
   try{
-    const currentBoardState = yield select((state) => seriliaseState(state.game) )
+    const currentBoardState = yield select((state) => seriliaseState(state.game))
     const newState = yield call(Api.postMove, currentBoardState ,action.from, action.to)
     yield put(actionUpdateGameStateSuccess(deserializeState(newState.data.state)))
     yield put(actionHighlightLastMove([action.from, action.to]))

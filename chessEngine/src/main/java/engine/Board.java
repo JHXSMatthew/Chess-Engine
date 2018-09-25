@@ -101,8 +101,8 @@ public class Board {
         draw conditions
      */
     public boolean makeMove (Move m) {
-        int originSquare = toSquare(m.getOriginSquare());
-        int targetSquare = toSquare(m.getTargetSquare());
+        int originSquare = m.getOriginSquare();
+        int targetSquare = m.getTargetSquare();
         boolean success = false;
 
         if (!Square.isValid(originSquare) || !Square.isValid(targetSquare)) {
@@ -114,7 +114,7 @@ public class Board {
             return success;
         }
 
-        int[] directions = Square.getDirection(activeColour, originPiece);
+        int[] directions = Square.getDirection(activeColour, Piece.getType(originPiece));
 
         //start with pawns
         if (Piece.getType(originPiece) == Piece.PAWN) {
