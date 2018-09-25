@@ -63,8 +63,8 @@ public class Square {
     static final int NW = N + W;
 
     static final int[][] pawnDirections = {
-            {N, NE, NW}, // Color.WHITE
-            {S, SE, SW}  // Color.BLACK
+            {S, SE, SW}, // Color.WHITE
+            {N, NE, NW}  // Color.BLACK
     };
     static final int[] knightDirections = {
             N + N + E,

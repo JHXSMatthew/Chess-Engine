@@ -14,7 +14,7 @@ import {
   actionAvailableMove,
   actionSaveLocalGame,
   actionLoadLocalSavedGame,
-  actionUpdateStateSuccess,
+  actionUpdateGameStateSuccess,
   actionEndGame
 } from './ChessGameReducer'
 
@@ -40,6 +40,9 @@ class Game extends React.Component{
 
   render(){
     const { boardRep,onCellClick,availableMove, select, highlight, lastMove } = this.props
+
+    const {currentTurn, gameType} = this.props
+
     return (
       <div className='game'>
         <div className='game-left'>
@@ -53,14 +56,26 @@ class Game extends React.Component{
         </div>
         <div className="game-right">
           <div>
-            <button className='btn btn-primary' onClick={this.props.saveGame}> Save </button>
-            <button className='btn btn-secondary ml-2' onClick={this.props.loadGame}> Load </button>
-            
-            <button className='btn btn-secondary ml-2' data-toggle='modal' data-target='#endGameScreen' 
-                    onClick={this.props.endGame}> Resign </button>
-          </div>
+            <div className='block'>
+              <h1>{gameType}</h1>
+              <h4>{currentTurn} Move</h4>
+            </div>
+
+            <div>
+
+
+            </div>
+            <div> 
+              <button className='btn btn-primary' onClick={this.props.saveGame}> Save </button>
+              <button className='btn btn-secondary ml-2' onClick={this.props.loadGame}> Load </button>
+              
+              <button className='btn btn-secondary ml-2' data-toggle='modal' data-target='#endGameScreen' 
+                      onClick={this.props.endGame}> Resign </button>
+            </div>
            
+          </div>
         </div>
+
         <div className="modal fade" id="endGameScreen" tabIndex="-1" role="dialog" aria-labelledby="endGameScreenTitle" 
              aria-hidden="true" data-backdrop="static" data-keyboard="false">
           <div className="modal-dialog modal-dialog-centered" role="document">
@@ -79,7 +94,6 @@ class Game extends React.Component{
           </div>
         </div>
       </div>
-      
     )
   }
 }
@@ -90,7 +104,9 @@ const mapStateToProps = state =>{
     boardRep: state.game.boardRep,
     select: state.game.select,
     highlight: state.game.boardHightLight,
-    lastMove: state.game.lastMovePair
+    lastMove: state.game.lastMovePair,
+    gameType: state.game.type,
+    currentTurn: state.game.currentTurn == 'w' ? 'White' : 'Black'
   }
 }
 

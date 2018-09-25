@@ -1,4 +1,4 @@
-import {boardStrToRepArray} from './Utils'
+import {boardStrToRepArray, indexMorphism} from './Utils'
 
 const INIT_BOARD_STATE_STR = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 const LOCAL_SAVED_GAME_INDEX = "savedLocalGame"
@@ -6,31 +6,39 @@ const LOCAL_SAVED_GAME_LASTMOVE = "savedLocalLastMove"
 
 //reducer
 const initState = {
-  boardStr: INIT_BOARD_STATE_STR,
+  // UI states
   boardRep: boardStrToRepArray(INIT_BOARD_STATE_STR),
   boardHightLight: [],
   lastMovePair: [],
-  select: []
+  select: [],
+  //the game state obj
+  boardStr: INIT_BOARD_STATE_STR,
+  currentTurn: "w",
+  castling: "KQkq",
+  enPassantTarget: "-",
+  halfMove: "0",
+  fullMove: "1",
+
+  type: "Local Game"
+
+
 }
 
 export const gameReducer  = (state = initState, action)=>{
   switch(action.type){
-    case UPDATE_BOARD_STATE_SUCCESS:
-      return Object.assign({}, state, {
-        boardStr: action.newState,
-        boardRep: boardStrToRepArray(action.newState),
-        boardHightLight: []
+    case UPDATE_GAME_STATE_SUCCESS:
+      const newGameState = action.state
+      return Object.assign({},
+        state, //old state
+        newGameState, // gamestate
+        { //UI state 
+          boardHightLight: [],
+          boardRep: boardStrToRepArray(newGameState.boardStr),
       });
-    case UPDATE_BOARD_STATE_FAIL:
+    case UPDATE_GAME_STATE_FAIL:
       return state;
     case LOAD_INIT_BOARD_STATE:
-      return Object.assign({}, state, {
-        boardStr: INIT_BOARD_STATE_STR,
-        boardRep: boardStrToRepArray(INIT_BOARD_STATE_STR),
-        boardHightLight: [],
-        lastMovePair: [],
-        select: []
-      })
+      return Object.assign({}, state, initState)
     case CLEAR_SELECT:
       return Object.assign({}, state, {
         select: []
@@ -91,17 +99,17 @@ export const actionSelectCell = (index)=>{
   }
 }
 
-const UPDATE_BOARD_STATE_SUCCESS = "UPDATE_BOARD_STATE_SUCCESS"
-export const actionUpdateStateSuccess = (newState) =>{
+const UPDATE_GAME_STATE_SUCCESS = "UPDATE_GAME_STATE_SUCCESS"
+export const actionUpdateGameStateSuccess = (state) =>{
   return {
-    type: UPDATE_BOARD_STATE_SUCCESS,
-    newState
+    type: UPDATE_GAME_STATE_SUCCESS,
+    state
   }
 }
-const UPDATE_BOARD_STATE_FAIL = "UPDATE_BOARD_STATE_FAIL"
-export const actionUpdateStateFail = (message) =>{
+const UPDATE_GAME_STATE_FAIL = "UPDATE_GAME_STATE_FAIL"
+export const actionUpdateGameStateFail = (message) =>{
   return {
-    type: UPDATE_BOARD_STATE_FAIL,
+    type: UPDATE_GAME_STATE_FAIL,
     message
   }
 }
@@ -118,8 +126,8 @@ export const MOVE_REQUEST = "MOVE_REQUEST"
 export const actionMove = (from, to)=>{
   return {
     type: MOVE_REQUEST,
-    from,
-    to
+    from: from,
+    to: to
   }
 }
 
@@ -127,7 +135,7 @@ export const AVAILABLE_MOVE_REQUEST = "AVAILABLE_MOVE_REQUEST"
 export const actionAvailableMove = (from)=>{
   return {
     type: AVAILABLE_MOVE_REQUEST,
-    from
+    from: from
   }
 }
 
@@ -173,6 +181,7 @@ export const actionLoadSavedGameFail = (message)=>{
     message
   }
 }
+
 
 const SAVE_GAME_SUCCESS = "SAVE_GAME_SUCCESS"
 export const actionSaveGameSuccess = (message) =>{
