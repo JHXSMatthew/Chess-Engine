@@ -11,6 +11,7 @@ const initState = {
   boardHightLight: [],
   lastMovePair: [],
   select: [],
+  gameType: "",
   //the game state obj
   boardStr: INIT_BOARD_STATE_STR,
   currentTurn: "w",
@@ -19,7 +20,6 @@ const initState = {
   halfMove: "0",
   fullMove: "1",
 
-  type: "Local Game"
 
 
 }
@@ -52,15 +52,16 @@ export const gameReducer  = (state = initState, action)=>{
       // if clicked on empty squere initially, do nothing
       var newSelectListRep = [];
       var highlight = state.boardHightLight;
-      if (state.select.length === 0 && state.boardRep[action.index]){
-        newSelectListRep = state.select.concat([action.index])
-      } else if (state.select.length === 1 && state.select[0] !== action.index) {
-        newSelectListRep = state.select.concat([action.index])
-      } else {
-        // Empty square initially, or deselect piece
-        highlight = []
+      if (state.gameType) {
+        if (state.select.length === 0 && state.boardRep[action.index]){
+          newSelectListRep = state.select.concat([action.index])
+        } else if (state.select.length === 1 && state.select[0] !== action.index) {
+          newSelectListRep = state.select.concat([action.index])
+        } else {
+          // Empty square initially, or deselect piece
+          highlight = []
+        }
       }
-      
       return Object.assign({}, state, {
         select: newSelectListRep,
         boardHightLight: highlight
@@ -76,6 +77,15 @@ export const gameReducer  = (state = initState, action)=>{
     case END_GAME:
       return Object.assign({}, state, {
 
+      })
+    case NEW_LOCAL_GAME:
+      return Object.assign({}, state, {
+        boardStr: INIT_BOARD_STATE_STR,
+        boardRep: boardStrToRepArray(INIT_BOARD_STATE_STR),
+        boardHightLight: [],
+        lastMovePair: [],
+        select: [],
+        gameType: "LocalGame"
       })
     default:
       return state;
@@ -212,5 +222,12 @@ export const actionEndGame = (winLose) =>{
   return {
     type: END_GAME,
     winLose
+  }
+}
+
+const NEW_LOCAL_GAME = "NEW_LOCAL_GAME"
+export const actionNewLocalGame = () =>{
+  return {
+    type: NEW_LOCAL_GAME
   }
 }
