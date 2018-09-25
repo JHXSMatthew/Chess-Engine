@@ -17,7 +17,8 @@ import {
   actionSaveLocalGame,
   actionLoadLocalSavedGame,
   actionUpdateStateSuccess,
-  actionEndGame
+  actionEndGame,
+  actionNewLocalGame
 } from './ChessGameReducer'
 
 
@@ -42,7 +43,7 @@ class Game extends React.Component{
 
   render(){
     const { boardRep,onCellClick,availableMove, select, highlight, 
-      lastMove, saveGame, loadGame, endGame, gameType } = this.props
+      lastMove, saveGame, loadGame, endGame, newLocalGame, gameType } = this.props
     return (
       <div className='game'>
         <div className='game-left'>
@@ -61,6 +62,7 @@ class Game extends React.Component{
                     loadGame={loadGame}
                     saveGame={saveGame}
                     endGame={endGame}
+                    newLocalGame={newLocalGame}
           />
         </div>
         <div className="modal fade" id="endGameScreen" tabIndex="-1" role="dialog" aria-labelledby="endGameScreenTitle" 
@@ -109,6 +111,7 @@ const mapDispatchToProps = dispatch => {
     clearSelect: ()=> dispatch(actionClearSelect()),
     saveGame: () => dispatch(actionSaveLocalGame()),
     loadGame: () => dispatch(actionLoadLocalSavedGame()),
+    newLocalGame: () => dispatch(actionNewLocalGame()),
     endGame: (winLose) => dispatch(actionEndGame(winLose))
   }
 }

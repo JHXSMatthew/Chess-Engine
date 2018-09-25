@@ -46,7 +46,7 @@ export const gameReducer  = (state = initState, action)=>{
       // if clicked on empty squere initially, do nothing
       var newSelectListRep = [];
       var highlight = state.boardHightLight;
-      if (action.gameType) {
+      if (state.gameType) {
         if (state.select.length === 0 && state.boardRep[action.index]){
           newSelectListRep = state.select.concat([action.index])
         } else if (state.select.length === 1 && state.select[0] !== action.index) {
@@ -72,6 +72,15 @@ export const gameReducer  = (state = initState, action)=>{
       return Object.assign({}, state, {
 
       })
+    case NEW_LOCAL_GAME:
+      return Object.assign({}, state, {
+        boardStr: INIT_BOARD_STATE_STR,
+        boardRep: boardStrToRepArray(INIT_BOARD_STATE_STR),
+        boardHightLight: [],
+        lastMovePair: [],
+        select: [],
+        gameType: "LocalGame"
+      })
     default:
       return state;
   }
@@ -86,11 +95,10 @@ export const actionClearSelect = ()=>{
 }
 
 const ON_SELECT_CELL  = "SELECT_CELL"
-export const actionSelectCell = (gameType, index)=>{
+export const actionSelectCell = (index)=>{
 
   return {
     type: ON_SELECT_CELL,
-    gameType,
     index
   }
 }
@@ -207,5 +215,12 @@ export const actionEndGame = (winLose) =>{
   return {
     type: END_GAME,
     winLose
+  }
+}
+
+const NEW_LOCAL_GAME = "NEW_LOCAL_GAME"
+export const actionNewLocalGame = () =>{
+  return {
+    type: NEW_LOCAL_GAME
   }
 }
