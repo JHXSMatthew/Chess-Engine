@@ -41,7 +41,8 @@ class Game extends React.Component{
 
 
   render(){
-    const { boardRep,onCellClick,availableMove, select, highlight, lastMove } = this.props
+    const { boardRep,onCellClick,availableMove, select, highlight, 
+      lastMove, saveGame, loadGame, endGame, gameType } = this.props
     return (
       <div className='game'>
         <div className='game-left'>
@@ -51,10 +52,16 @@ class Game extends React.Component{
           highlight={highlight}
           onCellClick={onCellClick}
           availableMove={availableMove}
-          lastMove={lastMove} />
+          lastMove={lastMove} 
+          gameType={gameType}
+          />
         </div>
         <div className="game-right">
-          <Sidebar />
+          <Sidebar  gameType={gameType}
+                    loadGame={loadGame}
+                    saveGame={saveGame}
+                    endGame={endGame}
+          />
         </div>
         <div className="modal fade" id="endGameScreen" tabIndex="-1" role="dialog" aria-labelledby="endGameScreenTitle" 
              aria-hidden="true" data-backdrop="static" data-keyboard="false">
@@ -85,7 +92,8 @@ const mapStateToProps = state =>{
     boardRep: state.game.boardRep,
     select: state.game.select,
     highlight: state.game.boardHightLight,
-    lastMove: state.game.lastMovePair
+    lastMove: state.game.lastMovePair,
+    gameType: state.game.gameType
   }
 }
 

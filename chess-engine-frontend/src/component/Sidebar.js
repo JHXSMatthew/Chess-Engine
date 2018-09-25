@@ -7,14 +7,37 @@ import './Sidebar.less';
 export default class Sidebar extends React.Component{
 
   render(){
+    const {saveGame, loadGame, endGame} = this.props;
+
     return (
-      <div>
-        <button className='btn btn-primary' onClick={this.props.saveGame}> Save </button>
-        <button className='btn btn-secondary ml-2' onClick={this.props.loadGame}> Load </button>
-        
-        <button className='btn btn-secondary ml-2' data-toggle='modal' data-target='#endGameScreen' 
-                onClick={this.props.endGame}> Resign </button>
+      <div className="sidebar">
+        <div className="row align-items-end">
+          <div className="col-5">
+            <button className='btn btn-primary' onClick={saveGame}> New Local Game </button>
+          </div>
+          <div className="col-5">
+            <button className='btn btn-primary' onClick={saveGame}> New Network Game </button>
+          </div>
+        </div>
+        <div className="row align-items-start">
+          <div className="col-5">
+            <button className='btn btn-primary' onClick={saveGame}> Load Local Game </button>
+          </div>
+          <div className="col-5">
+            <button className='btn btn-primary' onClick={saveGame}> Load Network Game </button>
+          </div>
+        </div>
       </div>
     );
+
+    // return (
+    //   <div>
+    //     <button className='btn btn-primary' onClick={saveGame}> Save </button>
+    //     <button className='btn btn-secondary ml-2' onClick={loadGame}> Load </button>
+        
+    //     <button className='btn btn-secondary ml-2' data-toggle='modal' data-target='#endGameScreen' 
+    //             onClick={endGame}> Resign </button>
+    //   </div>
+    // );
   }
 }

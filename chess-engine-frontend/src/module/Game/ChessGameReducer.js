@@ -10,7 +10,8 @@ const initState = {
   boardRep: boardStrToRepArray(INIT_BOARD_STATE_STR),
   boardHightLight: [],
   lastMovePair: [],
-  select: []
+  select: [],
+  gameType: ""
 }
 
 export const gameReducer  = (state = initState, action)=>{
@@ -29,7 +30,8 @@ export const gameReducer  = (state = initState, action)=>{
         boardRep: boardStrToRepArray(INIT_BOARD_STATE_STR),
         boardHightLight: [],
         lastMovePair: [],
-        select: []
+        select: [],
+        gameType: ""
       })
     case CLEAR_SELECT:
       return Object.assign({}, state, {
@@ -44,15 +46,16 @@ export const gameReducer  = (state = initState, action)=>{
       // if clicked on empty squere initially, do nothing
       var newSelectListRep = [];
       var highlight = state.boardHightLight;
-      if (state.select.length === 0 && state.boardRep[action.index]){
-        newSelectListRep = state.select.concat([action.index])
-      } else if (state.select.length === 1 && state.select[0] !== action.index) {
-        newSelectListRep = state.select.concat([action.index])
-      } else {
-        // Empty square initially, or deselect piece
-        highlight = []
+      if (action.gameType) {
+        if (state.select.length === 0 && state.boardRep[action.index]){
+          newSelectListRep = state.select.concat([action.index])
+        } else if (state.select.length === 1 && state.select[0] !== action.index) {
+          newSelectListRep = state.select.concat([action.index])
+        } else {
+          // Empty square initially, or deselect piece
+          highlight = []
+        }
       }
-      
       return Object.assign({}, state, {
         select: newSelectListRep,
         boardHightLight: highlight
@@ -83,10 +86,11 @@ export const actionClearSelect = ()=>{
 }
 
 const ON_SELECT_CELL  = "SELECT_CELL"
-export const actionSelectCell = (index)=>{
+export const actionSelectCell = (gameType, index)=>{
 
   return {
     type: ON_SELECT_CELL,
+    gameType,
     index
   }
 }
