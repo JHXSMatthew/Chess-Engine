@@ -9,7 +9,7 @@ import org.junit.Test;
 public class PositionTest {
 
     @Test
-    public void de(){
+    public void moveTest(){
         ChessEngineDummy engine = new ChessEngineDummy();
 
         Board p = new Board();
@@ -170,6 +170,11 @@ public class PositionTest {
             }
             System.out.print(i + " ");
         }
+
+    }
+
+    @Test
+    public void moveHintTest(){
 
     }
 

@@ -17,7 +17,9 @@ const initState = {
   castling: "KQkq",
   enPassantTarget: "-",
   halfMove: "0",
-  fullMove: "1"
+  fullMove: "1",
+
+  type: "Local Game"
 
 
 }
@@ -33,7 +35,7 @@ export const gameReducer  = (state = initState, action)=>{
           boardHightLight: [],
           boardRep: boardStrToRepArray(newGameState.boardStr),
       });
-    case UPDATE_BOARD_STATE_FAIL:
+    case UPDATE_GAME_STATE_FAIL:
       return state;
     case LOAD_INIT_BOARD_STATE:
       return Object.assign({}, state, initState)
@@ -104,10 +106,10 @@ export const actionUpdateGameStateSuccess = (state) =>{
     state
   }
 }
-const UPDATE_BOARD_STATE_FAIL = "UPDATE_BOARD_STATE_FAIL"
-export const actionUpdateStateFail = (message) =>{
+const UPDATE_GAME_STATE_FAIL = "UPDATE_GAME_STATE_FAIL"
+export const actionUpdateGameStateFail = (message) =>{
   return {
-    type: UPDATE_BOARD_STATE_FAIL,
+    type: UPDATE_GAME_STATE_FAIL,
     message
   }
 }
@@ -179,6 +181,7 @@ export const actionLoadSavedGameFail = (message)=>{
     message
   }
 }
+
 
 const SAVE_GAME_SUCCESS = "SAVE_GAME_SUCCESS"
 export const actionSaveGameSuccess = (message) =>{
