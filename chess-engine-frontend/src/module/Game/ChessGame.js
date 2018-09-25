@@ -4,9 +4,9 @@ import { connect } from 'react-redux'
 
 import Board from '../../component/Board'
 
-import Sidebar from '../../component/Sidebar'
+import Sidebar from './Sidebar'
 
-import Style from "./Game.less"
+import Style from "./ChessGame.less"
 
 import {
   actionLoadInitState,
@@ -43,7 +43,8 @@ class Game extends React.Component{
 
   render(){
     const { boardRep,onCellClick,availableMove, select, highlight, 
-      lastMove, saveGame, loadGame, endGame, newLocalGame, gameType } = this.props
+      lastMove, saveGame, loadGame, endGame, newLocalGame, gameType,
+      currentTurn } = this.props
     return (
       <div className='game'>
         <div className='game-left'>
@@ -63,6 +64,7 @@ class Game extends React.Component{
                     saveGame={saveGame}
                     endGame={endGame}
                     newLocalGame={newLocalGame}
+                    currentTurn={currentTurn}
           />
         </div>
 
@@ -96,7 +98,7 @@ const mapStateToProps = state =>{
     highlight: state.game.boardHightLight,
     lastMove: state.game.lastMovePair,
     gameType: state.game.gameType,
-    currentTurn: state.game.currentTurn == 'w' ? 'White' : 'Black'
+    currentTurn: state.game.currentTurn
   }
 }
 
