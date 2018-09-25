@@ -65,6 +65,7 @@ class Game extends React.Component{
                     newLocalGame={newLocalGame}
           />
         </div>
+
         <div className="modal fade" id="endGameScreen" tabIndex="-1" role="dialog" aria-labelledby="endGameScreenTitle" 
              aria-hidden="true" data-backdrop="static" data-keyboard="false">
           <div className="modal-dialog modal-dialog-centered" role="document">
@@ -83,7 +84,6 @@ class Game extends React.Component{
           </div>
         </div>
       </div>
-      
     )
   }
 }
@@ -95,7 +95,8 @@ const mapStateToProps = state =>{
     select: state.game.select,
     highlight: state.game.boardHightLight,
     lastMove: state.game.lastMovePair,
-    gameType: state.game.gameType
+    gameType: state.game.gameType,
+    currentTurn: state.game.currentTurn == 'w' ? 'White' : 'Black'
   }
 }
 

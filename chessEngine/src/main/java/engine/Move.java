@@ -10,7 +10,6 @@ public class Move {
 
     static final int NORMAL = 0;
 
-
     public Move(int type, int originSquare, int targetSquare, int originPiece, int targetPiece, int promotion) {
         this.type = type;
         this.originSquare = originSquare;
@@ -22,11 +21,17 @@ public class Move {
 
     public Move(int originSquare, int targetSquare) {
         this.type = NORMAL;
-        this.originSquare = Position.toSquare(originSquare);
-        this.targetSquare = Position.toSquare(targetSquare);
+        this.originSquare = Board.toSquare(originSquare);
+        this.targetSquare = Board.toSquare(targetSquare);
         this.originPiece = Piece.NO_PIECE;
         this.targetPiece = Piece.NO_PIECE;
         this.promotion = Piece.NO_PIECE_TYPE;
+    }
+
+    public void setOriginPiece (Board b) {
+        if (Square.isValid(originSquare)) {
+            originPiece = b.board[originSquare];
+        }
     }
 
     public int getType() {

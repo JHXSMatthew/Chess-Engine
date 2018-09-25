@@ -8,9 +8,9 @@ public class AvailableMoveResponseModel {
     @JsonProperty("from")
     private int fromPost;
     @JsonProperty("AvailableMoveRequestModel")
-    private ArrayList<Integer> all_pos;
+    private int[] all_pos;
 
-    public AvailableMoveResponseModel(int startPos, ArrayList<Integer> pos){
+    public AvailableMoveResponseModel(int startPos, int[] pos){
         this.fromPost = startPos;
         this.all_pos = pos;
     }

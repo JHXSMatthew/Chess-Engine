@@ -1,19 +1,23 @@
-import { boardStrToRepArray, boardRepArrayToStr} from '../module/Game/Utils'
+import { boardStrToRepArray, boardRepArrayToStr, deserializeState, seriliaseState} from '../module/Game/Utils'
 
 
 export const regMove = (server) =>{
   server.mockPost("api/move", (request) =>{
-    const body = JSON.parse(request.requestBody);
-    const arrayRep = boardStrToRepArray(body.state);
+		const body = JSON.parse(request.requestBody);
+		const stateObj = deserializeState(body.state)
+    const arrayRep = boardStrToRepArray(stateObj.boardStr);
     arrayRep[body.to] = arrayRep[body.from] 
-    arrayRep[body.from] = 0
-    
+		arrayRep[body.from] = 0
+		
+		
     return [200, { 'Content-Type': 'application/json' }, JSON.stringify({
-      state: boardRepArrayToStr(arrayRep)
+      state: seriliaseState(Object.assign({}, stateObj, {
+				boardStr: boardRepArrayToStr(arrayRep)
+			}))
     })];
   });
 
-  server.mockPost("api/availableMove", (request) =>{
+  server.mockPost("api/move/available", (request) =>{
   	const body = JSON.parse(request.requestBody);
   	var a = [];
   	for (let i = 0; i < 64; i++){
