@@ -121,7 +121,7 @@ public class Board {
         draw conditions
      */
 
-    //will need to implement check statemate
+    //will need to implement check stalemate
     public State psuedoLegalMakeMove(String stateString, Move m) {
         //is the move valid
         State boardRep = new State();
@@ -134,18 +134,25 @@ public class Board {
             //no move is allowed to leave us in check
             if (isChecked(Piece.oppositeColour(activeColour))) {
                 undoMove(m);
+
+                if (isChecked(activeColour)) {
+                    boardRep.setCheck(true);
+                    MoveGenerator mg = new MoveGenerator();
+                    mg.generateMoves(this);
+                    boardRep.setCheckMate(isCheckMate(mg, activeColour));
+                }
+
                 return boardRep;
             }
 
             //does the move check the other player
             if (isChecked(activeColour)) {
-                //does the move checkmate the other player?
                 boardRep.setCheck(true);
+                //does the move checkmate the other player?
                 MoveGenerator mg = new MoveGenerator();
                 mg.generateMoves(this);
-                if (isCheckMate(mg, activeColour)) {
-                    boardRep.setCheckMate(true);
-                }
+                boardRep.setCheckMate(isCheckMate(mg, activeColour));
+
             }
 
             boardRep.setBoardRep(serializeBoard());

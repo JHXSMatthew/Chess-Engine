@@ -125,12 +125,15 @@ public class PositionTest {
         State checkMove = engine.move("8/6k1/8/4b3/8/K7/8/3q4 b KQkq - 0 1", 28, 19);
         Assert.assertEquals(checkMove.getBoardRep(), "8/6k1/3b4/8/8/K7/8/3q4 w KQkq - 0 1");
         Assert.assertEquals(checkMove.isCheck(), true);
+        Assert.assertEquals(checkMove.isCheckMate(), false);
         State checkMove2 = engine.move("8/2k5/6p1/8/8/3Q4/7K/r7 w KQkq - 0 1", 43, 42);
         Assert.assertEquals(checkMove2.getBoardRep(), "8/2k5/6p1/8/8/2Q5/7K/r7 b KQkq - 0 1");
         Assert.assertEquals(checkMove2.isCheck(), true);
+        Assert.assertEquals(checkMove2.isCheckMate(), false);
         State checkMove3 = engine.move("2n5/k3p3/5Q2/1p6/p6P/P3b3/8/5K2 w KQkq - 0 1", 21, 12);
         Assert.assertEquals(checkMove3.getBoardRep(), "2n5/k3Q3/8/1p6/p6P/P3b3/8/5K2 b KQkq - 0 1");
         Assert.assertEquals(checkMove3.isCheck(), true);
+        Assert.assertEquals(checkMove3.isCheckMate(), false);
     }
 
     @Test
