@@ -6,8 +6,10 @@ public class StateContainer {
     @JsonProperty("state")
     private String state;
 
-    public StateContainer(){ }
-    public String getState(){
+    public StateContainer() {
+    }
+
+    public String getState() {
         return state;
     }
 

@@ -1,4 +1,4 @@
-package model;
+package model.move;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,18 +9,19 @@ public class AvailableMoveRequestModel {
     @JsonProperty("from")
     private int from;
 
-    public AvailableMoveRequestModel(String State, int from){
+    public AvailableMoveRequestModel(String State, int from) {
         this.State = State;
         this.from = from;
     }
 
-    public AvailableMoveRequestModel(){}
+    public AvailableMoveRequestModel() {
+    }
 
     public String getState() {
         return State;
     }
 
-    public int getFrom(){
+    public int getFrom() {
         return from;
     }
 }
