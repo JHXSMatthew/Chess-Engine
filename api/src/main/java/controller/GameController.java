@@ -37,6 +37,7 @@ public class GameController {
 
         JoinGameResponse response = new JoinGameResponse();
         response.setPlayerType(JoinGameResponse.PlayerType.black);
+        response.setGameId(gr.getId());
         return response;
     }
 
