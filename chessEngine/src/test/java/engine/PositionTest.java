@@ -116,7 +116,7 @@ public class PositionTest {
         Assert.assertEquals(checkmateMove3, "3q4/8/7k/4n3/7K/1r6/8/8 w KQkq - 0 1");
 
         Board b1 = new Board();
-        b1.deserializeBoard("8/8/6r1/8/5b2/5q2/7K/8 w KQkq - 0 1");
+        b1.deserializeBoard("k7/8/6r1/8/5b2/5q2/7K/8 w KQkq - 0 1");
         MoveGenerator mg = new MoveGenerator();
         mg.generateMoves(b1);
         Assert.assertEquals(b1.isCheckMate(mg, Piece.WHITE), true);
