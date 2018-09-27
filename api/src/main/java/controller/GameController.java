@@ -2,18 +2,18 @@ package controller;
 
 import engine.ChessEngineDummy;
 import engine.ChessEngineI;
+import exception.IllegalStateExceptionInternal;
+import exception.ResourceNotFoundException;
 import model.StateContainer;
 import model.game.GameInfoResponse;
 import model.game.GameRoom;
 import model.game.JoinGameResponse;
+import model.move.MoveRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import repository.GameRoomRepository;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @CrossOrigin
 @RestController
@@ -23,70 +23,74 @@ public class GameController {
 
     @Autowired
     private GameRoomRepository grr;
-    private Integer id = 1;
 
-    @CrossOrigin(origins = "*")
     @PostMapping("/game")
-    public GameRoom newGame() {
+    public JoinGameResponse newGame() {
+        //construct a new game instance
         String initState = engine.getInitState();
-        UUID gameId = UUID.randomUUID();
         GameRoom gr = new GameRoom();
-        gr.setId(id);
-        id += 1;
-        gr.setRoomId(gameId.toString());
+        gr.setId(UUID.randomUUID());
         gr.setNumOfUser(1);
         gr.setState(initState);
-        gr.setStatus("lobby");
+        gr.setStatus(GameRoom.GameStatus.lobby);
         grr.save(gr);
-        return gr;
+
+        JoinGameResponse response = new JoinGameResponse();
+        response.setPlayerType(JoinGameResponse.PlayerType.black);
+        return response;
     }
 
-    @CrossOrigin(origins = "*")
     @GetMapping("/game/{id}")
     // Get status and state
     public GameInfoResponse getGameInfo(@RequestParam UUID id) {
         GameInfoResponse info = new GameInfoResponse();
-        Iterable<GameRoom> result = grr.findAll();
-        for (GameRoom i : result) {
-            if (i.getRoomId().equals(id.toString())) {
-                info.setState(i.getState());
-                info.setStatus(i.getStatus());
-            }
+        Optional<GameRoom> dbModel = grr.findById(id);
+        if(dbModel.isPresent()){
+            info.setState(dbModel.get().getState());
+            info.setStatus(dbModel.get().getStatus().toString());
+            return info;
+        }else {
+            throw new ResourceNotFoundException();
         }
-        return info;
     }
 
-    @CrossOrigin(origins = "*")
-    @PatchMapping("/game/{id}?move={move}")
-    public StateContainer handlePatch(@RequestParam UUID id, @RequestParam String move) {
-        Iterable<GameRoom> result = grr.findAll();
-        // Assume move is : "from to"
-        int from = Integer.parseInt(move.split(" ")[0]);
-        int to = Integer.parseInt(move.split(" ")[1]);
-        String resultState = "";
-        for (GameRoom i : result) {
-            if (i.getRoomId().equals(id.toString())) {
-                resultState = engine.move(i.getState(), from, to);
-                i.setState(resultState);
-            }
+    @PatchMapping("/game/{id}")
+    public StateContainer handlePatch(@RequestParam UUID id, @RequestBody MoveRequestModel request) {
+        Optional<GameRoom> dbModel = grr.findById(id);
+        if(dbModel.isPresent()){
+            StateContainer returnValue = new StateContainer();
+
+            String afterMove =  engine.move(dbModel.get().getState(),
+                    request.getFrom(), request.getTo());
+
+            returnValue.setState(afterMove);
+            //update db
+            dbModel.get().setState(returnValue.getState());
+            return returnValue;
+        }else{
+            throw new ResourceNotFoundException();
         }
-        StateContainer finalState = new StateContainer();
-        finalState.setState(resultState);
-        return finalState;
     }
 
-    @CrossOrigin(origins = "*")
     @PutMapping("/game/{id}")
     public JoinGameResponse handlePutAction(@RequestParam UUID id) {
-        Iterable<GameRoom> result = grr.findAll();
-        for (GameRoom i : result) {
-            if (i.getRoomId().equals(id.toString())) {
-                i.setNumOfUser(2);
-                i.setStatus("start");
+        Optional<GameRoom> dbModel = grr.findById(id);
+        if(dbModel.isPresent()){
+            if(dbModel.get().getNumOfUser() == 1){
+                dbModel.get().setNumOfUser(2);
+                dbModel.get().setStatus(GameRoom.GameStatus.ingame);
+
+                JoinGameResponse response = new JoinGameResponse();
+                response.setPlayerType(JoinGameResponse.PlayerType.white);
+                return response;
+
+            }else{
+                throw new IllegalStateExceptionInternal();
             }
+
+        }else{
+            throw new ResourceNotFoundException();
         }
-        List<String> playerType = Arrays.asList("white", "black");
-        String returnType = playerType.get(new Random().nextInt(playerType.size()));
-        return new JoinGameResponse(returnType);
+
     }
 }
