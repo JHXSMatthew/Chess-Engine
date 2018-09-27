@@ -1,0 +1,23 @@
+matrix:
+  include:
+    - language: java 
+      before_script:
+        - cd chessEngine 
+      script:
+        - mvn install
+
+    - language: java
+      before_script:
+        - cd chessEngine
+        - mvn install
+        - cp target/*.jar ../api/src/main/resources/chess-engine.jar
+        - cd ../api
+      script:
+        - mvn install 
+
+    - language: javascript
+      before_script:
+        - cd chess-engine-frontend 
+        - npm install
+      script:
+        - npm run test

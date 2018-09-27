@@ -1,4 +1,6 @@
 
+import engine.ChessEngineDummy;
+import engine.ChessEngineI;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,4 +17,5 @@ public class ChessEngineTest {
     public void initStateTest(){
         Assert.assertEquals("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", engine.getInitState());
     }
+
 }

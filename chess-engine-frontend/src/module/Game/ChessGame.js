@@ -4,13 +4,24 @@ import { connect } from 'react-redux'
 
 import Board from '../../component/Board'
 
+import Sidebar from './Sidebar'
+
+import Style from "./ChessGame.less"
+
 import {
   actionLoadInitState,
   actionSelectCell,
   actionClearSelect,
   actionMove,
-  actionAvailableMove
+  actionAvailableMove,
+  actionSaveLocalGame,
+  actionLoadLocalSavedGame,
+  actionUpdateStateSuccess,
+  actionEndGame,
+  actionNewLocalGame,
+  actionUndoRequest
 } from './ChessGameReducer'
+
 
 class Game extends React.Component{
 
@@ -32,16 +43,53 @@ class Game extends React.Component{
 
 
   render(){
-    const { boardRep,onCellClick,availableMove, select, highlight } = this.props
+    const { boardRep,onCellClick,availableMove, select, highlight, 
+      lastMove, saveGame, loadGame, endGame, newLocalGame, gameType,
+      currentTurn, undo, moveHistory } = this.props
+
     return (
-      <div style={{width: "600px", height: "600px"}}>
-        <Board 
-        rep={boardRep}
-        select={select}
-        highlight={highlight}
-        onCellClick={onCellClick}
-        availableMove={availableMove} />
-    </div>
+      <div className='game'>
+        <div className='game-left'>
+          <Board 
+          rep={boardRep}
+          select={select}
+          highlight={highlight}
+          onCellClick={onCellClick}
+          availableMove={availableMove}
+          lastMove={lastMove} 
+          gameType={gameType}
+          />
+        </div>
+        <div className="game-right">
+          <Sidebar  gameType={gameType}
+                    loadGame={loadGame}
+                    saveGame={saveGame}
+                    endGame={endGame}
+                    newLocalGame={newLocalGame}
+                    currentTurn={currentTurn}
+                    undoMove={undo}
+                    moveHistory={moveHistory}
+          />
+        </div>
+
+        <div className="modal fade" id="endGameScreen" tabIndex="-1" role="dialog" aria-labelledby="endGameScreenTitle" 
+             aria-hidden="true" data-backdrop="static" data-keyboard="false">
+          <div className="modal-dialog modal-dialog-centered" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLongTitle">Checkmate</h5>
+              </div>
+              <div className="modal-body">
+                You lose.
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-primary" data-dismiss="modal" 
+                        onClick={this.props.loadInitState}>New Game</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     )
   }
 }
@@ -51,7 +99,11 @@ const mapStateToProps = state =>{
   return {
     boardRep: state.game.boardRep,
     select: state.game.select,
-    highlight: state.game.boardHightLight
+    highlight: state.game.boardHightLight,
+    lastMove: state.game.lastMovePair,
+    gameType: state.game.gameType,
+    currentTurn: state.game.currentTurn,
+    moveHistory: state.game.moveHistory
   }
 }
 
@@ -64,7 +116,12 @@ const mapDispatchToProps = dispatch => {
     },
     onCellClick: (index) => dispatch(actionSelectCell(index)),
     availableMove: (from) => dispatch(actionAvailableMove(from)),
-    clearSelect: ()=> dispatch(actionClearSelect())
+    clearSelect: ()=> dispatch(actionClearSelect()),
+    saveGame: () => dispatch(actionSaveLocalGame()),
+    loadGame: () => dispatch(actionLoadLocalSavedGame()),
+    newLocalGame: () => dispatch(actionNewLocalGame()),
+    endGame: (winLose) => dispatch(actionEndGame(winLose)),
+    undo: () => dispatch(actionUndoRequest())
   }
 }
 

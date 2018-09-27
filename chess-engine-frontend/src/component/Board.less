@@ -6,7 +6,6 @@
   border-width: 1px;
 
   width: 12%;
-  height: 70px;
   flex-grow: 1;
   display: flex;
   justify-content: center;
@@ -14,11 +13,11 @@
   
   &-bg-dark{
     &:extend(.cell);
-    background-color: #f0d9b5;
+    background-color: #b58863;
   }
   &-bg-light{
     &:extend(.cell);
-    background-color: #b58863;
+    background-color: #f0d9b5;
   }
   &-bg-selected{
     &:extend(.cell);
@@ -28,8 +27,11 @@
     &:extend(.cell);
     background-color: #99ccff;
   }
+  &-bg-lastMove{
+    &:extend(.cell);
+    background-color: #ff6666;
+  }
 }
-
 
 .board{
   display: flex;
