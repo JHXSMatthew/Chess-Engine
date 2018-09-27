@@ -30,7 +30,7 @@ public class GameController {
         GameRoom gr = new GameRoom();
         gr.setNumOfUser(1);
         gr.setState(initState);
-        gr.setStatus(GameRoom.GameStatus.lobby);
+        gr.setStatus("lobby");
         grr.save(gr);
 
         JoinGameResponse response = new JoinGameResponse();
@@ -41,12 +41,12 @@ public class GameController {
 
     @GetMapping("/api/game/{id}")
     // Get status and state
-    public GameInfoResponse getGameInfo(@RequestParam UUID id) {
+    public GameInfoResponse getGameInfo(@PathVariable String id) {
         GameInfoResponse info = new GameInfoResponse();
         Optional<GameRoom> dbModel = grr.findById(id);
         if(dbModel.isPresent()){
             info.setState(dbModel.get().getState());
-            info.setStatus(dbModel.get().getStatus().toString());
+            info.setStatus(dbModel.get().getStatus());
             return info;
         }else {
             throw new ResourceNotFoundException();
@@ -54,7 +54,7 @@ public class GameController {
     }
 
     @PatchMapping("/api/game/{id}")
-    public StateContainer handlePatch(@RequestParam UUID id, @RequestBody MoveRequestModel request) {
+    public StateContainer handlePatch(@PathVariable String id, @RequestBody MoveRequestModel request) {
         Optional<GameRoom> dbModel = grr.findById(id);
         if(dbModel.isPresent()){
             StateContainer returnValue = new StateContainer();
@@ -72,12 +72,12 @@ public class GameController {
     }
 
     @PutMapping("/api/game/{id}")
-    public JoinGameResponse handlePutAction(@RequestParam UUID id) {
+    public JoinGameResponse handlePutAction(@PathVariable String id) {
         Optional<GameRoom> dbModel = grr.findById(id);
         if(dbModel.isPresent()){
             if(dbModel.get().getNumOfUser() == 1){
                 dbModel.get().setNumOfUser(2);
-                dbModel.get().setStatus(GameRoom.GameStatus.ingame);
+                dbModel.get().setStatus("ingame");
 
                 JoinGameResponse response = new JoinGameResponse();
                 response.setPlayerType(JoinGameResponse.PlayerType.white);
