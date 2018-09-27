@@ -1,4 +1,4 @@
-import {boardStrToRepArray} from './Utils'
+import {boardStrToRepArray, indexMorphism} from './Utils'
 
 const INIT_BOARD_STATE_STR = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 const LOCAL_SAVED_GAME_INDEX = "savedLocalGame"
@@ -17,7 +17,9 @@ const initState = {
   castling: "KQkq",
   enPassantTarget: "-",
   halfMove: "0",
-  fullMove: "1"
+  fullMove: "1",
+
+  type: "Local Game"
 
 
 }
@@ -33,7 +35,7 @@ export const gameReducer  = (state = initState, action)=>{
           boardHightLight: [],
           boardRep: boardStrToRepArray(newGameState.boardStr),
       });
-    case UPDATE_BOARD_STATE_FAIL:
+    case UPDATE_GAME_STATE_FAIL:
       return state;
     case LOAD_INIT_BOARD_STATE:
       return Object.assign({}, state, initState)
@@ -104,10 +106,10 @@ export const actionUpdateGameStateSuccess = (state) =>{
     state
   }
 }
-const UPDATE_BOARD_STATE_FAIL = "UPDATE_BOARD_STATE_FAIL"
-export const actionUpdateStateFail = (message) =>{
+const UPDATE_GAME_STATE_FAIL = "UPDATE_GAME_STATE_FAIL"
+export const actionUpdateGameStateFail = (message) =>{
   return {
-    type: UPDATE_BOARD_STATE_FAIL,
+    type: UPDATE_GAME_STATE_FAIL,
     message
   }
 }
@@ -124,8 +126,8 @@ export const MOVE_REQUEST = "MOVE_REQUEST"
 export const actionMove = (from, to)=>{
   return {
     type: MOVE_REQUEST,
-    from,
-    to
+    from: from,
+    to: to
   }
 }
 
@@ -133,7 +135,7 @@ export const AVAILABLE_MOVE_REQUEST = "AVAILABLE_MOVE_REQUEST"
 export const actionAvailableMove = (from)=>{
   return {
     type: AVAILABLE_MOVE_REQUEST,
-    from
+    from: from
   }
 }
 
@@ -179,6 +181,7 @@ export const actionLoadSavedGameFail = (message)=>{
     message
   }
 }
+
 
 const SAVE_GAME_SUCCESS = "SAVE_GAME_SUCCESS"
 export const actionSaveGameSuccess = (message) =>{

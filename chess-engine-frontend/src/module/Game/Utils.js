@@ -85,3 +85,13 @@ export const boardRepArrayToStr = (array) =>{
   return final;
 
 }
+
+
+
+export const indexMorphism = (viewIndex) =>{
+  if(viewIndex > 63 || viewIndex < 0){
+    return -1;
+  }
+
+  return (8-Math.floor(viewIndex/8))*8 - (8 - viewIndex%8);
+}

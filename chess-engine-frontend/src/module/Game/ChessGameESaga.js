@@ -11,7 +11,8 @@ import {
   actionSaveGameSuccess,
   actionSaveGameFail,
   SAVE_LOCAL_GAME,
-  actionHighlightLastMove
+  actionHighlightLastMove,
+  actionUpdateGameStateFail
 } from './ChessGameReducer'
 
 import Api from './ChessGameEAPI'
@@ -33,10 +34,16 @@ export function* gameSaga(){
 
 function* MoveRequest(action){
   try{
-    const currentBoardState = yield select((state) => seriliaseState(state.game) )
-    const newState = yield call(Api.postMove, currentBoardState ,action.from, action.to)
-    yield put(actionUpdateGameStateSuccess(deserializeState(newState.data.state)))
-    yield put(actionHighlightLastMove([action.from, action.to]))
+    const currentBoardState = yield select((state) => seriliaseState(state.game))
+    const response = yield call(Api.postMove, currentBoardState ,action.from, action.to)
+    const newState = response.data.state;
+
+    if(newState === currentBoardState){
+      yield put(actionUpdateGameStateFail("Illegal move."))
+    }else{
+      yield put(actionUpdateGameStateSuccess(deserializeState(newState)))
+      yield put(actionHighlightLastMove([action.from, action.to]))
+    }
   }catch(e){
     yield put(actionMoveFail(e.message))
   }
