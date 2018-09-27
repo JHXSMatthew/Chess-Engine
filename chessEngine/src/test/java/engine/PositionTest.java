@@ -78,10 +78,10 @@ public class PositionTest {
         Assert.assertEquals(queenMove5.getBoardRep(), "rnbqkbnr/8/8/8/3N4/8/8/R1BQKBNR w KQkq - 0 1");
 
         //King tests
-        State kingMove = engine.move("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR b KQkq - 0 1", 4, 11);
-        Assert.assertEquals(kingMove.getBoardRep(), "rnbq1bnr/3k4/8/8/8/8/8/RNBQKBNR w KQkq - 0 1");
-        State kingMove2 = engine.move("rnbq1bnr/5k2/8/8/8/8/8/RNBQKBNR b KQkq - 0 1", 13, 21);
-        Assert.assertEquals(kingMove2.getBoardRep(), "rnbq1bnr/8/5k2/8/8/8/8/RNBQKBNR w KQkq - 0 1");
+        State kingMove = engine.move("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR b KQkq - 0 1", 4, 12);
+        Assert.assertEquals(kingMove.getBoardRep(), "rnbq1bnr/4k3/8/8/8/8/8/RNBQKBNR w KQkq - 0 1");
+        State kingMove2 = engine.move("rnbq1bnr/5k2/8/8/8/8/8/RNBQKBNR b KQkq - 0 1", 13, 20);
+        Assert.assertEquals(kingMove2.getBoardRep(), "rnbq1bnr/8/4k3/8/8/8/8/RNBQKBNR w KQkq - 0 1");
         State kingMove3 = engine.move("rnbq1bnr/8/4k3/8/8/8/8/RNBQKBNR b KQkq - 0 1", 20, 28);
         Assert.assertEquals(kingMove3.getBoardRep(), "rnbq1bnr/8/8/4k3/8/8/8/RNBQKBNR w KQkq - 0 1");
         State kingMove4 = engine.move("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR b KQkq - 0 1", 4, 3); //blocked by own piece
