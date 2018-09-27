@@ -21,26 +21,19 @@ public class ChessEngineDummy implements ChessEngineI {
         return m.targetSquareToIndexArray();
     }
     @Override
-    public String move(String state, int from, int to) {
+    public State move(String stateString, int from, int to) {
         /*
         0 ..        black
         ...         ....
         .. 63       white
          */
-        Board p = new Board();
-        p.deserializeBoard(state);
+        Board b = new Board();
+        b.deserializeBoard(stateString);
         Move m = new Move(from, to);
-        m.setOriginPiece(p);
+        m.setOriginPiece(b);
+        m.setTargetPiece(b);
 
-        Boolean success = p.validateMove(m);
-
-        if (success) {
-            p.applyMove(m);
-            return p.serializeBoard();
-        } else {
-            return state;
-        }
-
+        return b.psuedoLegalMakeMove(stateString, m);
     }
 
 }

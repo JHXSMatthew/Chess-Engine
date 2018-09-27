@@ -31,7 +31,10 @@ public class MoveGenerator {
     public void generateMoves(Board p) {
         for (int originSquare: Square.values) {
             int originPiece = p.board[originSquare];
-            if (!Piece.isValid(originPiece) || Piece.getColour(originPiece) != p.activeColour) {
+            if (!Piece.isValid(originPiece)) {
+                continue;
+            }
+            if (Piece.getColour(originPiece) != p.activeColour) {
                 continue;
             }
             int originType = Piece.getType(originPiece);
@@ -89,18 +92,19 @@ public class MoveGenerator {
 
 
     public void generateMoves(int indexSquare, Board p) {
-       // System.out.println("index square: " + indexSquare);
         int originSquare = Board.toSquare(indexSquare);
-       // System.out.println("originSquare: " + originSquare);
         if (!Square.isValid(originSquare)) {
             return;
         }
+
         int originPiece = p.board[originSquare];
-        if (!Piece.isValid(originPiece) || Piece.getColour(originPiece) != p.activeColour) {
+        if (!Piece.isValid(originPiece)) {
+            return;
+        }
+        if (Piece.getColour(originPiece) != p.activeColour) {
             return;
         }
         int originType = Piece.getType(originPiece);
-
         int[] directions = Square.getDirection(p.activeColour, originType);
         if (originType == Piece.PAWN) {
             int max = 1;
@@ -117,7 +121,7 @@ public class MoveGenerator {
             for (int remainingDirections = 1; remainingDirections < 3; remainingDirections++) {
                 int currentSquare = originSquare + directions[remainingDirections];
                 if (Square.isValid(currentSquare) && p.board[currentSquare] != Piece.NO_PIECE && Piece.getColour(p.board[currentSquare]) != p.activeColour) {
-                    Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, p.board[currentSquare] , Piece.NO_PIECE_TYPE);
+                    Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
                     moves.add(m);
                 }
             }
