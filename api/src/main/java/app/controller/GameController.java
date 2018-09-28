@@ -41,7 +41,7 @@ public class GameController {
 
     @GetMapping("/api/game/{id}")
     // Get status and state
-    public GameInfoResponse getGameInfo(@RequestParam UUID id) {
+    public GameInfoResponse getGameInfo(@PathVariable String id) {
         GameInfoResponse info = new GameInfoResponse();
         Optional<GameRoom> dbModel = grr.findById(id);
         if(dbModel.isPresent()){
@@ -54,7 +54,7 @@ public class GameController {
     }
 
     @PatchMapping("/api/game/{id}")
-    public StateContainer handlePatch(@RequestParam UUID id, @RequestBody MoveRequestModel request) {
+    public StateContainer handlePatch(@PathVariable String id, @RequestBody MoveRequestModel request) {
         Optional<GameRoom> dbModel = grr.findById(id);
         if(dbModel.isPresent()){
             StateContainer returnValue = new StateContainer();
@@ -72,7 +72,7 @@ public class GameController {
     }
 
     @PutMapping("/api/game/{id}")
-    public JoinGameResponse handlePutAction(@RequestParam UUID id) {
+    public JoinGameResponse handlePutAction(@PathVariable String id) {
         Optional<GameRoom> dbModel = grr.findById(id);
         if(dbModel.isPresent()){
             if(dbModel.get().getNumOfUser() == 1){

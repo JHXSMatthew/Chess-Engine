@@ -62,12 +62,9 @@ public class GameRoom implements Serializable {
 
 
     public enum GameStatus{
-        lobby(1),ingame(2),finished(3);
+        lobby,ingame,finished;
 
-        private int status;
-        GameStatus(int i){
-            this.status = i;
-        }
+
 
         @Override
         public String toString() {
