@@ -25,9 +25,9 @@ public class GameRoom implements Serializable {
     private Integer numOfUser;
 
     @Column(nullable = false)
-    private String status;
+    private GameStatus status;
 
-    public String getStatus() {
+    public GameStatus getStatus() {
         return status;
     }
 
@@ -39,7 +39,7 @@ public class GameRoom implements Serializable {
         this.id = id;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(GameStatus status) {
         this.status = status;
     }
 
@@ -61,18 +61,18 @@ public class GameRoom implements Serializable {
     }
 
 
-//    public enum GameStatus{
-//        lobby(1),ingame(2),finished(3);
-//
-//        private int status;
-//        GameStatus(int i){
-//            this.status = i;
-//        }
-//
-//        @Override
-//        public String toString() {
-//            return super.toString();
-//        }
-//    }
+    public enum GameStatus{
+        lobby(1),ingame(2),finished(3);
+
+        private int status;
+        GameStatus(int i){
+            this.status = i;
+        }
+
+        @Override
+        public String toString() {
+            return super.toString();
+        }
+    }
 
 }
