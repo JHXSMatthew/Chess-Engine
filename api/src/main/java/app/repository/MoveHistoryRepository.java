@@ -1,6 +1,6 @@
-package repository;
+package app.repository;
 
-import model.move.MoveHistory;
+import app.model.move.MoveHistory;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package model.game;
+package app.model.game;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

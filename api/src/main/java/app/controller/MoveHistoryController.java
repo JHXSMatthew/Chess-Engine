@@ -1,9 +1,9 @@
-package controller;
+package app.controller;
 
-import model.move.MoveHistory;
+import app.model.move.MoveHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import repository.MoveHistoryRepository;
+import app.repository.MoveHistoryRepository;
 
 
 @RestController

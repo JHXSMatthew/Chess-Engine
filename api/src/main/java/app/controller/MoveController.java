@@ -1,11 +1,11 @@
-package controller;
+package app.controller;
 
 import engine.ChessEngineDummy;
 import engine.ChessEngineI;
-import model.StateContainer;
-import model.move.AvailableMoveRequestModel;
-import model.move.AvailableMoveResponseModel;
-import model.move.MoveRequestModel;
+import app.model.StateContainer;
+import app.model.move.AvailableMoveRequestModel;
+import app.model.move.AvailableMoveResponseModel;
+import app.model.move.MoveRequestModel;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

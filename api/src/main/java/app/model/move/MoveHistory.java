@@ -1,4 +1,4 @@
-package model.move;
+package app.model.move;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;

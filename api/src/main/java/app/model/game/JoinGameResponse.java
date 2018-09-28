@@ -1,4 +1,4 @@
-package model.game;
+package app.model.game;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -8,7 +8,7 @@ public class JoinGameResponse {
     @JsonProperty("playerType")
     private PlayerType playerType;
     @JsonProperty("gameId")
-    private UUID gameId;
+    private String gameId;
 
     public JoinGameResponse() {
     }
@@ -22,11 +22,11 @@ public class JoinGameResponse {
         this.playerType = playerType;
     }
 
-    public UUID getGameId() {
+    public String getGameId() {
         return gameId;
     }
 
-    public void setGameId(UUID gameId) {
+    public void setGameId(String gameId) {
         this.gameId = gameId;
     }
 

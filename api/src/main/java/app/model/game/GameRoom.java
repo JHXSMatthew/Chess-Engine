@@ -1,4 +1,7 @@
-package model.game;
+package app.model.game;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -9,8 +12,10 @@ import java.util.UUID;
 @Table(name = "game_room")
 public class GameRoom implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID id;
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @GeneratedValue(generator = "uuid")
+    @Column(name = "uuid", columnDefinition="uuid" ,unique = true)
+    private String id;
 
     @NotBlank
     @Column(nullable = false)
@@ -26,11 +31,11 @@ public class GameRoom implements Serializable {
         return status;
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -57,12 +62,9 @@ public class GameRoom implements Serializable {
 
 
     public enum GameStatus{
-        lobby(1),ingame(2),finished(3);
+        lobby,ingame,finished;
 
-        private int status;
-        GameStatus(int i){
-            this.status = i;
-        }
+
 
         @Override
         public String toString() {

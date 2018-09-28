@@ -1,4 +1,4 @@
-package model.move;
+package app.model.move;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
