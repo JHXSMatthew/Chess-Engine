@@ -65,6 +65,8 @@ public class GameController {
             returnValue.setState(afterMove);
             //update db
             dbModel.get().setState(returnValue.getState());
+            grr.save(dbModel.get());
+
             return returnValue;
         }else{
             throw new ResourceNotFoundException();
@@ -79,8 +81,11 @@ public class GameController {
                 dbModel.get().setNumOfUser(2);
                 dbModel.get().setStatus(GameRoom.GameStatus.ingame);
 
+                grr.save(dbModel.get());
+
                 JoinGameResponse response = new JoinGameResponse();
                 response.setPlayerType(JoinGameResponse.PlayerType.white);
+                response.setGameId(id);
                 return response;
 
             }else{
