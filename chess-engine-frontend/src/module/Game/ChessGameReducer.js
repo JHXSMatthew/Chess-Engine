@@ -4,6 +4,11 @@ const INIT_BOARD_STATE_STR = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 const LOCAL_SAVED_GAME_INDEX = "savedLocalGame"
 const LOCAL_SAVED_GAME_LASTMOVE = "savedLocalLastMove"
 
+
+export const GAME_TYPE = {
+  LOCAL_GAME: 'LocalGame'
+}
+
 //reducer
 const initState = {
   // UI states
@@ -20,8 +25,10 @@ const initState = {
   halfMove: "0",
   fullMove: "1",
 
-
-
+  // storep revious state, for the undo
+  history: [],
+  //the real move history
+  moveHistory: []
 }
 
 export const gameReducer  = (state = initState, action)=>{
@@ -85,8 +92,23 @@ export const gameReducer  = (state = initState, action)=>{
         boardHightLight: [],
         lastMovePair: [],
         select: [],
-        gameType: "LocalGame"
+        gameType: GAME_TYPE.LOCAL_GAME
       })
+    case ADD_MOVE_HISTORY:
+      return Object.assign({}, state, {
+        history: [...state.history, Object.assign({}, state, {history: []})],
+        moveHistory: [...state.moveHistory, action.move]
+      })
+    case UNDO_SUCCESS:
+      if(state.history && state.history.length != 0){
+        const history = state.history;
+        return Object.assign({}, history[history.length -1], {
+          history: [...state.history.slice(0, state.history.length -1)]
+        })
+      }else{
+       return state;
+      }
+      
     default:
       return state;
   }
@@ -140,6 +162,37 @@ export const actionMove = (from, to)=>{
     to: to
   }
 }
+
+export const UNDO_REQUEST = "UNDO_REQUEST"
+export const actionUndoRequest = () =>{
+  return {
+    type: UNDO_REQUEST
+  }
+}
+
+export const UNDO_SUCCESS = "UNDO_SUCCESS"
+export const actionUndoSuccess = () =>{
+  return {
+    type: UNDO_SUCCESS
+  }
+}
+
+export const UNDO_FAIL = "UNDO_FAIL"
+export const actionUndoFail = () =>{
+  return {
+    type: UNDO_FAIL
+  }
+}
+
+
+export const ADD_MOVE_HISTORY = "ADD_MOVE_HISTORY"
+export const actionAddMoveHistory = (move)=>{
+  return {
+    type:ADD_MOVE_HISTORY,
+    move
+  }
+}
+
 
 export const AVAILABLE_MOVE_REQUEST = "AVAILABLE_MOVE_REQUEST"
 export const actionAvailableMove = (from)=>{

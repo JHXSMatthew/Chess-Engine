@@ -12,7 +12,12 @@ import {
   actionSaveGameFail,
   SAVE_LOCAL_GAME,
   actionHighlightLastMove,
-  actionUpdateGameStateFail
+  actionUpdateGameStateFail,
+  actionUndoFail,
+  GAME_TYPE,
+  actionUndoSuccess,
+  UNDO_REQUEST,
+  actionAddMoveHistory
 } from './ChessGameReducer'
 
 import Api from './ChessGameEAPI'
@@ -29,6 +34,7 @@ export function* gameSaga(){
   //save load
   yield takeEvery(LOAD_LOCAL_SAVED_GAME, LoadLocalSavedGame)
   yield takeEvery(SAVE_LOCAL_GAME, SaveLocalGame)
+  yield takeEvery(UNDO_REQUEST, UndoRequest)
 }
 
 
@@ -41,6 +47,7 @@ function* MoveRequest(action){
     if(newState === currentBoardState){
       yield put(actionUpdateGameStateFail("Illegal move."))
     }else{
+      yield put(actionAddMoveHistory({from: action.from , to: action.to}))
       yield put(actionUpdateGameStateSuccess(deserializeState(newState)))
       yield put(actionHighlightLastMove([action.from, action.to]))
     }
@@ -86,5 +93,19 @@ function* AvailableMoveRequest(action){
 
   }catch(e){
     console.log("AvailableMoveRequest Api Error: ", e);
+  }
+}
+
+function* UndoRequest(action){
+  try{
+    const currentState = yield select((state) => state.game)
+    
+    if(currentState.gameType === GAME_TYPE.LOCAL_GAME){
+      yield put(actionUndoSuccess())
+    }else{
+      //call api
+    }
+  }catch(e){
+    yield put(actionUndoFail())
   }
 }
