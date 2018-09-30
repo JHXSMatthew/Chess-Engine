@@ -3,12 +3,26 @@ import React from 'react'
 import { PiecesSVG } from '../../resource/PieceResource'
 import './Sidebar.less';
 
-import { GAME_TYPE } from './ChessGameReducer';
+import { GAME_TYPE, actionNewNetworkedGame } from './ChessGameReducer';
 
 import UUID from  'uuid/v1';
 
+import InvitedNetworkedGamePanel from './SidebarNetworkedGamePanel'
 
-export default class Sidebar extends React.Component{
+import { connect } from 'react-redux'
+
+import {
+  actionLoadInitState,
+  actionSaveLocalGame,
+  actionLoadLocalSavedGame,
+  actionEndGame,
+  actionNewLocalGame,
+  actionUndoRequest,
+} from './ChessGameReducer'
+import { actionUpdateModalInfo } from '../../AppReducer';
+
+
+class Sidebar extends React.Component{
 
 
   getMoveHistoryView = (data)=>{
@@ -48,17 +62,14 @@ export default class Sidebar extends React.Component{
     return historyShow;
   }
 
-  render(){
-    const {undoMove, saveGame, loadGame, endGame, newLocalGame, gameType, currentTurn, moveHistory} = this.props;
 
-    //TODO: a better 
-    
-    const moveHistoryView = this.getMoveHistoryView(moveHistory);
- 
+  renderSideBarByType = (gameType, moveHistoryView)=>{
+    const {undoMove, saveGame, endGame, currentTurn} = this.props;
 
-    if (gameType) {
-      return (
-        <div className="sidebar">
+    if(gameType === GAME_TYPE.INVITE_NETWOKRED){
+      return <InvitedNetworkedGamePanel/>
+    }else if(gameType === GAME_TYPE.LOCAL_GAME){
+        return <div className="sidebar">
           {gameType != GAME_TYPE.LOCAL_GAME && <div className="d-flex flex-row flex-fill">
             <div className="p-2">Opponent: </div>
             <div className="p-2">{PiecesSVG['p']}</div>
@@ -98,20 +109,69 @@ export default class Sidebar extends React.Component{
             <div className="p-2">{PiecesSVG['P']}</div>
           </div>
         </div>
-      );
-    } else {
-      return (
-        <div className="sidebar">
+    }
+  
+  }
+
+  render(){
+    const {loadGame, newLocalGame, gameType, moveHistory, newNetworkedGame} = this.props;
+
+    
+    const moveHistoryView = this.getMoveHistoryView(moveHistory);
+
+    return (
+      !gameType ? 
+        (<div className="sidebar">
           <div className="d-flex flex-row flex-fill align-items-end">
               <button className='btn btn-primary' onClick={newLocalGame}> New Local Game </button>
-              <button className='btn btn-primary' > New Network Game </button>
+              <button className='btn btn-primary' onClick={newNetworkedGame} > New Network Game </button>
           </div>
           <div className="d-flex flex-row flex-fill align-items-start">
               <button className='btn btn-primary' onClick={loadGame}> Load Local Game </button>
               {/* <button className='btn btn-primary' > Load Network Game </button> */}
           </div>
-        </div>
-      );
-    }
+        </div>)
+        : this.renderSideBarByType(gameType, moveHistoryView)
+    )
+
   }
 }
+
+
+
+
+const mapStateToProps = state =>{
+  return {
+    gameType: state.game.gameType,
+    gameStatus: state.game.gameStatus,
+    currentTurn: state.game.currentTurn,
+    moveHistory: state.game.moveHistory,
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    saveGame: () => dispatch(actionSaveLocalGame()),
+    loadGame: () => {
+      dispatch(actionNewLocalGame())
+      dispatch(actionLoadLocalSavedGame())
+    },
+    newLocalGame: () => dispatch(actionNewLocalGame()),
+    newNetworkedGame: ()=> dispatch(actionNewNetworkedGame()),
+    endGame: (winLose, reason='Checkmate', who='You') => {
+      dispatch(actionEndGame(winLose))
+      dispatch(actionUpdateModalInfo({
+        content: who + " " + (winLose?"win":'lose') +"!",
+        show: true,
+        title: reason,
+        action: ()=> dispatch(actionLoadInitState())
+      }))
+    },
+    undo: () => dispatch(actionUndoRequest())
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Sidebar)

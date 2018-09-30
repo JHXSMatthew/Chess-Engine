@@ -1,4 +1,5 @@
-import { call, put, takeEvery, select } from 'redux-saga/effects'
+import { take , call, put, takeEvery, select, cancelled } from 'redux-saga/effects'
+import { eventChannel, END } from 'redux-saga'
 
 import { 
   MOVE_REQUEST, 
@@ -17,10 +18,16 @@ import {
   GAME_TYPE,
   actionUndoSuccess,
   UNDO_REQUEST,
-  actionAddMoveHistory
+  actionAddMoveHistory,
+  NETWORKED_CREATE_LOBBY,
+  actionNetworkedCreateLobbyFail,
+  actionNetworkedCreateLobbySuccess,
+  actionNetworkedJoinGame,
+  actionNetworkedJoinGameFail,
+  actionNetworkedJoinGameSuccess,
 } from './ChessGameReducer'
 
-import Api from './ChessGameEAPI'
+import { MoveApi, NetworkedGameApi} from './ChessGameEAPI'
 
 import {
   seriliaseState,
@@ -35,13 +42,15 @@ export function* gameSaga(){
   yield takeEvery(LOAD_LOCAL_SAVED_GAME, LoadLocalSavedGame)
   yield takeEvery(SAVE_LOCAL_GAME, SaveLocalGame)
   yield takeEvery(UNDO_REQUEST, UndoRequest)
+
+  yield takeEvery(NETWORKED_CREATE_LOBBY, NetworkedCreateLobby)
 }
 
 
 function* MoveRequest(action){
   try{
     const currentBoardState = yield select((state) => seriliaseState(state.game))
-    const response = yield call(Api.postMove, currentBoardState ,action.from, action.to)
+    const response = yield call(MoveApi.postMove, currentBoardState ,action.from, action.to)
     const stateObj = response.data;
 
     if(stateObj.state === currentBoardState){
@@ -99,7 +108,7 @@ function* SaveLocalGame(action){
 function* AvailableMoveRequest(action){
   try{
     const currentBoardState = yield select((state) => seriliaseState(state.game))
-    const availableMoves = yield call(Api.postAvaliableMove, currentBoardState, action.from)
+    const availableMoves = yield call(MoveApi.postAvaliableMove, currentBoardState, action.from)
     yield put(actionHighlightAvailable(availableMoves.data.available))
 
   }catch(e){
@@ -119,4 +128,59 @@ function* UndoRequest(action){
   }catch(e){
     yield put(actionUndoFail())
   }
+}
+
+function* NetworkedJoinLobby(action){
+  try{
+    const gameJoined = yield call(NetworkedGameApi.PutGame, action.gameId)
+  }catch(e){
+
+  }
+}
+
+//networked game saga
+function* NetworkedCreateLobby(action) {
+  try{
+    const gameCreated = yield call(NetworkedGameApi.postGame);
+    yield put(actionNetworkedCreateLobbySuccess(gameCreated.data))
+
+    const channel = yield call(networkedTimer, gameCreated.data.gameId)
+    //block on channel asyc
+    while(true){
+      try{
+        let state = yield take(channel) 
+        console.log(state);
+      }catch(e){
+
+      }finally{
+        if (yield cancelled()) {
+          channel.close()
+          console.log('TODO:')
+        } 
+      }
+    }
+  }catch(e){
+    console.log("Create lobby fail")
+    yield put(actionNetworkedCreateLobbyFail())
+  }
+}
+
+//saga data channel for the state update timer
+function networkedTimer(gameId){
+  return eventChannel(emitter => {
+      const iv = setInterval(() => {
+        try{
+          NetworkedGameApi.getGame(gameId).then((r)=>{
+            emitter(r.data)
+          });
+          
+        }catch(e){
+          emitter(END)
+        }
+      }, 3000);
+
+      return () => {
+        clearInterval(iv)
+      }
+  })
 }

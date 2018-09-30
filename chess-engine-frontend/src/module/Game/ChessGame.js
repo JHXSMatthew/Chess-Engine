@@ -76,15 +76,7 @@ class Game extends React.Component{
                 />
               </div>
               <div className="game-right">
-                <Sidebar  gameType={gameType}
-                          loadGame={loadGame}
-                          saveGame={saveGame}
-                          endGame={endGame}
-                          newLocalGame={newLocalGame}
-                          currentTurn={currentTurn}
-                          undoMove={undo}
-                          moveHistory={moveHistory}
-                />
+                <Sidebar />
               </div>
         </div>
 

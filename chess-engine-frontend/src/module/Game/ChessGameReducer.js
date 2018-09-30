@@ -6,13 +6,25 @@ const LOCAL_SAVED_GAME_LASTMOVE = "savedLocalLastMove"
 
 
 export const GAME_TYPE = {
-  LOCAL_GAME: 'LocalGame'
+  LOCAL_GAME: 'LocalGame',
+  INVITE_NETWOKRED: 'InviteNetworked'
 }
 
 export const GAME_STATUS = {
   INIT: 'init',
   INGAME: 'ingame',
   END: 'end'
+}
+
+
+const lobbyInitState = {
+  //undefined, show two buttons, create or join
+  //true, show create view, read-only code
+  //false, show the join lobby view
+  creating: undefined,
+  gameIdCopied: false,
+  gmaeId: undefined,
+  playerType: undefined
 }
 
 //reducer
@@ -37,8 +49,14 @@ const initState = {
   // storep revious state, for the undo
   history: [],
   //the real move history
-  moveHistory: []
+  moveHistory: [],
+
+  //networked game
+  //game lobby (before game start)
+  lobby: lobbyInitState,
+  myColor: 'w'
 }
+
 
 export const gameReducer  = (state = initState, action)=>{
   switch(action.type){
@@ -99,15 +117,14 @@ export const gameReducer  = (state = initState, action)=>{
         gameStatus: GAME_STATUS.END
       })
     case NEW_LOCAL_GAME:
+    case NEW_NETWORKED_GAME:
       return Object.assign({}, state, {
         boardStr: INIT_BOARD_STATE_STR,
         boardRep: boardStrToRepArray(INIT_BOARD_STATE_STR),
         boardHightLight: [],
         lastMovePair: [],
-        select: [],
-        gameType: GAME_TYPE.LOCAL_GAME,
-        gameStatus: GAME_STATUS.INGAME
-      })
+        select: [],      
+      }, newGameReducer(state, action))
     case ADD_MOVE_HISTORY:
       return Object.assign({}, state, {
         history: [...state.history, Object.assign({}, state, {history: []})],
@@ -122,12 +139,138 @@ export const gameReducer  = (state = initState, action)=>{
       }else{
        return state;
       }
-      
+    //networked game reducer composition
+    case NETWORKED_CREATE_LOBBY_SUCCESS:
+    case NETWORKED_LOBBY_WANT_TO_JOIN:
+    case NETWORKED_UPDATE_GAME_ID:
+    case NETWOKRED_SET_GAMEID_COPIED:
+    case NETWORKED_JOIN_GAME_SUCCESS:
+    case NETWORKED_JOIN_GAME_FAIL:
+      return Object.assign({}, state, {
+        lobby: invitedNetowkredLobbyReducer(state.lobby,action)
+      })
     default:
       return state;
   }
 }
  
+const invitedNetowkredLobbyReducer = (state, action) =>{
+  switch(action.type){
+    case NETWORKED_CREATE_LOBBY_SUCCESS:
+      return Object.assign({}, state, {
+        ...action.data,
+        creating: true
+      })   
+    case NETWORKED_LOBBY_WANT_TO_JOIN:
+      return Object.assign({}, state, {
+        creating: false
+      })
+    case NETWORKED_UPDATE_GAME_ID:
+      return Object.assign({}, state, {
+        gameId: action.gameId
+      })
+    case NETWOKRED_SET_GAMEID_COPIED:
+      return Object.assign({}, state,{
+        gameIdCopied: action.copied
+      })
+    case NETWORKED_JOIN_GAME_SUCCESS:
+      return Object.assign({}, state, {
+        ...action.data
+      })
+    default:
+      return state
+  }
+}
+
+const newGameReducer = (state, action) => {
+  switch(action.type){
+    case NEW_NETWORKED_GAME:
+      return {
+        gameType: GAME_TYPE.INVITE_NETWOKRED,
+      };
+    case NEW_LOCAL_GAME:
+      return {
+        gameType: GAME_TYPE.LOCAL_GAME,
+        gameStatus: GAME_STATUS.INGAME,
+        lobby: Object.assign({}, state.lobby, {
+          gameIdCopied: false
+        })
+      };
+    default:
+      return state;
+  }
+}
+
+export const NETWORKED_JOIN_GAME = "NETWORKED_JOIN_GAME"
+export const actionNetworkedJoinGame = ()=>{
+  return {
+    type: NETWORKED_JOIN_GAME
+  }
+}
+
+export const NETWORKED_JOIN_GAME_SUCCESS = "NETWORKED_JOIN_GAME_SUCCESS"
+export const actionNetworkedJoinGameSuccess = (data)=>{
+  return {
+    type: NETWORKED_JOIN_GAME_SUCCESS,
+    data
+  }
+}
+
+export const NETWORKED_JOIN_GAME_FAIL = "NETWORKED_JOIN_GAME_FAIL"
+export const actionNetworkedJoinGameFail = (msg)=>{
+  return {
+    type: NETWORKED_JOIN_GAME_FAIL,
+    msg
+  }
+}
+
+export const NETWORKED_UPDATE_GAME_ID = "NETWORKED_UPDATE_GAME_ID"
+export const actionNetworkedUpdateGameId = (gameId) =>{
+  return {
+    type: NETWORKED_UPDATE_GAME_ID,
+    gameId
+  }
+}
+
+export const NETWOKRED_SET_GAMEID_COPIED = "NETWOKRED_SET_GAMEID_COPIED"
+export const actionNetworkedSetGameIdCopied = (copied) =>{
+  return {
+    type: NETWOKRED_SET_GAMEID_COPIED,
+    copied
+  }
+}
+
+
+
+export const NETWORKED_CREATE_LOBBY = "NETWORKED_CREATE_LOBBY"
+export const actionNetworkedCreateLobby = () =>{
+  return {
+    type: NETWORKED_CREATE_LOBBY
+  }
+}
+
+export const NETWORKED_CREATE_LOBBY_SUCCESS = "NETWORKED_CREATE_LOBBY_SUCCESS"
+export const actionNetworkedCreateLobbySuccess = (data) =>{
+  return {
+    type: NETWORKED_CREATE_LOBBY_SUCCESS,
+    data
+  }
+}
+
+export const NETWORKED_CREATE_LOBBY_FAIL = "NETWORKED_CREATE_LOBBY_FAIL"
+export const actionNetworkedCreateLobbyFail = () =>{
+  return {
+    type: NETWORKED_CREATE_LOBBY_FAIL
+  }
+}
+
+
+const NETWORKED_LOBBY_WANT_TO_JOIN= "NETWORKED_LOBBY_WANT_TO_JOIN"
+export const actionNetworkedWantToJoin = ()=>{
+  return {
+    type: NETWORKED_LOBBY_WANT_TO_JOIN
+  }
+}
 
 const CLEAR_SELECT = "CLEAR_SELECT";
 export const actionClearSelect = ()=>{
@@ -300,3 +443,12 @@ export const actionNewLocalGame = () =>{
     type: NEW_LOCAL_GAME
   }
 }
+
+
+const NEW_NETWORKED_GAME = "NEW_NETWORKED_GAME"
+export const actionNewNetworkedGame = () =>{
+  return {
+    type: NEW_NETWORKED_GAME
+  }
+}
+
