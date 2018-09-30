@@ -102,7 +102,7 @@ public class Board {
         activeColour = Piece.oppositeColour(activeColour);
     }
 
-    //might be handy?? currently not sure how to implement
+    //everything verified ahead of this call. currently only used for isCheckMate
     public void undoMove(Move m) {
         int originSquare = m.getOriginSquare();
         int targetSquare = m.getTargetSquare();
@@ -121,6 +121,38 @@ public class Board {
         draw conditions
      */
 
+    //will need to implement check statemate
+    public State psuedoLegalMakeMove(String stateString, Move m) {
+        //is the move valid
+        State boardRep = new State();
+        boardRep.setBoardRep(stateString);
+
+        if (validateMove(m)) {
+            //lets apply the move
+            applyMove(m);
+
+            //no move is allowed to leave us in check
+            if (isChecked(Piece.oppositeColour(activeColour))) {
+                undoMove(m);
+                return boardRep;
+            }
+
+            //does the move check the other player
+            if (isChecked(activeColour)) {
+                //does the move checkmate the other player?
+                boardRep.setCheck(true);
+                MoveGenerator mg = new MoveGenerator();
+                mg.generateMoves(this);
+                if (isCheckMate(mg, activeColour)) {
+                    boardRep.setCheckMate(true);
+                }
+            }
+
+            boardRep.setBoardRep(serializeBoard());
+        }
+        return boardRep;
+    }
+
     public boolean validateMove (Move m) {
         int originSquare = m.getOriginSquare();
         int targetSquare = m.getTargetSquare();
@@ -131,7 +163,10 @@ public class Board {
         }
 
         int originPiece = m.getOriginPiece();
-        if (originPiece == Piece.NO_PIECE || Piece.getColour(originPiece) != activeColour) {
+        if (!Piece.isValid(originPiece)) {
+            return success;
+        }
+        if (Piece.getColour(originPiece) != activeColour) {
             return success;
         }
 

@@ -103,7 +103,7 @@ export default class Sidebar extends React.Component{
               <button className='btn btn-primary' > New Network Game </button>
           </div>
           <div className="d-flex flex-row flex-fill align-items-start">
-              <button className='btn btn-primary' > Load Local Game </button>
+              <button className='btn btn-primary' onClick={loadGame}> Load Local Game </button>
               <button className='btn btn-primary' > Load Network Game </button>
           </div>
         </div>

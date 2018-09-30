@@ -6,6 +6,7 @@ import app.model.StateContainer;
 import app.model.move.AvailableMoveRequestModel;
 import app.model.move.AvailableMoveResponseModel;
 import app.model.move.MoveRequestModel;
+import engine.State;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,10 +20,9 @@ public class MoveController {
 
     @RequestMapping(value = "/api/move", method = RequestMethod.POST)
     public StateContainer handleMove(@RequestBody MoveRequestModel info) {
-        String returnValue = engine.move(info.getState(), info.getFrom(), info.getTo());
-        StateContainer container = new StateContainer();
-        container.setState(returnValue);
-        return container;
+        State returnValue = engine.move(info.getState(), info.getFrom(), info.getTo());
+
+        return StateContainer.build(returnValue);
     }
 
     @RequestMapping(value = "/api/move/available", method = RequestMethod.POST)

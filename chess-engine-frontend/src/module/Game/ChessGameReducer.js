@@ -132,10 +132,12 @@ export const actionSelectCell = (index)=>{
 }
 
 const UPDATE_GAME_STATE_SUCCESS = "UPDATE_GAME_STATE_SUCCESS"
-export const actionUpdateGameStateSuccess = (state) =>{
+export const actionUpdateGameStateSuccess = ({state, isChecked, isCheckmate}) =>{
   return {
     type: UPDATE_GAME_STATE_SUCCESS,
-    state
+    state,
+    isChecked,
+    isCheckmate
   }
 }
 const UPDATE_GAME_STATE_FAIL = "UPDATE_GAME_STATE_FAIL"

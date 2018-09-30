@@ -34,6 +34,12 @@ public class Move {
         }
     }
 
+    public void setTargetPiece (Board b) {
+        if (Square.isValid(targetSquare)) {
+            targetPiece = b.board[targetSquare];
+        }
+    }
+
     public int getType() {
         return type;
     }

@@ -23,5 +23,5 @@ public interface ChessEngineI {
      * @param to after loc
      * @return the state after move
      */
-    String move(String state, int from, int to);
+    State move(String state, int from, int to);
 }

@@ -42,14 +42,15 @@ function* MoveRequest(action){
   try{
     const currentBoardState = yield select((state) => seriliaseState(state.game))
     const response = yield call(Api.postMove, currentBoardState ,action.from, action.to)
-    const newState = response.data.state;
+    const stateObj = response.data;
 
-    if(newState === currentBoardState){
+    if(stateObj.state === currentBoardState){
       yield put(actionUpdateGameStateFail("Illegal move."))
     }else{
       yield put(actionAddMoveHistory({from: action.from , to: action.to}))
-      yield put(actionUpdateGameStateSuccess(deserializeState(newState)))
+      yield put(actionUpdateGameStateSuccess({...response.data, state: deserializeState(stateObj.state)}))
       yield put(actionHighlightLastMove([action.from, action.to]))
+    
     }
   }catch(e){
     yield put(actionMoveFail(e.message))
@@ -58,11 +59,13 @@ function* MoveRequest(action){
 
 function* LoadLocalSavedGame(action){
   try{
-    let game = localStorage.getItem(action.index);
-    let lastMoveStr = localStorage.getItem(action.lastMove);
-    let lastMove = JSON.parse("[" + lastMoveStr + "]");
+    const game = localStorage.getItem(action.index);
+    const lastMoveStr = localStorage.getItem(action.lastMove);
+    const lastMove = JSON.parse("[" + lastMoveStr + "]");
+    const StateObj  = JSON.parse(game);
+
     if(game){
-      yield put(actionUpdateGameStateSuccess(deserializeState(game)))
+      yield put(actionUpdateGameStateSuccess({... StateObj, state: deserializeState(StateObj.state) }))
       yield put(actionHighlightLastMove(lastMove))
     }else{
       yield put(actionLoadSavedGameFail("no saved game!"))
