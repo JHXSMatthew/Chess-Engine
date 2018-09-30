@@ -4,7 +4,9 @@ import { connect } from 'react-redux'
 
 import Board from '../../component/Board'
 
-import Style from "./Game.less"
+import Sidebar from './Sidebar'
+
+import Style from "./ChessGame.less"
 
 import {
   actionLoadInitState,
@@ -14,8 +16,10 @@ import {
   actionAvailableMove,
   actionSaveLocalGame,
   actionLoadLocalSavedGame,
-  actionUpdateGameStateSuccess,
-  actionEndGame
+  actionUpdateStateSuccess,
+  actionEndGame,
+  actionNewLocalGame,
+  actionUndoRequest
 } from './ChessGameReducer'
 
 
@@ -39,9 +43,9 @@ class Game extends React.Component{
 
 
   render(){
-    const { boardRep,onCellClick,availableMove, select, highlight, lastMove } = this.props
-
-    const {currentTurn, gameType} = this.props
+    const { boardRep,onCellClick,availableMove, select, highlight, 
+      lastMove, saveGame, loadGame, endGame, newLocalGame, gameType,
+      currentTurn, undo, moveHistory } = this.props
 
     return (
       <div className='game'>
@@ -52,28 +56,20 @@ class Game extends React.Component{
           highlight={highlight}
           onCellClick={onCellClick}
           availableMove={availableMove}
-          lastMove={lastMove} />
+          lastMove={lastMove} 
+          gameType={gameType}
+          />
         </div>
         <div className="game-right">
-          <div>
-            <div className='block'>
-              <h1>{gameType}</h1>
-              <h4>{currentTurn} Move</h4>
-            </div>
-
-            <div>
-
-
-            </div>
-            <div> 
-              <button className='btn btn-primary' onClick={this.props.saveGame}> Save </button>
-              <button className='btn btn-secondary ml-2' onClick={this.props.loadGame}> Load </button>
-              
-              <button className='btn btn-secondary ml-2' data-toggle='modal' data-target='#endGameScreen' 
-                      onClick={this.props.endGame}> Resign </button>
-            </div>
-           
-          </div>
+          <Sidebar  gameType={gameType}
+                    loadGame={loadGame}
+                    saveGame={saveGame}
+                    endGame={endGame}
+                    newLocalGame={newLocalGame}
+                    currentTurn={currentTurn}
+                    undoMove={undo}
+                    moveHistory={moveHistory}
+          />
         </div>
 
         <div className="modal fade" id="endGameScreen" tabIndex="-1" role="dialog" aria-labelledby="endGameScreenTitle" 
@@ -105,8 +101,9 @@ const mapStateToProps = state =>{
     select: state.game.select,
     highlight: state.game.boardHightLight,
     lastMove: state.game.lastMovePair,
-    gameType: state.game.type,
-    currentTurn: state.game.currentTurn == 'w' ? 'White' : 'Black'
+    gameType: state.game.gameType,
+    currentTurn: state.game.currentTurn,
+    moveHistory: state.game.moveHistory
   }
 }
 
@@ -122,7 +119,9 @@ const mapDispatchToProps = dispatch => {
     clearSelect: ()=> dispatch(actionClearSelect()),
     saveGame: () => dispatch(actionSaveLocalGame()),
     loadGame: () => dispatch(actionLoadLocalSavedGame()),
-    endGame: (winLose) => dispatch(actionEndGame(winLose))
+    newLocalGame: () => dispatch(actionNewLocalGame()),
+    endGame: (winLose) => dispatch(actionEndGame(winLose)),
+    undo: () => dispatch(actionUndoRequest())
   }
 }
 

@@ -1,6 +1,6 @@
-package model;
+package app.model.move;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.lang.*;
 
 public class MoveRequestModel {
     @JsonProperty("state")
@@ -10,22 +10,24 @@ public class MoveRequestModel {
     @JsonProperty("to")
     private int to;
 
-    public MoveRequestModel(String state, int start, int end){
+    public MoveRequestModel(String state, int start, int end) {
         this.state = state;
         this.from = start;
         this.to = end;
     }
 
-    public MoveRequestModel(){ }
-    public String getState(){
+    public MoveRequestModel() {
+    }
+
+    public String getState() {
         return state;
     }
 
-    public int getFrom(){
+    public int getFrom() {
         return from;
     }
 
-    public int getTo(){
+    public int getTo() {
         return to;
     }
 

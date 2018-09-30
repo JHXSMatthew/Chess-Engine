@@ -1,7 +1,6 @@
-package model;
-import com.fasterxml.jackson.annotation.JsonProperty;
+package app.model.move;
 
-import java.util.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AvailableMoveResponseModel {
     // Start position
@@ -10,11 +9,12 @@ public class AvailableMoveResponseModel {
     @JsonProperty("AvailableMoveRequestModel")
     private int[] all_pos;
 
-    public AvailableMoveResponseModel(int startPos, int[] pos){
+    public AvailableMoveResponseModel(int startPos, int[] pos) {
         this.fromPost = startPos;
         this.all_pos = pos;
     }
 
-    public AvailableMoveResponseModel(){}
+    public AvailableMoveResponseModel() {
+    }
 
 }
