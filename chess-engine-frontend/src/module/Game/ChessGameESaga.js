@@ -25,6 +25,7 @@ import {
   actionNetworkedJoinGame,
   actionNetworkedJoinGameFail,
   actionNetworkedJoinGameSuccess,
+  NETWORKED_JOIN_GAME,
 } from './ChessGameReducer'
 
 import { MoveApi, NetworkedGameApi} from './ChessGameEAPI'
@@ -44,6 +45,7 @@ export function* gameSaga(){
   yield takeEvery(UNDO_REQUEST, UndoRequest)
 
   yield takeEvery(NETWORKED_CREATE_LOBBY, NetworkedCreateLobby)
+  yield takeEvery(NETWORKED_JOIN_GAME, NetworkedJoinLobby)
 }
 
 
@@ -130,38 +132,54 @@ function* UndoRequest(action){
   }
 }
 
-function* NetworkedJoinLobby(action){
-  try{
-    const gameJoined = yield call(NetworkedGameApi.PutGame, action.gameId)
-  }catch(e){
 
+
+//networked game saga
+function* networkedTimerLoop(gameId){
+  const channel = yield call(networkedTimer, gameId)
+  while(true){
+    try{
+      let obj = yield take(channel) 
+      // const {status, state} = obj
+      // const {isChecked, }
+      // if(){
+
+      // }
+      console.log(obj)
+      //TODO: logics here
+    }catch(e){
+
+    }finally{
+      if (yield cancelled()) {
+        channel.close()
+        console.log('TODO:')
+      } 
+    }
   }
 }
 
-//networked game saga
 function* NetworkedCreateLobby(action) {
   try{
     const gameCreated = yield call(NetworkedGameApi.postGame);
     yield put(actionNetworkedCreateLobbySuccess(gameCreated.data))
-
-    const channel = yield call(networkedTimer, gameCreated.data.gameId)
-    //block on channel asyc
-    while(true){
-      try{
-        let state = yield take(channel) 
-        console.log(state);
-      }catch(e){
-
-      }finally{
-        if (yield cancelled()) {
-          channel.close()
-          console.log('TODO:')
-        } 
-      }
-    }
+    yield networkedTimerLoop(gameCreated.data.gameId)
   }catch(e){
     console.log("Create lobby fail")
     yield put(actionNetworkedCreateLobbyFail())
+  }
+}
+
+
+function* NetworkedJoinLobby(action){
+  try{
+    const gameJoined = yield call(NetworkedGameApi.PutGame, action.gameId)
+
+    yield networkedTimerLoop(gameJoined.data.gameId)
+
+    console.log(gameJoined)
+  }catch(e){
+    console.log("join lobby fail!")
+    yield put(actionNetworkedJoinGameFail())
   }
 }
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { actionNetworkedCreateLobby, actionNetworkedWantToJoin, actionNetworkedUpdateGameId, actionNetworkedSetGameIdCopied} from './ChessGameReducer';
+import { actionNetworkedCreateLobby, actionNetworkedWantToJoin, actionNetworkedUpdateGameId, actionNetworkedSetGameIdCopied, actionNetworkedJoinGame} from './ChessGameReducer';
 
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
@@ -9,7 +9,7 @@ import {CopyToClipboard} from 'react-copy-to-clipboard';
 class InvitedNetworkedGamePanel extends React.Component{
 
   render(){
-    const {creating, updateGameId, gameIdCopied} = this.props;
+    const {creating, updateGameId, gameIdCopied, join, gameId} = this.props;
 
     const displayFirstMenu = creating == undefined;
 
@@ -33,14 +33,14 @@ class InvitedNetworkedGamePanel extends React.Component{
                 </div>
                 {creating ?
                   <div>
-                    <textarea type="text" className="form-control" value={this.props.gameId} readOnly aria-describedby="append"/>
+                    <textarea type="text" className="form-control" value={gameId} readOnly aria-describedby="append"/>
                   </div>
                 :
-                  <textarea type="text" className="form-control" value={this.props.gameId} onChange={(event)=> { updateGameId(event.target.value) }} />
+                  <textarea type="text" className="form-control" value={gameId} onChange={(event)=> { updateGameId(event.target.value) }} />
                 }
                 {creating && 
                   <div id="append" className="input-group-append">
-                    <CopyToClipboard text={this.props.gameId} onCopy={()=> this.props.setCopied()}>
+                    <CopyToClipboard text={gameId} onCopy={()=> this.props.setCopied()}>
                       <button disabled={gameIdCopied} className="btn btn-outline-secondary" type="button" id="button-addon2" onClick={()=>{}}>{gameIdCopied?"√":"Copy"}</button>
                     </CopyToClipboard>
                   </div>}
@@ -55,7 +55,7 @@ class InvitedNetworkedGamePanel extends React.Component{
                 </div>)
               :(
                 <div>
-                <button className='btn btn-success'> Join  </button>
+                <button className='btn btn-success' onClick={()=> { join(gameId) }}> Join  </button>
                 <div className="d-flex flex-row flex-fill">
                   Enter code to join the game! 
                 </div>
@@ -84,7 +84,8 @@ const mapDispatchToProps = dispatch => {
    createLobby: ()=> dispatch(actionNetworkedCreateLobby()),
    wantToJoin: ()=> dispatch(actionNetworkedWantToJoin()),
    updateGameId: (gameId) => dispatch(actionNetworkedUpdateGameId(gameId)),
-   setCopied: () => dispatch(actionNetworkedSetGameIdCopied(true))
+   setCopied: () => dispatch(actionNetworkedSetGameIdCopied(true)),
+   join: (id)=>dispatch(actionNetworkedJoinGame(id))
   }
 }
 

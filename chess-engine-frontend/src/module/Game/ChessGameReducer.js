@@ -202,9 +202,10 @@ const newGameReducer = (state, action) => {
 }
 
 export const NETWORKED_JOIN_GAME = "NETWORKED_JOIN_GAME"
-export const actionNetworkedJoinGame = ()=>{
+export const actionNetworkedJoinGame = (gameId)=>{
   return {
-    type: NETWORKED_JOIN_GAME
+    type: NETWORKED_JOIN_GAME,
+    gameId
   }
 }
 
