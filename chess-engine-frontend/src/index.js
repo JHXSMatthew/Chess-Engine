@@ -15,6 +15,7 @@ import createSaga from 'redux-saga'
 
 //reducers
 import {gameReducer} from './module/Game/ChessGameReducer'
+import { appReducer } from './AppReducer'
 //sagas
 import { gameSaga} from './module/Game/ChessGameESaga'
 
@@ -28,12 +29,16 @@ import { BrowserRouter } from 'react-router-dom';
 //configs
 import { DEBUG } from './config'
 
+//css
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 const saga = createSaga(); 
 
 
 const store = createStore(
   combineReducers({
-    game: gameReducer
+    game: gameReducer,
+    app: appReducer
   }),
   applyMiddleware(logger, saga)
 );

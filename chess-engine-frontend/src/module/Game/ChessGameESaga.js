@@ -62,10 +62,11 @@ function* LoadLocalSavedGame(action){
     const game = localStorage.getItem(action.index);
     const lastMoveStr = localStorage.getItem(action.lastMove);
     const lastMove = JSON.parse("[" + lastMoveStr + "]");
-    const StateObj  = JSON.parse(game);
+    const stateObj  = JSON.parse(game);
+    console.log(stateObj)
 
     if(game){
-      yield put(actionUpdateGameStateSuccess({... StateObj, state: deserializeState(StateObj.state) }))
+      yield put(actionUpdateGameStateSuccess({... stateObj, state: deserializeState(stateObj.state) }))
       yield put(actionHighlightLastMove(lastMove))
     }else{
       yield put(actionLoadSavedGameFail("no saved game!"))
@@ -77,11 +78,19 @@ function* LoadLocalSavedGame(action){
 
 function* SaveLocalGame(action){
   try{
-    const currentBoardState = yield select((state) => state.game.boardStr )
+    const currentBoardState = yield select((state) => {
+      const stateObj = state.game;
+      return JSON.stringify({
+        state: seriliaseState(stateObj),
+        isChecked: stateObj.isChecked,
+        isCheckmate: stateObj.isCheckmate
+      })
+    })
+    console.log(currentBoardState)
     const lastMovePair = yield select((state) => state.game.lastMovePair)
     localStorage.setItem(action.index, currentBoardState);
     localStorage.setItem(action.lastMove, lastMovePair);
-    yield put(actionSaveGameSuccess());
+    yield put(actionSaveGameSuccess(currentBoardState));
   }catch(e){
     yield put(actionSaveGameFail(e.message));
   }

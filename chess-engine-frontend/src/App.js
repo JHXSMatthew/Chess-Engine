@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
 
 import Game from './module/Game/ChessGame'
+import ModalWrapper from './component/ModalWrapper';
 
 import './App.less'
 
 import { Switch, Route, Link } from 'react-router-dom'; 
+
+import {connect} from 'react-redux';
+import { actionToggleModal } from './AppReducer';
+
+
+
+
 class Header extends Component{
   render(){
     return (
@@ -27,7 +35,6 @@ class Header extends Component{
           </li>
         </ul>
         <form className="form-inline my-2 my-lg-0">
-          
         </form>
       </div>
     </nav>
@@ -37,18 +44,43 @@ class Header extends Component{
 
 class App extends Component {
   render() {
+    console.log(this.props);
     return (
       <div>
         <Header/>
+        <ModalWrapper
+          {...this.props.modal}
+          hideSelf={this.props.hideModal}
+        />
+
         <div className="container content-margin">
           <Switch>
             <Route exact path="/" component={Game}/>
           </Switch>
         </div>
-       
       </div>
+
+
     );
   }
 }
 
-export default App;
+
+
+const mapStateToProps = state =>{
+  return {
+    modal: state.app.modal
+    
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    hideModal: ()=> dispatch(actionToggleModal(false))
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App)

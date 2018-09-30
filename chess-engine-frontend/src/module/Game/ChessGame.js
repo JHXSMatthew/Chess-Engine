@@ -16,11 +16,15 @@ import {
   actionAvailableMove,
   actionSaveLocalGame,
   actionLoadLocalSavedGame,
-  actionUpdateStateSuccess,
   actionEndGame,
   actionNewLocalGame,
-  actionUndoRequest
+  actionUndoRequest,
+  actionUpdateGameStateSuccess,
+  GAME_STATUS
 } from './ChessGameReducer'
+import { actionUpdateModalInfo } from '../../AppReducer';
+import { SHOW_DEBUG_BUTTONS } from '../../config';
+import { deserializeState } from './Utils';
 
 
 class Game extends React.Component{
@@ -35,10 +39,20 @@ class Game extends React.Component{
     }
   }
 
+  currentTurnToDisplayName = ()=>{
+    const {currentTurn} = this.props;
+    return currentTurn === 'w' ? 'white' : 'black'
+
+  }
+
   componentDidUpdate(){
-    const {boardRep, select} = this.props;
-      
+    const {boardRep, select, isCheckmate, gameStatus} = this.props;
+
     this.checkMove(boardRep, select);
+
+    if(isCheckmate && gameStatus === GAME_STATUS.INGAME){
+      this.props.endGame(false, 'checkmate', this.currentTurnToDisplayName())
+    }
   }
 
 
@@ -48,48 +62,41 @@ class Game extends React.Component{
       currentTurn, undo, moveHistory } = this.props
 
     return (
-      <div className='game'>
-        <div className='game-left'>
-          <Board 
-          rep={boardRep}
-          select={select}
-          highlight={highlight}
-          onCellClick={onCellClick}
-          availableMove={availableMove}
-          lastMove={lastMove} 
-          gameType={gameType}
-          />
-        </div>
-        <div className="game-right">
-          <Sidebar  gameType={gameType}
-                    loadGame={loadGame}
-                    saveGame={saveGame}
-                    endGame={endGame}
-                    newLocalGame={newLocalGame}
-                    currentTurn={currentTurn}
-                    undoMove={undo}
-                    moveHistory={moveHistory}
-          />
+      <div>
+        <div className='game'>
+              <div className='game-left'>
+                <Board 
+                rep={boardRep}
+                select={select}
+                highlight={highlight}
+                onCellClick={onCellClick}
+                availableMove={availableMove}
+                lastMove={lastMove} 
+                gameType={gameType}
+                />
+              </div>
+              <div className="game-right">
+                <Sidebar  gameType={gameType}
+                          loadGame={loadGame}
+                          saveGame={saveGame}
+                          endGame={endGame}
+                          newLocalGame={newLocalGame}
+                          currentTurn={currentTurn}
+                          undoMove={undo}
+                          moveHistory={moveHistory}
+                />
+              </div>
         </div>
 
-        <div className="modal fade" id="endGameScreen" tabIndex="-1" role="dialog" aria-labelledby="endGameScreenTitle" 
-             aria-hidden="true" data-backdrop="static" data-keyboard="false">
-          <div className="modal-dialog modal-dialog-centered" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLongTitle">Checkmate</h5>
-              </div>
-              <div className="modal-body">
-                You lose.
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-primary" data-dismiss="modal" 
-                        onClick={this.props.loadInitState}>New Game</button>
-              </div>
-            </div>
-          </div>
-        </div>
+            
+        {SHOW_DEBUG_BUTTONS &&
+          <div>
+            <div>Debug section, turn it off in config.js</div>
+            <button className='btn btn-primary' onClick={()=> {this.props.loadGameState("4k2R/8/R2N2Q1/3P4/8/8/1PPPPPPP/1NB1KB2 w - - 0 1")}}>load check</button>
+          </div>}
       </div>
+
+    
     )
   }
 }
@@ -102,14 +109,23 @@ const mapStateToProps = state =>{
     highlight: state.game.boardHightLight,
     lastMove: state.game.lastMovePair,
     gameType: state.game.gameType,
+    gameStatus: state.game.gameStatus,
     currentTurn: state.game.currentTurn,
-    moveHistory: state.game.moveHistory
+    moveHistory: state.game.moveHistory,
+    isCheckmate: state.game.isCheckmate,
+    isCheck: state.game.isCheck
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     loadInitState: () => dispatch(actionLoadInitState()),
+    loadGameState: (stateStr) => { console.log(stateStr) 
+      dispatch(actionUpdateGameStateSuccess({
+          state: deserializeState(stateStr),
+          isChecked: true,
+          isCheckmate: false
+         }))},
     move: (from, to)=> { 
       dispatch(actionClearSelect());
       dispatch(actionMove(from, to));
@@ -118,9 +134,20 @@ const mapDispatchToProps = dispatch => {
     availableMove: (from) => dispatch(actionAvailableMove(from)),
     clearSelect: ()=> dispatch(actionClearSelect()),
     saveGame: () => dispatch(actionSaveLocalGame()),
-    loadGame: () => dispatch(actionLoadLocalSavedGame()),
+    loadGame: () => {
+      dispatch(actionNewLocalGame())
+      dispatch(actionLoadLocalSavedGame())
+    },
     newLocalGame: () => dispatch(actionNewLocalGame()),
-    endGame: (winLose) => dispatch(actionEndGame(winLose)),
+    endGame: (winLose, reason='Checkmate', who='You') => {
+      dispatch(actionEndGame(winLose))
+      dispatch(actionUpdateModalInfo({
+        content: who + " " + (winLose?"win":'lose') +"!",
+        show: true,
+        title: reason,
+        action: ()=> dispatch(actionLoadInitState())
+      }))
+    },
     undo: () => dispatch(actionUndoRequest())
   }
 }

@@ -9,6 +9,12 @@ export const GAME_TYPE = {
   LOCAL_GAME: 'LocalGame'
 }
 
+export const GAME_STATUS = {
+  INIT: 'init',
+  INGAME: 'ingame',
+  END: 'end'
+}
+
 //reducer
 const initState = {
   // UI states
@@ -17,6 +23,7 @@ const initState = {
   lastMovePair: [],
   select: [],
   gameType: "",
+  gameStatus: GAME_STATUS.INIT,
   //the game state obj
   boardStr: INIT_BOARD_STATE_STR,
   currentTurn: "w",
@@ -24,6 +31,8 @@ const initState = {
   enPassantTarget: "-",
   halfMove: "0",
   fullMove: "1",
+  isChecked: false,
+  isCheckmate: false,
 
   // storep revious state, for the undo
   history: [],
@@ -35,11 +44,15 @@ export const gameReducer  = (state = initState, action)=>{
   switch(action.type){
     case UPDATE_GAME_STATE_SUCCESS:
       const newGameState = action.state
+      const {isCheckmate, isChecked} = action
+
       return Object.assign({},
         state, //old state
         newGameState, // gamestate
         { //UI state 
           boardHightLight: [],
+          isCheckmate,
+          isChecked,
           boardRep: boardStrToRepArray(newGameState.boardStr),
       });
     case UPDATE_GAME_STATE_FAIL:
@@ -83,7 +96,7 @@ export const gameReducer  = (state = initState, action)=>{
       })
     case END_GAME:
       return Object.assign({}, state, {
-
+        gameStatus: GAME_STATUS.END
       })
     case NEW_LOCAL_GAME:
       return Object.assign({}, state, {
@@ -92,7 +105,8 @@ export const gameReducer  = (state = initState, action)=>{
         boardHightLight: [],
         lastMovePair: [],
         select: [],
-        gameType: GAME_TYPE.LOCAL_GAME
+        gameType: GAME_TYPE.LOCAL_GAME,
+        gameStatus: GAME_STATUS.INGAME
       })
     case ADD_MOVE_HISTORY:
       return Object.assign({}, state, {
