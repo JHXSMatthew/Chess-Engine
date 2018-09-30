@@ -21,6 +21,7 @@ import {
   actionNewLocalGame,
   actionUndoRequest
 } from './ChessGameReducer'
+import { actionUpdateModalInfo } from '../../AppReducer';
 
 
 class Game extends React.Component{
@@ -72,23 +73,6 @@ class Game extends React.Component{
           />
         </div>
 
-        <div className="modal fade" id="endGameScreen" tabIndex="-1" role="dialog" aria-labelledby="endGameScreenTitle" 
-             aria-hidden="true" data-backdrop="static" data-keyboard="false">
-          <div className="modal-dialog modal-dialog-centered" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLongTitle">Checkmate</h5>
-              </div>
-              <div className="modal-body">
-                You lose.
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-primary" data-dismiss="modal" 
-                        onClick={this.props.loadInitState}>New Game</button>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     )
   }
@@ -118,9 +102,20 @@ const mapDispatchToProps = dispatch => {
     availableMove: (from) => dispatch(actionAvailableMove(from)),
     clearSelect: ()=> dispatch(actionClearSelect()),
     saveGame: () => dispatch(actionSaveLocalGame()),
-    loadGame: () => dispatch(actionLoadLocalSavedGame()),
+    loadGame: () => {
+      dispatch(actionNewLocalGame())
+      dispatch(actionLoadLocalSavedGame())
+    },
     newLocalGame: () => dispatch(actionNewLocalGame()),
-    endGame: (winLose) => dispatch(actionEndGame(winLose)),
+    endGame: (winLose, reason='Checkmate') => {
+      dispatch(actionEndGame(winLose))
+      dispatch(actionUpdateModalInfo({
+        content: "You " + (winLose?"win":'lose') +"!",
+        show: true,
+        title: reason,
+        action: ()=> dispatch(actionLoadInitState())
+      }))
+    },
     undo: () => dispatch(actionUndoRequest())
   }
 }

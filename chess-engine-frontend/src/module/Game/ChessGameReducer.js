@@ -24,6 +24,8 @@ const initState = {
   enPassantTarget: "-",
   halfMove: "0",
   fullMove: "1",
+  isChecked: false,
+  isCheckmate: false,
 
   // storep revious state, for the undo
   history: [],
@@ -35,11 +37,15 @@ export const gameReducer  = (state = initState, action)=>{
   switch(action.type){
     case UPDATE_GAME_STATE_SUCCESS:
       const newGameState = action.state
+      const {isCheckmate, isChecked} = action
+
       return Object.assign({},
         state, //old state
         newGameState, // gamestate
         { //UI state 
           boardHightLight: [],
+          isCheckmate,
+          isChecked,
           boardRep: boardStrToRepArray(newGameState.boardStr),
       });
     case UPDATE_GAME_STATE_FAIL:
