@@ -5,6 +5,9 @@ import './Sidebar.less';
 
 import { GAME_TYPE } from './ChessGameReducer';
 
+import UUID from  'uuid/v1';
+
+
 export default class Sidebar extends React.Component{
 
 
@@ -17,7 +20,7 @@ export default class Sidebar extends React.Component{
 
     const f = (a,b)=>{
       return (
-        <div key={a.from + a.to} className='d-flex flex-row flex-fill'>
+        <div key={UUID()} className='d-flex flex-row flex-fill'>
           <div className='pl-3'>
             {a.from}:{a.to}
           </div>
