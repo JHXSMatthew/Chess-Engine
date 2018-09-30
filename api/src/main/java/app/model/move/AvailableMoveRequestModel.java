@@ -4,7 +4,7 @@ package app.model.move;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AvailableMoveRequestModel {
-    @JsonProperty("State")
+    @JsonProperty("state")
     private String State;
     @JsonProperty("from")
     private int from;

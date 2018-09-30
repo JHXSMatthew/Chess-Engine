@@ -6,15 +6,26 @@ public class AvailableMoveResponseModel {
     // Start position
     @JsonProperty("from")
     private int fromPost;
-    @JsonProperty("AvailableMoveRequestModel")
-    private int[] all_pos;
+    @JsonProperty("available")
+    private int[] hint;
 
-    public AvailableMoveResponseModel(int startPos, int[] pos) {
-        this.fromPost = startPos;
-        this.all_pos = pos;
-    }
 
     public AvailableMoveResponseModel() {
     }
 
+    public int getFromPost() {
+        return fromPost;
+    }
+
+    public void setFromPost(int fromPost) {
+        this.fromPost = fromPost;
+    }
+
+    public int[] getHint() {
+        return hint;
+    }
+
+    public void setHint(int[] hint) {
+        this.hint = hint;
+    }
 }

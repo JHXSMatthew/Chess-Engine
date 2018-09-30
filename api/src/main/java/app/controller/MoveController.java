@@ -28,6 +28,9 @@ public class MoveController {
     @RequestMapping(value = "/api/move/available", method = RequestMethod.POST)
     public AvailableMoveResponseModel handleAvailableMove(@RequestBody AvailableMoveRequestModel am) {
         int[] hint = engine.getMoveHint(am.getState(), am.getFrom());
-        return new AvailableMoveResponseModel(am.getFrom(), hint);
+        AvailableMoveResponseModel model = new AvailableMoveResponseModel();
+        model.setFromPost(am.getFrom());
+        model.setHint(hint);
+        return model;
     }
 }

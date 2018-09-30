@@ -13,7 +13,7 @@ export default class Board extends React.Component{
       if (selected.length > 0 && index === selected[0]){
         return "cell-bg-selected";
       }
-      if (highlight[index]) {
+      if (highlight.includes(index)) {
         return "cell-bg-highlight";
       }
       if (index === lastMove[0] || index === lastMove[1]){
