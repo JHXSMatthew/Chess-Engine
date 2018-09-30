@@ -8,6 +8,7 @@ import app.model.game.GameInfoResponse;
 import app.model.game.GameRoom;
 import app.model.game.JoinGameResponse;
 import app.model.move.MoveRequestModel;
+import engine.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import app.repository.*;
@@ -57,17 +58,13 @@ public class GameController {
     public StateContainer handlePatch(@PathVariable String id, @RequestBody MoveRequestModel request) {
         Optional<GameRoom> dbModel = grr.findById(id);
         if(dbModel.isPresent()){
-            StateContainer returnValue = new StateContainer();
-
-            String afterMove =  engine.move(dbModel.get().getState(),
+            State s =  engine.move(dbModel.get().getState(),
                     request.getFrom(), request.getTo());
 
-            returnValue.setState(afterMove);
-            //update db
-            dbModel.get().setState(returnValue.getState());
+            dbModel.get().setState(s.getBoardRep());
             grr.save(dbModel.get());
 
-            return returnValue;
+            return StateContainer.build(s);
         }else{
             throw new ResourceNotFoundException();
         }

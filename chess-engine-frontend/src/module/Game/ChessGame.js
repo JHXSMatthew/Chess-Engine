@@ -37,7 +37,7 @@ class Game extends React.Component{
 
   componentDidUpdate(){
     const {boardRep, select} = this.props;
-
+      
     this.checkMove(boardRep, select);
   }
 
