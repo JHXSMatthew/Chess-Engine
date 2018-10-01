@@ -3,7 +3,7 @@ import React from 'react'
 import { PiecesSVG } from '../../resource/PieceResource'
 import './Sidebar.less';
 
-import { GAME_TYPE, actionNewNetworkedGame, GAME_STATUS } from './ChessGameReducer';
+import { GAME_TYPE, actionNewNetworkedGame, GAME_STATUS, actionMove } from './ChessGameReducer';
 
 import UUID from  'uuid/v1';
 
@@ -18,6 +18,7 @@ import {
   actionEndGame,
   actionNewLocalGame,
   actionUndoRequest,
+  actionResignNetworkedGame,
 } from './ChessGameReducer'
 import { actionUpdateModalInfo } from '../../AppReducer';
 
@@ -62,6 +63,14 @@ class Sidebar extends React.Component{
     return historyShow;
   }
 
+  resign = (gameType)=>{
+    const {endLocalGame,resignNetworkedGame} = this.props
+    if(gameType === GAME_TYPE.LOCAL_GAME){
+      endLocalGame(false, "Resign")
+    }else{
+      resignNetworkedGame();
+    }
+  }
 
   renderSideBarByType = (gameType, moveHistoryView)=>{
     const {undoMove, saveGame, endGame, currentTurn, opponentColor, gameStatus} = this.props;
@@ -92,7 +101,7 @@ class Sidebar extends React.Component{
           <div className="d-flex flex-row flex-fill">
             <div className="p-2">
               <button className='btn btn-secondary ml-2'
-                  onClick={()=> endGame(false, "Resign")}> Resign </button>
+                  onClick={()=> this.resign(gameType)}> Resign </button>
             </div>
             {gameType === GAME_TYPE.LOCAL_GAME && 
               <div className="p-2">
@@ -164,7 +173,8 @@ const mapDispatchToProps = dispatch => {
     },
     newLocalGame: () => dispatch(actionNewLocalGame()),
     newNetworkedGame: ()=> dispatch(actionNewNetworkedGame()),
-    undoMove: () => dispatch(actionUndoRequest())
+    undoMove: () => dispatch(actionUndoRequest()),
+    resignNetworkedGame: ()=> dispatch(actionResignNetworkedGame())
   }
 }
 

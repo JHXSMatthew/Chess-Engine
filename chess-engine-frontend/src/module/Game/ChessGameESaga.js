@@ -1,9 +1,10 @@
-import { take , call, put, takeEvery, select, cancelled } from 'redux-saga/effects'
+import { take , cancel, fork, call, put, takeEvery, select, cancelled } from 'redux-saga/effects'
 import { eventChannel, END } from 'redux-saga'
 
 import { 
   MOVE_REQUEST, 
   AVAILABLE_MOVE_REQUEST,
+  NETWORKED_RESIGN_GAME,
   actionUpdateGameStateSuccess, 
   actionMoveFail,
   actionHighlightAvailable,
@@ -32,7 +33,14 @@ import {
   actionChopSelect,
   actionSelectCell,
   actionAvailableMove,
+  NETWORKED_TIMER_DESTORY,
+  actionDestoryNetworkedGameTimerSuccess,
+  actionDestoryNetworkedGameTimer,
+  actionEndGame,
+  actionLoadInitState,
 } from './ChessGameReducer'
+
+import { actionUpdateModalInfo } from '../../AppReducer'
 
 import { MoveApi, NetworkedGameApi} from './ChessGameEAPI'
 
@@ -52,6 +60,8 @@ export function* gameSaga(){
 
   yield takeEvery(NETWORKED_CREATE_LOBBY, NetworkedCreateLobby)
   yield takeEvery(NETWORKED_JOIN_GAME, NetworkedJoinLobby)
+  yield takeEvery(NETWORKED_TIMER_DESTORY, NetworkedDestoryTimer)
+  yield takeEvery(NETWORKED_RESIGN_GAME, NetworkedResignGame)
 }
 
 
@@ -66,7 +76,6 @@ function* MoveRequest(action){
         apiToCall = MoveApi.postMove
         break;
       case GAME_TYPE.INVITE_NETWOKRED:
-
         const playerTypeCheck = yield select((state) => {
           return {
             result: state.game.currentTurn === state.game.lobby.playerType,
@@ -80,7 +89,7 @@ function* MoveRequest(action){
         if(playerTypeCheck.result === true){
           apiToCall = (...others)=> {
             console.log(others)
-            return NetworkedGameApi.patchGame(gameId, playerTypeCheck.playerType,others)}
+            return NetworkedGameApi.patchGame(gameId, playerTypeCheck.playerType ,others)}
           
         }else{
           yield put(actionUpdateGameStateFail("Not the turn"))
@@ -170,6 +179,7 @@ function* UndoRequest(action){
     
     if(currentState.gameType === GAME_TYPE.LOCAL_GAME){
       yield put(actionUndoSuccess())
+      
     }else{
       //call api
     }
@@ -191,7 +201,8 @@ function* networkedTimerLoop(gameId){
       const gameBoardRepStr = seriliaseState(gameState)
     
       let obj = yield take(channel) 
-      const {status, state} = obj
+      
+      const {status, state, resignedPlayer} = obj
       // const {isCheckmate, isChecked} = state
       const currentStatus = gameState.gameStatus;
       /*
@@ -212,6 +223,52 @@ function* networkedTimerLoop(gameId){
           }
   
         }else if(currentStatus === GAME_STATUS.INGAME){
+          if(status === GAME_STATUS.FINISHED){
+            //is checkmate? 
+            console.log(obj)
+            let win = undefined
+            let reason = "Result"
+
+            if(state.isCheckmate){
+              const {currentTurn} = deserializeState(state.state)
+              if(currentTurn === gameState.lobby.playerType){
+                //lose  
+                win= false;
+              }else{
+                //win
+                win = true;
+              }
+              reason = 'CheckMate'
+            }
+            //check resign
+            if(resignedPlayer){
+              if(resignedPlayer === gameState.lobby.playerType){
+                //lost
+                win = false;
+              }else{
+                //win
+                win = true;
+              }
+              reason = 'Resign'
+
+            }
+            if(win === undefined){
+              console.log("this should never happen, check it.")
+            }
+
+            yield put(actionEndGame(win))
+            yield put(actionUpdateModalInfo({
+              content: 'You' + ' ' + (win?'win':'lose') +"!",
+              show: true,
+              title: reason,
+              action: actionLoadInitState()
+            }))
+            //todo: this is anti-pattern, try fix it later
+
+            yield put(actionDestoryNetworkedGameTimer())
+
+            
+          }
   
         }else if(currentStatus === GAME_STATUS.FINISHED){
   
@@ -232,26 +289,55 @@ function* networkedTimerLoop(gameId){
         }
 
       }
-
-      
-      
       //TODO: logics here
     }catch(e){
 
     }finally{
       if (yield cancelled()) {
         channel.close()
-        console.log('TODO:')
       } 
     }
+  }
+}
+
+function* NetworkedResignGame(action){
+  try{
+    const gameId = yield select((state) => {
+      return state.game.lobby.gameId
+    })
+
+    const playerType = yield select((state) => {
+      return state.game.lobby.playerType
+    })
+    //call the api
+    yield call(NetworkedGameApi.resignGame,gameId, playerType)
+  }catch(e){
+    console.log("regin err.")
+
+  }
+}
+
+function* NetworkedDestoryTimer(action){
+  try{
+    const timer = yield select((state) => state.game.lobby.timerTask)
+    if(timer){
+      yield cancel(timer)
+      yield put(actionDestoryNetworkedGameTimerSuccess())
+    }else{    
+      console.log("no timer.")
+    }
+    
+  }catch(e){
+    console.log("timer err.")
+
   }
 }
 
 function* NetworkedCreateLobby(action) {
   try{
     const gameCreated = yield call(NetworkedGameApi.postGame);
-    yield put(actionNetworkedCreateLobbySuccess(gameCreated.data))
-    yield networkedTimerLoop(gameCreated.data.gameId)
+    const task = yield fork(networkedTimerLoop,gameCreated.data.gameId)
+    yield put(actionNetworkedCreateLobbySuccess(gameCreated.data, task))
   }catch(e){
     console.log("Create lobby fail")
     yield put(actionNetworkedCreateLobbyFail())
@@ -263,8 +349,8 @@ function* NetworkedJoinLobby(action){
   try{
     const gameJoined = yield call(NetworkedGameApi.PutGame, action.gameId)
     console.log(gameJoined)
-    yield put(actionNetworkedJoinGameSuccess(gameJoined.data))
-    yield networkedTimerLoop(gameJoined.data.gameId)
+    const task = yield fork(networkedTimerLoop, gameJoined.data.gameId)
+    yield put(actionNetworkedJoinGameSuccess(gameJoined.data,task))
 
   }catch(e){
     console.log("join lobby fail!")
@@ -286,7 +372,7 @@ function networkedTimer(gameId){
         }catch(e){
           emitter(END)
         }
-      }, 1000);
+      }, 3000);
 
       return () => {
         clearInterval(iv)

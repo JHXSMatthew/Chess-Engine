@@ -10,8 +10,6 @@ public class NetworkedMoveRequest extends MoveRequest {
     @JsonProperty("playerType")
     private String plyaerType;
 
-    @JsonProperty("resign")
-    private boolean resign;
 
     public String getPlyaerType() {
         return plyaerType;
@@ -21,11 +19,4 @@ public class NetworkedMoveRequest extends MoveRequest {
         this.plyaerType = plyaerType;
     }
 
-    public boolean isResign() {
-        return resign;
-    }
-
-    public void setResign(boolean resign) {
-        this.resign = resign;
-    }
 }

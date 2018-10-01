@@ -79,7 +79,7 @@ export const gameReducer  = (state = initState, action)=>{
     case UPDATE_GAME_STATE_FAIL:
       return state;
     case LOAD_INIT_BOARD_STATE:
-      return Object.assign({}, state, initState)
+      return Object.assign({}, initState)
     case CLEAR_SELECT:
       return Object.assign({}, state, {
         select: []
@@ -158,6 +158,7 @@ export const gameReducer  = (state = initState, action)=>{
     case NETWOKRED_SET_GAMEID_COPIED:
     case NETWORKED_JOIN_GAME_SUCCESS:
     case NETWORKED_JOIN_GAME_FAIL:
+    case NETWORKED_TIMER_DESTORY_SUCCESS:
       return Object.assign({}, state, {
         lobby: invitedNetowkredLobbyReducer(state.lobby,action)
       })
@@ -171,6 +172,7 @@ const invitedNetowkredLobbyReducer = (state, action) =>{
     case NETWORKED_CREATE_LOBBY_SUCCESS:
       return Object.assign({}, state, {
         ...action.data,
+        timerTask: action.timerTask,
         creating: true
       })   
     case NETWORKED_LOBBY_WANT_TO_JOIN:
@@ -187,7 +189,12 @@ const invitedNetowkredLobbyReducer = (state, action) =>{
       })
     case NETWORKED_JOIN_GAME_SUCCESS:
       return Object.assign({}, state, {
-        ...action.data
+        ...action.data,
+        timerTask: action.timerTask,
+      })
+    case NETWORKED_TIMER_DESTORY_SUCCESS:
+      return Object.assign({}, state, {
+        timerTask: undefined
       })
     default:
       return state
@@ -210,6 +217,28 @@ const newGameReducer = (state, action) => {
       };
     default:
       return state;
+  }
+}
+
+export const NETWORKED_TIMER_DESTORY = "NETWORKED_TIMER_DESTORY"
+export const actionDestoryNetworkedGameTimer = ()=>{
+  return {
+    type: NETWORKED_TIMER_DESTORY
+  }
+}
+
+export const NETWORKED_RESIGN_GAME = "NETWORKED_RESIGN_GAME"
+export const actionResignNetworkedGame = ()=>{
+  return {
+    type: NETWORKED_RESIGN_GAME
+  }
+}
+
+
+export const NETWORKED_TIMER_DESTORY_SUCCESS = "NETWORKED_TIMER_DESTORY_SUCCESS"
+export const actionDestoryNetworkedGameTimerSuccess = ()=>{
+  return {
+    type: NETWORKED_TIMER_DESTORY_SUCCESS
   }
 }
 
@@ -236,10 +265,11 @@ export const actionNetworkedJoinGame = (gameId)=>{
 }
 
 export const NETWORKED_JOIN_GAME_SUCCESS = "NETWORKED_JOIN_GAME_SUCCESS"
-export const actionNetworkedJoinGameSuccess = (data)=>{
+export const actionNetworkedJoinGameSuccess = (data,timerTask)=>{
   return {
     type: NETWORKED_JOIN_GAME_SUCCESS,
-    data
+    data,
+    timerTask
   }
 }
 
@@ -272,15 +302,16 @@ export const actionNetworkedSetGameIdCopied = (copied) =>{
 export const NETWORKED_CREATE_LOBBY = "NETWORKED_CREATE_LOBBY"
 export const actionNetworkedCreateLobby = () =>{
   return {
-    type: NETWORKED_CREATE_LOBBY
+    type: NETWORKED_CREATE_LOBBY,
   }
 }
 
 export const NETWORKED_CREATE_LOBBY_SUCCESS = "NETWORKED_CREATE_LOBBY_SUCCESS"
-export const actionNetworkedCreateLobbySuccess = (data) =>{
+export const actionNetworkedCreateLobbySuccess = (data, timerTask) =>{
   return {
     type: NETWORKED_CREATE_LOBBY_SUCCESS,
-    data
+    data,
+    timerTask
   }
 }
 
@@ -344,8 +375,8 @@ export const MOVE_REQUEST = "MOVE_REQUEST"
 export const actionMove = (from, to)=>{
   return {
     type: MOVE_REQUEST,
-    from: from,
-    to: to
+    from,
+    to
   }
 }
 

@@ -10,6 +10,7 @@ import app.model.game.GameRoom;
 import app.model.game.JoinGameResponse;
 import app.model.move.MoveRequest;
 import engine.State;
+import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import app.repository.*;
@@ -55,6 +56,7 @@ public class GameController {
             GameInfoResponse info = new GameInfoResponse();
             info.setState(dbModel.get().getState());
             info.setStatus(dbModel.get().getStatus().toString());
+            info.setResignedPlayer(dbModel.get().getResignedPlayer());
             return info;
         }else {
             throw new ResourceNotFoundException();
@@ -67,30 +69,31 @@ public class GameController {
 
         if(dbModel.isPresent()){
             if(dbModel.get().getStatus() == GameRoom.GameStatus.ingame){
-                StateContainer container = null;
-                //check resign
-                if(!request.isResign()){
-                    State s =  engine.move(dbModel.get().getState().getState(),
-                            request.getFrom(), request.getTo());
-                    if(s.isCheckMate()){
-                        dbModel.get().setStatus(GameRoom.GameStatus.finished);
-                    }
-                    dbModel.get().setState(StateContainer.build((s)));
-
-                }else{
-                    container = dbModel.get().getState();
-                    container.setResigned(true);
+                State s =  engine.move(dbModel.get().getState().getState(),
+                        request.getFrom(), request.getTo());
+                if(s.isCheckMate()){
                     dbModel.get().setStatus(GameRoom.GameStatus.finished);
                 }
+                dbModel.get().setState(StateContainer.build((s)));
 
                 grr.save(dbModel.get());
-                return container;
+                return StateContainer.build(s);
             }else{
                 throw new IllegalStateExceptionInternal();
             }
 
         }else{
             throw new ResourceNotFoundException();
+        }
+    }
+
+    @PostMapping("/api/game/{id}/resign")
+    public void handleResignPost(@PathVariable String id, @RequestParam String playerType){
+        Optional<GameRoom> dbModel = grr.findById(id);
+        if(dbModel.isPresent()) {
+            dbModel.get().setResignedPlayer(playerType);
+            dbModel.get().setStatus(GameRoom.GameStatus.finished);
+            grr.save(dbModel.get());
         }
     }
 

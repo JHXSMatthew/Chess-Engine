@@ -8,6 +8,8 @@ public class GameInfoResponse {
     private String status;
     @JsonProperty("state")
     private StateContainer state;
+    @JsonProperty("resignedPlayer")
+    private String resignedPlayer;
 
     public String getStatus() {
         return status;
@@ -23,6 +25,14 @@ public class GameInfoResponse {
 
     public void setState(StateContainer state) {
         this.state = state;
+    }
+
+    public String getResignedPlayer() {
+        return resignedPlayer;
+    }
+
+    public void setResignedPlayer(String resignedPlayer) {
+        this.resignedPlayer = resignedPlayer;
     }
 
     public GameInfoResponse() {

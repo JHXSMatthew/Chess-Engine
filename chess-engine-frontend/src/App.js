@@ -50,6 +50,7 @@ class App extends Component {
         <Header/>
         <ModalWrapper
           {...this.props.modal}
+          buttonAction={this.props.buttonAction}
           hideSelf={this.props.hideModal}
         />
 
@@ -70,13 +71,13 @@ class App extends Component {
 const mapStateToProps = state =>{
   return {
     modal: state.app.modal
-    
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    hideModal: ()=> dispatch(actionToggleModal(false))
+    hideModal: ()=> dispatch(actionToggleModal(false)),
+    buttonAction: (action) => dispatch(action)
   }
 }
 

@@ -32,6 +32,8 @@ public class GameRoom implements Serializable {
         return status;
     }
 
+    public String resignedPlayer;
+
     public String getId() {
         return id;
     }
@@ -67,6 +69,13 @@ public class GameRoom implements Serializable {
         this.numOfUser = numOfUser;
     }
 
+    public String getResignedPlayer() {
+        return resignedPlayer;
+    }
+
+    public void setResignedPlayer(String resignedPlayer) {
+        this.resignedPlayer = resignedPlayer;
+    }
 
     public enum GameStatus{
         lobby,ingame,finished;

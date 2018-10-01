@@ -37,6 +37,10 @@ export const NetworkedGameApi = {
       from,
       to
     })
+  },
+  //resign
+  resignGame: (id, playerType) => {
+    return axios.post(API_ENDPOINT + `/game/${id}/resign?playerType=${playerType}`)
   }
 }
 

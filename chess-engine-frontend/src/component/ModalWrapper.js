@@ -6,7 +6,7 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 class ModalWrapper extends React.Component{
 
   render(){
-    const {backdrop, show, title, content, action, hideSelf } = this.props;
+    const {backdrop, show, title, content, action, hideSelf,buttonAction } = this.props;
     return (
       <Modal isOpen={show} backdrop={backdrop}>
           <ModalHeader >{title}</ModalHeader>
@@ -16,7 +16,7 @@ class ModalWrapper extends React.Component{
           <ModalFooter>
             <Button color="primary" onClick={()=>{ 
               if(action){
-                action() 
+                buttonAction(action)
               }
               hideSelf()
             }}>confirm</Button>

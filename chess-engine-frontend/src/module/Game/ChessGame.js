@@ -20,7 +20,9 @@ import {
   actionNewLocalGame,
   actionUndoRequest,
   actionUpdateGameStateSuccess,
-  GAME_STATUS
+  actionDestoryNetworkedGameTimer,
+  GAME_STATUS,
+  GAME_TYPE
 } from './ChessGameReducer'
 import { actionUpdateModalInfo } from '../../AppReducer';
 import { SHOW_DEBUG_BUTTONS } from '../../config';
@@ -46,19 +48,19 @@ class Game extends React.Component{
   }
 
   componentDidUpdate(){
-    const {boardRep, select, isCheckmate, gameStatus} = this.props;
+    const {boardRep, select, isCheckmate, gameStatus, gameType} = this.props;
 
     this.checkMove(boardRep, select);
 
-    if(isCheckmate && gameStatus === GAME_STATUS.INGAME){
-      this.props.endGame(false, 'checkmate', this.currentTurnToDisplayName())
+    if(isCheckmate && gameStatus === GAME_STATUS.INGAME && GAME_TYPE === GAME_TYPE.LOCAL_GAME){
+      this.props.endLocalGame(gameType, false, 'checkmate', this.currentTurnToDisplayName())
     }
   }
 
 
   render(){
     const { boardRep,onCellClick,availableMove, select, highlight, 
-      lastMove, endGame, gameType } = this.props
+      lastMove, endLocalGame, gameType } = this.props
 
     return (
       <div>
@@ -76,7 +78,7 @@ class Game extends React.Component{
               </div>
               <div className="game-right">
                 <Sidebar 
-                endGame={endGame} />
+                 endLocalGame={endLocalGame} />
               </div>
         </div>
 
@@ -122,8 +124,8 @@ const mapDispatchToProps = dispatch => {
     },
     onCellClick: (index) => dispatch(actionSelectCell(index)),
     availableMove: (from) => dispatch(actionAvailableMove(from)),
-    
-    endGame: (winLose, reason='Checkmate', who='You') => {
+    //end local game
+    endLocalGame: (winLose, reason='Checkmate', who='You') => {
       dispatch(actionEndGame(winLose))
       dispatch(actionUpdateModalInfo({
         content: who + " " + (winLose?"win":'lose') +"!",
@@ -131,7 +133,8 @@ const mapDispatchToProps = dispatch => {
         title: reason,
         action: ()=> dispatch(actionLoadInitState())
       }))
-    }
+    },
+    
   }
 }
 
