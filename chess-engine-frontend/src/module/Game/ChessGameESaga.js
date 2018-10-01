@@ -26,6 +26,8 @@ import {
   actionNetworkedJoinGameFail,
   actionNetworkedJoinGameSuccess,
   NETWORKED_JOIN_GAME,
+  GAME_STATUS,
+  actionNetowkredGameStart,
 } from './ChessGameReducer'
 
 import { MoveApi, NetworkedGameApi} from './ChessGameEAPI'
@@ -52,8 +54,43 @@ export function* gameSaga(){
 function* MoveRequest(action){
   try{
     const currentBoardState = yield select((state) => seriliaseState(state.game))
-    const response = yield call(MoveApi.postMove, currentBoardState ,action.from, action.to)
+    const gameType = yield select((state) => state.game.gameType)
+    let apiToCall = undefined
+
+    switch(gameType){
+      case GAME_TYPE.LOCAL_GAME:
+        apiToCall = MoveApi.postMove
+        break;
+      case GAME_TYPE.INVITE_NETWOKRED:
+
+        const playerTypeCheck = yield select((state) => {
+          return {
+            result: state.game.currentTurn === state.game.lobby.playerType,
+            playerType: state.game.currentTurn
+          }
+        })
+        const gameId = yield select((state) => {
+          return state.game.lobby.gameId
+        })
+        
+        if(playerTypeCheck.result === true){
+          apiToCall = (...others)=> {
+            console.log(others)
+            return NetworkedGameApi.patchGame(gameId, playerTypeCheck.playerType , others)}
+          
+        }else{
+          yield put(actionUpdateGameStateFail("Not the turn"))
+          throw {message: "wrong turn"}
+        }
+        break;
+      default:
+        // console.log("illegal game type in move saga")
+        throw {message: "illegal game type in move saga"}
+    }
+
+    const response =  yield call(apiToCall, currentBoardState, action.from, action.to);
     const stateObj = response.data;
+
 
     if(stateObj.state === currentBoardState){
       yield put(actionUpdateGameStateFail("Illegal move."))
@@ -61,7 +98,6 @@ function* MoveRequest(action){
       yield put(actionAddMoveHistory({from: action.from , to: action.to}))
       yield put(actionUpdateGameStateSuccess({...response.data, state: deserializeState(stateObj.state)}))
       yield put(actionHighlightLastMove([action.from, action.to]))
-    
     }
   }catch(e){
     yield put(actionMoveFail(e.message))
@@ -136,16 +172,59 @@ function* UndoRequest(action){
 
 //networked game saga
 function* networkedTimerLoop(gameId){
+
   const channel = yield call(networkedTimer, gameId)
   while(true){
     try{
+      //all current state are named with "game" prefix
+      const gameState = yield select((state) => state.game)
+      const gameBoardRepStr = seriliaseState(gameState)
+    
       let obj = yield take(channel) 
-      // const {status, state} = obj
-      // const {isChecked, }
-      // if(){
+      const {status, state} = obj
+      // const {isCheckmate, isChecked} = state
+      const currentStatus = gameState.gameStatus;
+      /*
+      console.log({
+        fromStatus: currentStatus,
+        toStatus: status,
+        equal: status === currentStatus,
+        response:obj
+      })*/
 
-      // }
-      console.log(obj)
+      if(currentStatus !== status){
+        if(currentStatus === GAME_STATUS.INIT){
+          if(status === GAME_STATUS.INGAME){
+            yield put(actionNetowkredGameStart())
+          }else{
+            //TODO: is there a possibility it to be here?
+            console.log("unhandle case_001")
+          }
+  
+        }else if(currentStatus === GAME_STATUS.INGAME){
+  
+        }else if(currentStatus === GAME_STATUS.FINISHED){
+  
+        }else{
+          console.log("game status error!")
+        }
+      }else{
+        if(status === GAME_STATUS.INGAME){
+          //
+          if(gameBoardRepStr === state.state){
+            //ignore
+          }else{
+            yield put(actionUpdateGameStateSuccess({...state, state: deserializeState(state.state)}))
+          }
+          
+        }else{
+          //doing nothing
+        }
+
+      }
+
+      
+      
       //TODO: logics here
     }catch(e){
 
@@ -173,10 +252,10 @@ function* NetworkedCreateLobby(action) {
 function* NetworkedJoinLobby(action){
   try{
     const gameJoined = yield call(NetworkedGameApi.PutGame, action.gameId)
-
+    console.log(gameJoined)
+    yield put(actionNetworkedJoinGameSuccess(gameJoined.data))
     yield networkedTimerLoop(gameJoined.data.gameId)
 
-    console.log(gameJoined)
   }catch(e){
     console.log("join lobby fail!")
     yield put(actionNetworkedJoinGameFail())
@@ -190,12 +269,14 @@ function networkedTimer(gameId){
         try{
           NetworkedGameApi.getGame(gameId).then((r)=>{
             emitter(r.data)
+          }).catch(e => {
+            emitter(END)
           });
           
         }catch(e){
           emitter(END)
         }
-      }, 3000);
+      }, 1000);
 
       return () => {
         clearInterval(iv)

@@ -30,8 +30,13 @@ export const NetworkedGameApi = {
     return axios.put(API_ENDPOINT + `/game/${id}`)
   },
   //move
-  patchGame: (id, move) =>{
-    return axios.patch(API_ENDPOINT + `/game/${id}`, move )
+  patchGame: (id, playerType,[state, from, to]) =>{
+    return axios.patch(API_ENDPOINT + `/game/${id}`, {
+      playerType,
+      state,
+      from,
+      to
+    })
   }
 }
 

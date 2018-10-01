@@ -2,7 +2,7 @@ package app.model.move;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class AvailableMoveResponseModel {
+public class AvailableMoveResponse {
     // Start position
     @JsonProperty("from")
     private int fromPost;
@@ -10,7 +10,7 @@ public class AvailableMoveResponseModel {
     private int[] hint;
 
 
-    public AvailableMoveResponseModel() {
+    public AvailableMoveResponse() {
     }
 
     public int getFromPost() {

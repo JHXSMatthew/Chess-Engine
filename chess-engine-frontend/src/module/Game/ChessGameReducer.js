@@ -11,9 +11,9 @@ export const GAME_TYPE = {
 }
 
 export const GAME_STATUS = {
-  INIT: 'init',
+  INIT: 'lobby',
   INGAME: 'ingame',
-  END: 'end'
+  FINISHED: 'finished'
 }
 
 
@@ -23,7 +23,7 @@ const lobbyInitState = {
   //false, show the join lobby view
   creating: undefined,
   gameIdCopied: false,
-  gmaeId: undefined,
+  gameId: undefined,
   playerType: undefined
 }
 
@@ -53,8 +53,7 @@ const initState = {
 
   //networked game
   //game lobby (before game start)
-  lobby: lobbyInitState,
-  myColor: 'w'
+  lobby: lobbyInitState
 }
 
 
@@ -139,6 +138,10 @@ export const gameReducer  = (state = initState, action)=>{
       }else{
        return state;
       }
+    case NETWORKED_GAME_START:
+      return Object.assign({}, state, {
+        gameStatus: GAME_STATUS.INGAME
+      })
     //networked game reducer composition
     case NETWORKED_CREATE_LOBBY_SUCCESS:
     case NETWORKED_LOBBY_WANT_TO_JOIN:
@@ -198,6 +201,13 @@ const newGameReducer = (state, action) => {
       };
     default:
       return state;
+  }
+}
+
+export const NETWORKED_GAME_START = "NETWORKED_GAME_START"
+export const actionNetowkredGameStart = ()=>{
+  return {
+    type: NETWORKED_GAME_START
   }
 }
 

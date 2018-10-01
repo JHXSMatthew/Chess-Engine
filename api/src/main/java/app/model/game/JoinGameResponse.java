@@ -31,11 +31,17 @@ public class JoinGameResponse {
     }
 
     public enum PlayerType{
-        white,black;
+        w("w"),b("b");
+
+        private String rep;
+
+        PlayerType(String rep){
+            this.rep = rep;
+        }
 
         @Override
         public String toString() {
-            return super.toString();
+            return rep;
         }
     }
 }

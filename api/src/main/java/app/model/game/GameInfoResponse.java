@@ -1,12 +1,13 @@
 package app.model.game;
 
+import app.model.StateContainer;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class GameInfoResponse {
     @JsonProperty("status")
     private String status;
     @JsonProperty("state")
-    private String state;
+    private StateContainer state;
 
     public String getStatus() {
         return status;
@@ -16,17 +17,12 @@ public class GameInfoResponse {
         this.status = status;
     }
 
-    public String getState() {
+    public StateContainer getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(StateContainer state) {
         this.state = state;
-    }
-
-    public GameInfoResponse(String status, String state) {
-        this.state = state;
-        this.status = status;
     }
 
     public GameInfoResponse() {

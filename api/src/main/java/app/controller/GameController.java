@@ -1,5 +1,6 @@
 package app.controller;
 
+import app.model.game.NetworkedMoveRequest;
 import engine.ChessEngineDummy;
 import engine.ChessEngineI;
 import app.exception.*;
@@ -7,7 +8,7 @@ import app.model.*;
 import app.model.game.GameInfoResponse;
 import app.model.game.GameRoom;
 import app.model.game.JoinGameResponse;
-import app.model.move.MoveRequestModel;
+import app.model.move.MoveRequest;
 import engine.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,12 +31,18 @@ public class GameController {
         String initState = engine.getInitState();
         GameRoom gr = new GameRoom();
         gr.setNumOfUser(1);
-        gr.setState(initState);
+
+        StateContainer container = new StateContainer();
+        container.setChecked(false);
+        container.setCheckmate(false);
+        container.setState(initState);
+        gr.setState(container);
+
         gr.setStatus(GameRoom.GameStatus.lobby);
         grr.save(gr);
 
         JoinGameResponse response = new JoinGameResponse();
-        response.setPlayerType(JoinGameResponse.PlayerType.black);
+        response.setPlayerType(JoinGameResponse.PlayerType.b);
         response.setGameId(gr.getId());
         return response;
     }
@@ -43,9 +50,9 @@ public class GameController {
     @GetMapping("/api/game/{id}")
     // Get status and state
     public GameInfoResponse getGameInfo(@PathVariable String id) {
-        GameInfoResponse info = new GameInfoResponse();
         Optional<GameRoom> dbModel = grr.findById(id);
         if(dbModel.isPresent()){
+            GameInfoResponse info = new GameInfoResponse();
             info.setState(dbModel.get().getState());
             info.setStatus(dbModel.get().getStatus().toString());
             return info;
@@ -55,13 +62,13 @@ public class GameController {
     }
 
     @PatchMapping("/api/game/{id}")
-    public StateContainer handlePatch(@PathVariable String id, @RequestBody MoveRequestModel request) {
+    public StateContainer handlePatch(@PathVariable String id, @RequestBody NetworkedMoveRequest request) {
         Optional<GameRoom> dbModel = grr.findById(id);
         if(dbModel.isPresent()){
-            State s =  engine.move(dbModel.get().getState(),
+            State s =  engine.move(dbModel.get().getState().getState(),
                     request.getFrom(), request.getTo());
 
-            dbModel.get().setState(s.getBoardRep());
+            dbModel.get().setState(StateContainer.build((s)));
             grr.save(dbModel.get());
 
             return StateContainer.build(s);
@@ -81,7 +88,7 @@ public class GameController {
                 grr.save(dbModel.get());
 
                 JoinGameResponse response = new JoinGameResponse();
-                response.setPlayerType(JoinGameResponse.PlayerType.white);
+                response.setPlayerType(JoinGameResponse.PlayerType.w);
                 response.setGameId(id);
                 return response;
 
