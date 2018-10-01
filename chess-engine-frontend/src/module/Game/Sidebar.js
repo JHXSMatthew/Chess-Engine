@@ -3,7 +3,7 @@ import React from 'react'
 import { PiecesSVG } from '../../resource/PieceResource'
 import './Sidebar.less';
 
-import { GAME_TYPE, actionNewNetworkedGame } from './ChessGameReducer';
+import { GAME_TYPE, actionNewNetworkedGame, GAME_STATUS } from './ChessGameReducer';
 
 import UUID from  'uuid/v1';
 
@@ -64,22 +64,22 @@ class Sidebar extends React.Component{
 
 
   renderSideBarByType = (gameType, moveHistoryView)=>{
-    const {undoMove, saveGame, endGame, currentTurn} = this.props;
+    const {undoMove, saveGame, endGame, currentTurn, opponentColor, gameStatus} = this.props;
 
-    if(gameType === GAME_TYPE.INVITE_NETWOKRED){
+    if(gameType === GAME_TYPE.INVITE_NETWOKRED && gameStatus === GAME_STATUS.INIT){
       return <InvitedNetworkedGamePanel/>
-    }else if(gameType === GAME_TYPE.LOCAL_GAME){
+    }else{
         return <div className="sidebar">
           {gameType != GAME_TYPE.LOCAL_GAME && <div className="d-flex flex-row flex-fill">
             <div className="p-2">Opponent: </div>
-            <div className="p-2">{PiecesSVG['p']}</div>
+            <div className="p-2">{PiecesSVG[opponentColor=== 'w'? 'P' : 'p']}</div>
           </div>}
           <div className="d-flex flex-row flex-fill">
             <div className="p-2">Timer: </div>
             <div className="p-2">5:00/60:00</div>
           </div>
           <div className="d-flex flex-row flex-fill">
-            <div className="p-2">{PiecesSVG[ currentTurn=== 'w'? 'P' : 'p']}</div>
+            <div className="p-2">{PiecesSVG[currentTurn=== 'w'? 'P' : 'p']}</div>
             <div className="p-2">'s Turn</div>
           </div>
           <div className="d-flex flex-row flex-fill">
@@ -146,6 +146,7 @@ const mapStateToProps = state =>{
     gameStatus: state.game.gameStatus,
     currentTurn: state.game.currentTurn,
     moveHistory: state.game.moveHistory,
+    opponentColor: state.game.lobby.playerType === 'w' ? 'b': 'w'
   }
 }
 
