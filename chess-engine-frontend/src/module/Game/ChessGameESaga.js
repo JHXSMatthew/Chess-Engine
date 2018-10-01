@@ -108,8 +108,9 @@ function* MoveRequest(action){
     }
 
   }catch(e){
-    yield put(actionClearSelect())
     yield put(actionMoveFail(e.message))
+    yield put(actionAvailableMove(action.to))
+    yield put(actionSelectCell(action.to))
   }
 }
 

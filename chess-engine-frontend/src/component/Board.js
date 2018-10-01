@@ -10,15 +10,17 @@ export default class Board extends React.Component{
   getCellStyle = (gameType, index, selected, highlight,lastMove)=>{
     const f = (Math.floor(index/8 % 2) === 0 ) ? (a,b)=> a===b : (a,b)=> a!==b;
     if (gameType) {
+      if (index === lastMove[0] || index === lastMove[1]){
+        return "cell-bg-lastMove";
+      }
+      
       if (selected.length > 0 && index === selected[0]){
         return "cell-bg-selected";
       }
       if (highlight.includes(index)) {
         return "cell-bg-highlight";
       }
-      if (index === lastMove[0] || index === lastMove[1]){
-        return "cell-bg-lastMove";
-      }
+  
     }
     return f (index % 2 ,0)  ? "cell-bg-light" : "cell-bg-dark";
   }
