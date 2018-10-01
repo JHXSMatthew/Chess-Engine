@@ -164,16 +164,7 @@ const mapDispatchToProps = dispatch => {
     },
     newLocalGame: () => dispatch(actionNewLocalGame()),
     newNetworkedGame: ()=> dispatch(actionNewNetworkedGame()),
-    endGame: (winLose, reason='Checkmate', who='You') => {
-      dispatch(actionEndGame(winLose))
-      dispatch(actionUpdateModalInfo({
-        content: who + " " + (winLose?"win":'lose') +"!",
-        show: true,
-        title: reason,
-        action: ()=> dispatch(actionLoadInitState())
-      }))
-    },
-    undo: () => dispatch(actionUndoRequest())
+    undoMove: () => dispatch(actionUndoRequest())
   }
 }
 

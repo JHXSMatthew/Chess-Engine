@@ -58,8 +58,7 @@ class Game extends React.Component{
 
   render(){
     const { boardRep,onCellClick,availableMove, select, highlight, 
-      lastMove, saveGame, loadGame, endGame, newLocalGame, gameType,
-      currentTurn, undo, moveHistory } = this.props
+      lastMove, endGame, gameType } = this.props
 
     return (
       <div>
@@ -76,7 +75,8 @@ class Game extends React.Component{
                 />
               </div>
               <div className="game-right">
-                <Sidebar />
+                <Sidebar 
+                endGame={endGame} />
               </div>
         </div>
 
@@ -111,7 +111,6 @@ const mapStateToProps = state =>{
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadInitState: () => dispatch(actionLoadInitState()),
     loadGameState: (stateStr) => { console.log(stateStr) 
       dispatch(actionUpdateGameStateSuccess({
           state: deserializeState(stateStr),
@@ -123,13 +122,7 @@ const mapDispatchToProps = dispatch => {
     },
     onCellClick: (index) => dispatch(actionSelectCell(index)),
     availableMove: (from) => dispatch(actionAvailableMove(from)),
-    clearSelect: ()=> dispatch(actionClearSelect()),
-    saveGame: () => dispatch(actionSaveLocalGame()),
-    loadGame: () => {
-      dispatch(actionNewLocalGame())
-      dispatch(actionLoadLocalSavedGame())
-    },
-    newLocalGame: () => dispatch(actionNewLocalGame()),
+    
     endGame: (winLose, reason='Checkmate', who='You') => {
       dispatch(actionEndGame(winLose))
       dispatch(actionUpdateModalInfo({
@@ -138,8 +131,7 @@ const mapDispatchToProps = dispatch => {
         title: reason,
         action: ()=> dispatch(actionLoadInitState())
       }))
-    },
-    undo: () => dispatch(actionUndoRequest())
+    }
   }
 }
 

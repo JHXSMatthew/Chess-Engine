@@ -141,7 +141,8 @@ export const gameReducer  = (state = initState, action)=>{
       if(state.history && state.history.length != 0){
         const history = state.history;
         return Object.assign({}, history[history.length -1], {
-          history: [...state.history.slice(0, state.history.length -1)]
+          history: [...state.history.slice(0, state.history.length -1)],
+          boardHightLight: []
         })
       }else{
        return state;
