@@ -20,7 +20,9 @@ import {
   actionNewLocalGame,
   actionUndoRequest,
   actionUpdateGameStateSuccess,
-  GAME_STATUS
+  actionDestoryNetworkedGameTimer,
+  GAME_STATUS,
+  GAME_TYPE
 } from './ChessGameReducer'
 import { actionUpdateModalInfo } from '../../AppReducer';
 import { SHOW_DEBUG_BUTTONS } from '../../config';
@@ -46,20 +48,19 @@ class Game extends React.Component{
   }
 
   componentDidUpdate(){
-    const {boardRep, select, isCheckmate, gameStatus} = this.props;
+    const {boardRep, select, isCheckmate, gameStatus, gameType} = this.props;
 
     this.checkMove(boardRep, select);
 
-    if(isCheckmate && gameStatus === GAME_STATUS.INGAME){
-      this.props.endGame(false, 'checkmate', this.currentTurnToDisplayName())
+    if(isCheckmate && gameStatus === GAME_STATUS.INGAME && gameType === GAME_TYPE.LOCAL_GAME){
+      this.props.endLocalGame(false, 'checkmate', this.currentTurnToDisplayName())
     }
   }
 
 
   render(){
     const { boardRep,onCellClick,availableMove, select, highlight, 
-      lastMove, saveGame, loadGame, endGame, newLocalGame, gameType,
-      currentTurn, undo, moveHistory } = this.props
+      lastMove, endLocalGame, gameType } = this.props
 
     return (
       <div>
@@ -76,15 +77,8 @@ class Game extends React.Component{
                 />
               </div>
               <div className="game-right">
-                <Sidebar  gameType={gameType}
-                          loadGame={loadGame}
-                          saveGame={saveGame}
-                          endGame={endGame}
-                          newLocalGame={newLocalGame}
-                          currentTurn={currentTurn}
-                          undoMove={undo}
-                          moveHistory={moveHistory}
-                />
+                <Sidebar 
+                 endLocalGame={endLocalGame} />
               </div>
         </div>
 
@@ -119,7 +113,6 @@ const mapStateToProps = state =>{
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadInitState: () => dispatch(actionLoadInitState()),
     loadGameState: (stateStr) => { console.log(stateStr) 
       dispatch(actionUpdateGameStateSuccess({
           state: deserializeState(stateStr),
@@ -127,28 +120,21 @@ const mapDispatchToProps = dispatch => {
           isCheckmate: false
          }))},
     move: (from, to)=> { 
-      dispatch(actionClearSelect());
       dispatch(actionMove(from, to));
     },
     onCellClick: (index) => dispatch(actionSelectCell(index)),
     availableMove: (from) => dispatch(actionAvailableMove(from)),
-    clearSelect: ()=> dispatch(actionClearSelect()),
-    saveGame: () => dispatch(actionSaveLocalGame()),
-    loadGame: () => {
-      dispatch(actionNewLocalGame())
-      dispatch(actionLoadLocalSavedGame())
-    },
-    newLocalGame: () => dispatch(actionNewLocalGame()),
-    endGame: (winLose, reason='Checkmate', who='You') => {
+    //end local game
+    endLocalGame: (winLose, reason='Checkmate', who='You') => {
       dispatch(actionEndGame(winLose))
       dispatch(actionUpdateModalInfo({
         content: who + " " + (winLose?"win":'lose') +"!",
         show: true,
         title: reason,
-        action: ()=> dispatch(actionLoadInitState())
+        action: actionLoadInitState()
       }))
     },
-    undo: () => dispatch(actionUndoRequest())
+    
   }
 }
 

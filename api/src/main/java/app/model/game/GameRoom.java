@@ -1,5 +1,6 @@
 package app.model.game;
 
+import app.model.StateContainer;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -17,9 +18,9 @@ public class GameRoom implements Serializable {
     @Column(name = "uuid", columnDefinition="uuid" ,unique = true)
     private String id;
 
-    @NotBlank
-    @Column(nullable = false)
     private String state;
+    private boolean icChecked;
+    private boolean isCheckmate;
 
     @Column(nullable = false)
     private Integer numOfUser;
@@ -30,6 +31,8 @@ public class GameRoom implements Serializable {
     public GameStatus getStatus() {
         return status;
     }
+
+    public String resignedPlayer;
 
     public String getId() {
         return id;
@@ -44,12 +47,18 @@ public class GameRoom implements Serializable {
     }
 
 
-    public String getState() {
-        return state;
+    public StateContainer getState() {
+        StateContainer container = new StateContainer();
+        container.setChecked(icChecked);
+        container.setCheckmate(isCheckmate);
+        container.setState(state);
+        return container;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setState(StateContainer state) {
+        this.state = state.getState();
+        this.isCheckmate = state.isCheckmate();
+        this.icChecked = state.isChecked();
     }
 
     public Integer getNumOfUser() {
@@ -60,6 +69,13 @@ public class GameRoom implements Serializable {
         this.numOfUser = numOfUser;
     }
 
+    public String getResignedPlayer() {
+        return resignedPlayer;
+    }
+
+    public void setResignedPlayer(String resignedPlayer) {
+        this.resignedPlayer = resignedPlayer;
+    }
 
     public enum GameStatus{
         lobby,ingame,finished;
