@@ -72,6 +72,10 @@ export const gameReducer  = (state = initState, action)=>{
           isChecked,
           boardRep: boardStrToRepArray(newGameState.boardStr),
       });
+    case MOVE_FAIL:
+      return Object.assign({}, state, {
+        boardHightLight: []
+      })
     case UPDATE_GAME_STATE_FAIL:
       return state;
     case LOAD_INIT_BOARD_STATE:
@@ -80,6 +84,10 @@ export const gameReducer  = (state = initState, action)=>{
       return Object.assign({}, state, {
         select: []
       })
+    case SELECT_CHOP:
+      return Object.assign({}, state, {
+        select: state.select.slice(1)
+      })
     case ON_SELECT_CELL:
       //a "pair" using array 
 
@@ -87,8 +95,8 @@ export const gameReducer  = (state = initState, action)=>{
       // if clicked on a piece, then highlight that square.
       // if clicked on a piece previouly, and clicked anywhere else, move that piece from -> to.
       // if clicked on empty squere initially, do nothing
-      var newSelectListRep = [];
-      var highlight = state.boardHightLight;
+      let newSelectListRep = [];
+      let highlight = state.boardHightLight;
       if (state.gameType) {
         if (state.select.length === 0 && state.boardRep[action.index]){
           newSelectListRep = state.select.concat([action.index])
@@ -201,6 +209,13 @@ const newGameReducer = (state, action) => {
       };
     default:
       return state;
+  }
+}
+
+export const SELECT_CHOP = "SELECT_CHOP"
+export const actionChopSelect = ()=>{
+  return {
+    type: SELECT_CHOP
   }
 }
 

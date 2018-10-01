@@ -28,6 +28,10 @@ import {
   NETWORKED_JOIN_GAME,
   GAME_STATUS,
   actionNetowkredGameStart,
+  actionClearSelect,
+  actionChopSelect,
+  actionSelectCell,
+  actionAvailableMove,
 } from './ChessGameReducer'
 
 import { MoveApi, NetworkedGameApi} from './ChessGameEAPI'
@@ -76,7 +80,7 @@ function* MoveRequest(action){
         if(playerTypeCheck.result === true){
           apiToCall = (...others)=> {
             console.log(others)
-            return NetworkedGameApi.patchGame(gameId, playerTypeCheck.playerType , others)}
+            return NetworkedGameApi.patchGame(gameId, playerTypeCheck.playerType,others)}
           
         }else{
           yield put(actionUpdateGameStateFail("Not the turn"))
@@ -91,15 +95,20 @@ function* MoveRequest(action){
     const response =  yield call(apiToCall, currentBoardState, action.from, action.to);
     const stateObj = response.data;
 
-
+    yield put(actionClearSelect())
     if(stateObj.state === currentBoardState){
+      yield put(actionAvailableMove(action.to))
+      yield put(actionSelectCell(action.to))
       yield put(actionUpdateGameStateFail("Illegal move."))
+
     }else{
       yield put(actionAddMoveHistory({from: action.from , to: action.to}))
       yield put(actionUpdateGameStateSuccess({...response.data, state: deserializeState(stateObj.state)}))
       yield put(actionHighlightLastMove([action.from, action.to]))
     }
+
   }catch(e){
+    yield put(actionClearSelect())
     yield put(actionMoveFail(e.message))
   }
 }

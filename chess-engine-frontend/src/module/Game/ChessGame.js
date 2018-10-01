@@ -119,7 +119,6 @@ const mapDispatchToProps = dispatch => {
           isCheckmate: false
          }))},
     move: (from, to)=> { 
-      dispatch(actionClearSelect());
       dispatch(actionMove(from, to));
     },
     onCellClick: (index) => dispatch(actionSelectCell(index)),
