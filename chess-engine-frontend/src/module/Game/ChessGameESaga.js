@@ -157,6 +157,12 @@ function* SaveLocalGame(action){
     localStorage.setItem(action.index, currentBoardState);
     localStorage.setItem(action.lastMove, lastMovePair);
     yield put(actionSaveGameSuccess(currentBoardState));
+    yield put(actionUpdateModalInfo({
+        content: "Your local Game is saved!",
+        show: true,
+        title: "Save",
+        action: actionLoadInitState()
+    }))
   }catch(e){
     yield put(actionSaveGameFail(e.message));
   }

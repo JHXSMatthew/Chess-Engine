@@ -52,8 +52,8 @@ class Game extends React.Component{
 
     this.checkMove(boardRep, select);
 
-    if(isCheckmate && gameStatus === GAME_STATUS.INGAME && GAME_TYPE === GAME_TYPE.LOCAL_GAME){
-      this.props.endLocalGame(gameType, false, 'checkmate', this.currentTurnToDisplayName())
+    if(isCheckmate && gameStatus === GAME_STATUS.INGAME && gameType === GAME_TYPE.LOCAL_GAME){
+      this.props.endLocalGame(false, 'checkmate', this.currentTurnToDisplayName())
     }
   }
 
@@ -131,7 +131,7 @@ const mapDispatchToProps = dispatch => {
         content: who + " " + (winLose?"win":'lose') +"!",
         show: true,
         title: reason,
-        action: ()=> dispatch(actionLoadInitState())
+        action: actionLoadInitState()
       }))
     },
     

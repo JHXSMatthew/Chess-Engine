@@ -166,7 +166,10 @@ const mapStateToProps = state =>{
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveGame: () => dispatch(actionSaveLocalGame()),
+    saveGame: () => {
+      dispatch(actionSaveLocalGame())
+      dispatch(actionLoadInitState())
+    },
     loadGame: () => {
       dispatch(actionNewLocalGame())
       dispatch(actionLoadLocalSavedGame())
