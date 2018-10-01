@@ -11,6 +11,9 @@ public class StateContainer {
     @JsonProperty("isCheckmate")
     private boolean isCheckmate;
 
+    @JsonProperty("isResigned")
+    private boolean isResigned;
+
     public StateContainer() {
     }
 
@@ -38,6 +41,14 @@ public class StateContainer {
         this.state = state;
     }
 
+    public boolean isResigned() {
+        return isResigned;
+    }
+
+    public void setResigned(boolean resigned) {
+        isResigned = resigned;
+    }
+
     public static StateContainer build(State s){
         if(s == null){
             return null;
@@ -49,4 +60,6 @@ public class StateContainer {
 
         return container;
     }
+
+
 }

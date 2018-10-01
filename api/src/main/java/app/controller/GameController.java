@@ -64,14 +64,31 @@ public class GameController {
     @PatchMapping("/api/game/{id}")
     public StateContainer handlePatch(@PathVariable String id, @RequestBody NetworkedMoveRequest request) {
         Optional<GameRoom> dbModel = grr.findById(id);
+
         if(dbModel.isPresent()){
-            State s =  engine.move(dbModel.get().getState().getState(),
-                    request.getFrom(), request.getTo());
+            if(dbModel.get().getStatus() == GameRoom.GameStatus.ingame){
+                StateContainer container = null;
+                //check resign
+                if(!request.isResign()){
+                    State s =  engine.move(dbModel.get().getState().getState(),
+                            request.getFrom(), request.getTo());
+                    if(s.isCheckMate()){
+                        dbModel.get().setStatus(GameRoom.GameStatus.finished);
+                    }
+                    dbModel.get().setState(StateContainer.build((s)));
 
-            dbModel.get().setState(StateContainer.build((s)));
-            grr.save(dbModel.get());
+                }else{
+                    container = dbModel.get().getState();
+                    container.setResigned(true);
+                    dbModel.get().setStatus(GameRoom.GameStatus.finished);
+                }
 
-            return StateContainer.build(s);
+                grr.save(dbModel.get());
+                return container;
+            }else{
+                throw new IllegalStateExceptionInternal();
+            }
+
         }else{
             throw new ResourceNotFoundException();
         }
