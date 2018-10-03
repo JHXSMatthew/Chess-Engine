@@ -98,6 +98,17 @@ export const gameReducer  = (state = initState, action)=>{
       let newSelectListRep = [];
       let highlight = state.boardHightLight;
       let selectPiece = ''
+
+      if (state.gameType === GAME_TYPE.INVITE_NETWOKRED){
+        if (state.currentTurn !== state.lobby.playerType){
+          return Object.assign({}, state, {
+            select: newSelectListRep,
+            boardHightLight: [],
+            movePiece: selectPiece
+          })
+        }
+      }
+
       if (state.gameType) {
         if (state.select.length === 0 && state.boardRep[action.index]){
           // select a piece
@@ -125,6 +136,13 @@ export const gameReducer  = (state = initState, action)=>{
         movePiece: selectPiece
       })
     case HIGHLIGHT_AVAILABLE:
+      if (state.gameType === GAME_TYPE.INVITE_NETWOKRED){
+        if (state.currentTurn !== state.lobby.playerType){
+          return Object.assign({}, state, {
+            boardHightLight: [],
+          })
+        }
+      }
       return Object.assign({}, state, {
         boardHightLight: action.available
       })
