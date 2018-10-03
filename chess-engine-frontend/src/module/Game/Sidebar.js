@@ -126,7 +126,7 @@ class Sidebar extends React.Component{
           </div> */}
           <div className="d-flex flex-row flex-fill">
             <div className="p-2">You: </div>
-            <div className="p-2">{PiecesSVG[opponentColor=== 'w'? 'P' : 'p']}</div>
+            <div className="p-2">{PiecesSVG[opponentColor=== 'w'? 'p' : 'P']}</div>
           </div>
         </div>
     }

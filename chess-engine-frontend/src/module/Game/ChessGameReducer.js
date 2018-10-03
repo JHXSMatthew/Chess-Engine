@@ -175,6 +175,10 @@ export const gameReducer  = (state = initState, action)=>{
       return Object.assign({}, state, {
         lobby: invitedNetowkredLobbyReducer(state.lobby,action)
       })
+    case CANCEL_START_GAME:
+      return Object.assign({}, state, {
+        gameType: ""
+      })
     default:
       return state;
   }
@@ -523,3 +527,9 @@ export const actionNewNetworkedGame = () =>{
   }
 }
 
+const CANCEL_START_GAME = "CANCEL_START_GAME"
+export const actionCancelStartGame = () =>{
+  return {
+    type: CANCEL_START_GAME
+  }
+}
