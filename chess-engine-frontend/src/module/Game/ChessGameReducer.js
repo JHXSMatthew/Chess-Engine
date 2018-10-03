@@ -49,7 +49,8 @@ const initState = {
   history: [],
   //the real move history
   moveHistory: [],
-
+  // piece that just moved
+  movePiece: '',
   //networked game
   //game lobby (before game start)
   lobby: lobbyInitState
@@ -96,16 +97,23 @@ export const gameReducer  = (state = initState, action)=>{
       // if clicked on empty squere initially, do nothing
       let newSelectListRep = [];
       let highlight = state.boardHightLight;
+      let selectPiece = ''
       if (state.gameType) {
         if (state.select.length === 0 && state.boardRep[action.index]){
-          console.log(state.boardRep[action.index], state.boardRep[action.index].charCodeAt(0))
+          // select a piece
           if (state.currentTurn !== 'w' && state.boardRep[action.index].charCodeAt(0) >= 97) {
+            // select black piece and black's turn
             newSelectListRep = state.select.concat([action.index])
+            selectPiece = state.boardRep[action.index]
           } else if (state.currentTurn === 'w' && state.boardRep[action.index].charCodeAt(0) <= 90){
+            // select white piece and white's turn
             newSelectListRep = state.select.concat([action.index])
+            selectPiece = state.boardRep[action.index]
           }
         } else if (state.select.length === 1 && state.select[0] !== action.index) {
+          // select available square
           newSelectListRep = state.select.concat([action.index])
+          selectPiece = state.movePiece
         } else {
           // Empty square initially, or deselect piece
           highlight = []
@@ -113,7 +121,8 @@ export const gameReducer  = (state = initState, action)=>{
       }
       return Object.assign({}, state, {
         select: newSelectListRep,
-        boardHightLight: highlight
+        boardHightLight: highlight,
+        movePiece: selectPiece
       })
     case HIGHLIGHT_AVAILABLE:
       return Object.assign({}, state, {

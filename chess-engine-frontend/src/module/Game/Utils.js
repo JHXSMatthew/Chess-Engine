@@ -95,3 +95,10 @@ export const indexMorphism = (viewIndex) =>{
 
   return (8-Math.floor(viewIndex/8))*8 - (8 - viewIndex%8);
 }
+
+export const indexToCoord = (index) =>{
+  const LETTERS = ['A','B','C','D','E','F','G','H'];
+  var letter = LETTERS[index%8];
+  var number = 8-Math.floor(index/8);
+  return letter+number;
+}

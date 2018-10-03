@@ -111,7 +111,8 @@ function* MoveRequest(action){
       yield put(actionUpdateGameStateFail("Illegal move."))
 
     }else{
-      yield put(actionAddMoveHistory({from: action.from , to: action.to}))
+      const movedPiece = yield select((state) => state.game.movePiece)
+      yield put(actionAddMoveHistory({piece: movedPiece, from: action.from , to: action.to}))
       yield put(actionUpdateGameStateSuccess({...response.data, state: deserializeState(stateObj.state)}))
       yield put(actionHighlightLastMove([action.from, action.to]))
     }

@@ -11,6 +11,8 @@ import InvitedNetworkedGamePanel from './SidebarNetworkedGamePanel'
 
 import { connect } from 'react-redux'
 
+import { indexToCoord } from './Utils';
+
 import {
   actionLoadInitState,
   actionSaveLocalGame,
@@ -37,10 +39,10 @@ class Sidebar extends React.Component{
       return (
         <div key={UUID()} className='d-flex flex-row flex-fill'>
           <div className='pl-3'>
-            {a.from}:{a.to}
+            {a.piece};{indexToCoord(a.from)}:{indexToCoord(a.to)}
           </div>
-          <div className='pl-4'>
-            {b? b.from+ ":" + b.to: ""}
+          <div className='pl-5'>
+            {b? b.piece+";"+ indexToCoord(b.from)+ ":" + indexToCoord(b.to): ""}
           </div>
         </div>)
     }
@@ -95,6 +97,10 @@ class Sidebar extends React.Component{
           <div className="d-flex flex-row flex-fill">
             <div className="p-2">Move History: </div>
           </div>
+          <div className="d-flex flex-row flex-fill">
+            <div className="pl-3">White </div>
+            <div className="pl-5">Black</div>
+          </div>
           <div className='history'>
             {moveHistoryView}
           </div>
@@ -120,7 +126,7 @@ class Sidebar extends React.Component{
           </div> */}
           <div className="d-flex flex-row flex-fill">
             <div className="p-2">You: </div>
-            <div className="p-2">{PiecesSVG[opponentColor=== 'w'? 'p' : 'P']}</div>
+            <div className="p-2">{PiecesSVG[opponentColor=== 'w'? 'P' : 'p']}</div>
           </div>
         </div>
     }
