@@ -310,7 +310,7 @@ public class Board {
         int[] knightDirections = Square.getDirection(attackerColour, Piece.KNIGHT);
         for (int i = 0; i < knightDirections.length; i++) {
             int attackSquare = targetSquare + knightDirections[i];
-            if (Square.isValid(attackSquare) && board[attackSquare] == kingPiece) {
+            if (Square.isValid(attackSquare) && board[attackSquare] == knightPiece) {
                 return true;
             }
         }
