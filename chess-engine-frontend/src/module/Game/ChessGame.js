@@ -48,7 +48,7 @@ class Game extends React.Component{
   }
 
   componentDidUpdate(){
-    const {boardRep, select, isCheckmate, gameStatus, gameType} = this.props;
+    const {boardRep, select, isCheckmate, isChecked, gameStatus, gameType} = this.props;
 
     this.checkMove(boardRep, select);
 
@@ -107,7 +107,7 @@ const mapStateToProps = state =>{
     currentTurn: state.game.currentTurn,
     moveHistory: state.game.moveHistory,
     isCheckmate: state.game.isCheckmate,
-    isCheck: state.game.isCheck
+    isChecked: state.game.isChecked
   }
 }
 

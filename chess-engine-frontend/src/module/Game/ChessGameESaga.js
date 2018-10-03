@@ -40,7 +40,7 @@ import {
   actionLoadInitState,
 } from './ChessGameReducer'
 
-import { actionUpdateModalInfo } from '../../AppReducer'
+import { actionUpdateModalInfo,actionToggleModal } from '../../AppReducer'
 
 import { MoveApi, NetworkedGameApi} from './ChessGameEAPI'
 
@@ -114,6 +114,14 @@ function* MoveRequest(action){
       const movedPiece = yield select((state) => state.game.movePiece)
       yield put(actionAddMoveHistory({piece: movedPiece, from: action.from , to: action.to}))
       yield put(actionUpdateGameStateSuccess({...response.data, state: deserializeState(stateObj.state)}))
+      if (stateObj.isChecked){
+         yield put(actionUpdateModalInfo({
+          content: '',
+          show: true,
+          title: 'Check',
+          action: actionToggleModal(false)
+        }))
+      }
       yield put(actionHighlightLastMove([action.from, action.to]))
     }
 
