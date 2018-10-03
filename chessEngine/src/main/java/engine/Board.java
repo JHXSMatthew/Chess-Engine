@@ -4,18 +4,47 @@ public class Board {
     public int[] board = new int[128];
  //   public long[][] pieces = new long[2][6]; // first index is colour, second index is piece type
     public int activeColour;
+    public int enPassantSquare;
+
+    public boolean whiteQueenCastle;
+    public boolean whiteKingCastle;
+
+    public boolean blackQueenCastle;
+    public boolean blackKingCastle;
 
     public Board() {
         for (int value: Square.values) {
             board[value] = Piece.NO_PIECE;
         }
         activeColour = Piece.WHITE;
+        enPassantSquare = Square.NOSQUARE;
+        whiteQueenCastle = false;
+        whiteKingCastle = false;
+        blackQueenCastle = false;
+        blackKingCastle = false;
+    }
+
+    public Board copy(Board b) {
+        Board copy = new Board();
+        for (int value: Square.values) {
+            copy.board[value] = b.board[value];
+        }
+        copy.activeColour = b.activeColour;
+        copy.enPassantSquare = b.enPassantSquare;
+        copy.whiteQueenCastle = b.whiteQueenCastle;
+        copy.whiteKingCastle = b.whiteKingCastle;
+        copy.blackQueenCastle = b.blackQueenCastle;
+        copy.blackKingCastle = b.blackKingCastle;
+
+        return copy;
     }
 
     public void deserializeBoard(String state) {
         String[] splitState = state.split(" ");
         String boardRep = splitState[0];
         String colour = splitState[1];
+        String castleRights = splitState[2];
+        String enPassant = splitState[3];
 
         String[] rows = boardRep.split("/");
 
@@ -89,6 +118,33 @@ public class Board {
         } else {
             setColour(Piece.BLACK);
         }
+
+
+        if (castleRights != "-") {
+            char[] castleCharacters = castleRights.toCharArray();
+            for (Character c: castleCharacters) {
+                if (c.equals('k')) {
+                    blackKingCastle = true;
+                } else if (c.equals('K')) {
+                    whiteKingCastle = true;
+                } else if (c.equals('q')) {
+                    blackQueenCastle = true;
+                } else if (c.equals('Q')) {
+                    whiteQueenCastle = true;
+                } else {
+                    throw new IllegalArgumentException();
+                }
+            }
+        }
+
+        if (enPassant != "-") {
+            int square = toSquare(Integer.parseInt(enPassant));
+            if (Square.isValid(square)) {
+                enPassantSquare = square;
+            } else {
+                throw new IllegalArgumentException();
+            }
+        }
     }
 
 
@@ -96,10 +152,41 @@ public class Board {
     public void applyMove(Move m) {
         int originSquare = m.getOriginSquare();
         int targetSquare = m.getTargetSquare();
+        if (m.getType() == Move.ENPASSANT_ENABLER) {
+            board[targetSquare] = m.getOriginPiece();
+            board[originSquare] = Piece.NO_PIECE;
+            activeColour = Piece.oppositeColour(activeColour);
 
-        board[targetSquare] = m.getOriginPiece();
-        board[originSquare] = Piece.NO_PIECE;
-        activeColour = Piece.oppositeColour(activeColour);
+            if (Piece.getColour(m.getOriginPiece()) == Piece.WHITE) {
+                enPassantSquare = m.getTargetSquare() + Square.N;
+            } else if (Piece.getColour(m.getOriginPiece()) == Piece.BLACK) {
+                enPassantSquare = m.getTargetSquare() + Square.S;
+            } else {
+                throw new IllegalArgumentException();
+            }
+        } else {
+            enPassantSquare = Square.NOSQUARE;
+            if (m.getType() == Move.NORMAL) {
+                board[targetSquare] = m.getOriginPiece();
+                board[originSquare] = Piece.NO_PIECE;
+                activeColour = Piece.oppositeColour(activeColour);
+            } else if (m.getType() == Move.ENPASSANT_CAPTURE) {
+                board[targetSquare] = m.getOriginPiece();
+                board[originSquare] = Piece.NO_PIECE;
+
+                if (Piece.getColour(m.getOriginPiece()) == Piece.WHITE) {
+                    board[targetSquare + Square.S] = Piece.NO_PIECE;
+                } else if (Piece.getColour(m.getOriginPiece()) == Piece.BLACK) {
+                    board[targetSquare + Square.N] = Piece.NO_PIECE;
+                } else {
+                    throw new IllegalArgumentException();
+                }
+
+                activeColour = Piece.oppositeColour(activeColour);
+            }
+
+        }
+
     }
 
     //everything verified ahead of this call. currently only used for isCheckMate
@@ -236,6 +323,8 @@ public class Board {
 
     public boolean isCheckMate(MoveGenerator mg, int colour) {
         int kingSquare = findKing(colour);
+        Board copy = copy(this);
+
         boolean success = false;
         if (kingSquare == Square.NOSQUARE) {
             return success;
@@ -258,13 +347,26 @@ public class Board {
                     success = true;
                 }
             }
-            undoMove(m);
+
+            restoreBoard(copy);
             if (!success) {
                 return success;
             }
         }
 
         return true;
+    }
+
+    public void restoreBoard(Board copy) {
+        for (int values: Square.values) {
+            board[values] = copy.board[values];
+        }
+        activeColour = copy.activeColour;
+        enPassantSquare = copy.enPassantSquare;
+        whiteQueenCastle = copy.whiteQueenCastle;
+        whiteKingCastle = copy.whiteKingCastle;
+        blackQueenCastle = copy.blackQueenCastle;
+        blackKingCastle = copy.blackKingCastle;
     }
 
     public int findKing(int colour) {
@@ -310,7 +412,7 @@ public class Board {
         int[] knightDirections = Square.getDirection(attackerColour, Piece.KNIGHT);
         for (int i = 0; i < knightDirections.length; i++) {
             int attackSquare = targetSquare + knightDirections[i];
-            if (Square.isValid(attackSquare) && board[attackSquare] == kingPiece) {
+            if (Square.isValid(attackSquare) && board[attackSquare] == knightPiece) {
                 return true;
             }
         }
@@ -424,7 +526,27 @@ public class Board {
         } else {
             out = out + "b";
         }
-        return out + " KQkq - 0 1"; //hack because we don't what to do with it yet
+        out = out + " ";
+        if (whiteKingCastle) {
+            out = out + "K";
+        }
+        if (whiteQueenCastle) {
+            out = out + "Q";
+        }
+        if (blackKingCastle) {
+            out = out + "k";
+        }
+        if (blackQueenCastle) {
+            out = out + "q";
+        }
+
+        out = out + " ";
+        if (enPassantSquare == Square.NOSQUARE) {
+            out = out + "-";
+        } else {
+            out = out + String.valueOf(enPassantSquare);
+        }
+        return out + " 0 1"; //hack because we don't what to do with it yet
     }
 
     public void setColour (int colour) {
@@ -445,6 +567,26 @@ public class Board {
 
     public static int toIndex (int square) {
         return (square + (square & 7)) >> 1;
+    }
+
+    public boolean getCastleRight(int colour) {
+        if (colour == Piece.WHITE) {
+            return whiteKingCastle;
+        } else if (colour == Piece.BLACK) {
+            return blackKingCastle;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public boolean getCastleLeft(int colour) {
+        if (colour == Piece.WHITE) {
+            return whiteQueenCastle;
+        } else if (colour == Piece.BLACK) {
+            return blackKingCastle;
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 }
 

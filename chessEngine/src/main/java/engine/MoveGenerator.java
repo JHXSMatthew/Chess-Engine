@@ -114,15 +114,34 @@ public class MoveGenerator {
             for (int multiplier = 1; multiplier <= max; multiplier++) {
                 int currentSquare = originSquare + directions[0] * multiplier;
                 if (Square.isValid(currentSquare) && p.board[currentSquare] == Piece.NO_PIECE) {
-                    Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
-                    moves.add(m);
+                    //pawn promotion
+                    if (p.activeColour == Piece.BLACK && p.rank(originSquare) == 7 || p.activeColour == Piece.WHITE && p.rank(originSquare) == 0) {
+                        Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                        moves.add(m);
+                    } else if (multiplier == 2) {
+                        Move m = new Move(Move.ENPASSANT_ENABLER, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                    } else {
+                        Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                        moves.add(m);
+                    }
                 }
             }
             for (int remainingDirections = 1; remainingDirections < 3; remainingDirections++) {
                 int currentSquare = originSquare + directions[remainingDirections];
-                if (Square.isValid(currentSquare) && p.board[currentSquare] != Piece.NO_PIECE && Piece.getColour(p.board[currentSquare]) != p.activeColour) {
-                    Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
-                    moves.add(m);
+                if (Square.isValid(currentSquare)) {
+                    if (currentSquare == p.enPassantSquare && p.board[p.enPassantSquare] == Piece.NO_PIECE) {
+                        Move m = new Move(Move.ENPASSANT_CAPTURE, originSquare, currentSquare, originPiece, Piece.valueOf(Piece.oppositeColour(p.activeColour), Piece.PAWN), Piece.NO_PIECE_TYPE);
+                        moves.add(m);
+                    } else if (p.board[currentSquare] != Piece.NO_PIECE && Piece.getColour(p.board[currentSquare]) != p.activeColour) {
+                        if (p.activeColour == Piece.BLACK && p.rank(originSquare) == 7 || p.activeColour == Piece.WHITE && p.rank(originSquare) == 0) {
+                            Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
+                            moves.add(m);
+                        } else {
+                            Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
+                            moves.add(m);
+                        }
+
+                    }
                 }
             }
         } else if (!Piece.isSliding(originType)) { //kings/knights
@@ -154,6 +173,25 @@ public class MoveGenerator {
                 }
             }
         }
+
+        //castling
+        if (originType == Piece.KING) {
+            if (!p.isChecked(p.activeColour)) {
+                if (p.getCastleLeft(p.activeColour)) {
+
+                }
+                if (p.getCastleRight(p.activeColour)) {
+
+                }
+            }
+            //to do: if rook moves, then that side loses castle right
+            //       if king moves, both sides (king and queen side) lose castle right
+            //if we're in check, we cannot castle
+            //check if there are any pieces between the king and rook to castle
+            //check if any of the king's movements leave the king in check
+            //
+        }
+
     }
 
 }
