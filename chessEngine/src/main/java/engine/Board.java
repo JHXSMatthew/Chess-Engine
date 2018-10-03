@@ -1,4 +1,7 @@
 package engine;
+import com.sun.tools.javac.util.ArrayUtils;
+
+import java.util.*;
 
 public class Board {
     public int[] board = new int[128];
@@ -166,11 +169,7 @@ public class Board {
             }
         } else {
             enPassantSquare = Square.NOSQUARE;
-            if (m.getType() == Move.NORMAL) {
-                board[targetSquare] = m.getOriginPiece();
-                board[originSquare] = Piece.NO_PIECE;
-                activeColour = Piece.oppositeColour(activeColour);
-            } else if (m.getType() == Move.ENPASSANT_CAPTURE) {
+             if (m.getType() == Move.ENPASSANT_CAPTURE) {
                 board[targetSquare] = m.getOriginPiece();
                 board[originSquare] = Piece.NO_PIECE;
 
@@ -183,7 +182,11 @@ public class Board {
                 }
 
                 activeColour = Piece.oppositeColour(activeColour);
-            }
+            } else { //else if (m.getType() == Move.NORMAL) {
+                 board[targetSquare] = m.getOriginPiece();
+                 board[originSquare] = Piece.NO_PIECE;
+                 activeColour = Piece.oppositeColour(activeColour);
+             }
 
         }
 
@@ -214,7 +217,12 @@ public class Board {
         State boardRep = new State();
         boardRep.setBoardRep(stateString);
 
-        if (validateMove(m)) {
+        MoveGenerator mg = new MoveGenerator();
+        mg.generateMoves(m.getOriginSquare(), this);
+
+        int[] targetSquares = mg.targetSquareToSquareArray();
+
+        if (arrayContains(targetSquares, m.getTargetSquare())) {
             //lets apply the move
             applyMove(m);
 
@@ -224,9 +232,9 @@ public class Board {
 
                 if (isChecked(activeColour)) {
                     boardRep.setCheck(true);
-                    MoveGenerator mg = new MoveGenerator();
+                    MoveGenerator checkMateMoves = new MoveGenerator();
                     mg.generateMoves(this);
-                    boardRep.setCheckMate(isCheckMate(mg, activeColour));
+                    boardRep.setCheckMate(isCheckMate(checkMateMoves, activeColour));
                 }
 
                 return boardRep;
@@ -236,9 +244,9 @@ public class Board {
             if (isChecked(activeColour)) {
                 boardRep.setCheck(true);
                 //does the move checkmate the other player?
-                MoveGenerator mg = new MoveGenerator();
+                MoveGenerator checkMateMoves = new MoveGenerator();
                 mg.generateMoves(this);
-                boardRep.setCheckMate(isCheckMate(mg, activeColour));
+                boardRep.setCheckMate(isCheckMate(checkMateMoves, activeColour));
 
             }
 
@@ -319,6 +327,15 @@ public class Board {
             }
         }
         return success;
+    }
+
+    public boolean arrayContains(int[] arr, int val) {
+        for (int num: arr) {
+            if (num == val) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isCheckMate(MoveGenerator mg, int colour) {

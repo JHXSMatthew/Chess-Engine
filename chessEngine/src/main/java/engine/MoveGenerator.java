@@ -15,6 +15,17 @@ public class MoveGenerator {
         return targetSquares;
     }
 
+    public int[] targetSquareToSquareArray() {
+        int [] targetSquares = new int [moves.size()];
+
+        int index = 0;
+        for (Move m: moves) {
+            targetSquares[index] = m.getTargetSquare();
+            index++;
+        }
+        return targetSquares;
+    }
+
     public MoveGenerator() {
         this.moves = new ArrayList<Move>();
     }
@@ -91,8 +102,7 @@ public class MoveGenerator {
     }
 
 
-    public void generateMoves(int indexSquare, Board p) {
-        int originSquare = Board.toSquare(indexSquare);
+    public void generateMoves(int originSquare, Board p) {
         if (!Square.isValid(originSquare)) {
             return;
         }
@@ -173,7 +183,7 @@ public class MoveGenerator {
                 }
             }
         }
-
+/*
         //castling
         if (originType == Piece.KING) {
             if (!p.isChecked(p.activeColour)) {
@@ -190,7 +200,7 @@ public class MoveGenerator {
             //check if there are any pieces between the king and rook to castle
             //check if any of the king's movements leave the king in check
             //
-        }
+        }*/
 
     }
 
