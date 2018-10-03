@@ -4,7 +4,6 @@ const INIT_BOARD_STATE_STR = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 const LOCAL_SAVED_GAME_INDEX = "savedLocalGame"
 const LOCAL_SAVED_GAME_LASTMOVE = "savedLocalLastMove"
 
-
 export const GAME_TYPE = {
   LOCAL_GAME: 'LocalGame',
   INVITE_NETWOKRED: 'InviteNetworked'

@@ -22,7 +22,7 @@ import {
   actionUpdateGameStateSuccess,
   actionDestoryNetworkedGameTimer,
   GAME_STATUS,
-  GAME_TYPE
+  GAME_TYPE,
 } from './ChessGameReducer'
 import { actionUpdateModalInfo } from '../../AppReducer';
 import { SHOW_DEBUG_BUTTONS } from '../../config';
