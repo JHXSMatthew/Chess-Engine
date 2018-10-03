@@ -98,7 +98,12 @@ export const gameReducer  = (state = initState, action)=>{
       let highlight = state.boardHightLight;
       if (state.gameType) {
         if (state.select.length === 0 && state.boardRep[action.index]){
-          newSelectListRep = state.select.concat([action.index])
+          console.log(state.boardRep[action.index], state.boardRep[action.index].charCodeAt(0))
+          if (state.currentTurn !== 'w' && state.boardRep[action.index].charCodeAt(0) >= 97) {
+            newSelectListRep = state.select.concat([action.index])
+          } else if (state.currentTurn === 'w' && state.boardRep[action.index].charCodeAt(0) <= 90){
+            newSelectListRep = state.select.concat([action.index])
+          }
         } else if (state.select.length === 1 && state.select[0] !== action.index) {
           newSelectListRep = state.select.concat([action.index])
         } else {
