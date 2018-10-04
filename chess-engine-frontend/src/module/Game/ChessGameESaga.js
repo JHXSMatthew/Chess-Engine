@@ -115,7 +115,7 @@ function* MoveRequest(action){
       const gameType = yield select((state) => state.game.gameType)
       yield put(actionAddMoveHistory({piece: movedPiece, from: action.from , to: action.to}))
       yield put(actionUpdateGameStateSuccess({...response.data, state: deserializeState(stateObj.state)}))
-      if (gameType === GAME_TYPE.LOCAL_GAME && stateObj.isChecked){
+      if (gameType === GAME_TYPE.LOCAL_GAME && stateObj.isChecked && !stateObj.isCheckmate){
          yield put(actionUpdateModalInfo({
           content: '',
           show: true,

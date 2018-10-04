@@ -124,10 +124,10 @@ class Sidebar extends React.Component{
             <div className="p-2">Timer: </div>
             <div className="p-2">5:00/60:00</div>
           </div> */}
-          <div className="d-flex flex-row flex-fill">
+          {gameType != GAME_TYPE.LOCAL_GAME && <div className="d-flex flex-row flex-fill">
             <div className="p-2">You: </div>
             <div className="p-2">{PiecesSVG[opponentColor=== 'w'? 'p' : 'P']}</div>
-          </div>
+          </div>}
         </div>
     }
   
