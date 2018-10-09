@@ -399,7 +399,7 @@ function networkedTimer(gameId){
         }catch(e){
           emitter(END)
         }
-      }, 3000);
+      }, 1000);
 
       return () => {
         clearInterval(iv)

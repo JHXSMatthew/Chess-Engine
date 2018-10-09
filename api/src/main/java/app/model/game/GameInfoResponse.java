@@ -1,13 +1,18 @@
 package app.model.game;
 
+import app.model.NetworkedStateContainer;
 import app.model.StateContainer;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+
+import java.io.IOException;
 
 public class GameInfoResponse {
     @JsonProperty("status")
     private String status;
     @JsonProperty("state")
-    private StateContainer state;
+    private NetworkedStateContainer state;
     @JsonProperty("resignedPlayer")
     private String resignedPlayer;
 
@@ -19,11 +24,11 @@ public class GameInfoResponse {
         this.status = status;
     }
 
-    public StateContainer getState() {
+    public NetworkedStateContainer getState() {
         return state;
     }
 
-    public void setState(StateContainer state) {
+    public void setState(NetworkedStateContainer state) {
         this.state = state;
     }
 
@@ -37,4 +42,7 @@ public class GameInfoResponse {
 
     public GameInfoResponse() {
     }
+
 }
+
+
