@@ -91,8 +91,12 @@ public class Square {
             NE, NW, SE, SW
     };
 
-    static final int BLACK_STARTING_SQUARE = 4;
-    static final int WHITE_STARTING_SQUARE = 116;
+    static final int BLACK_KING_STARTING_SQUARE = 4;
+    static final int WHITE_KING_STARTING_SQUARE = 116;
+    static final int BLACK_QUEENSIDE_ROOK_STARTING_SQUARE = 0;
+    static final int BLACK_KINGSIDE_ROOK_STARTING_SQUARE = 7;
+    static final int WHITE_QUEENSIDE_ROOK_STARTING_SQUARE = 112;
+    static final int WHITE_KINGSIDE_ROOK_STARTING_SQUARE = 119;
 
     static int[] getDirection(int colour, int pieceType) {
         switch (pieceType) {
@@ -113,6 +117,7 @@ public class Square {
 
         }
     }
+
 
     static boolean isValid(int square) {
         return (square & 0x88) == 0;

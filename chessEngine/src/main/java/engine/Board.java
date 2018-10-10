@@ -1,5 +1,4 @@
 package engine;
-import com.sun.tools.javac.util.ArrayUtils;
 
 import java.util.*;
 
@@ -122,8 +121,7 @@ public class Board {
             setColour(Piece.BLACK);
         }
 
-
-        if (castleRights != "-") {
+        if (!castleRights.equals("-")) {
             char[] castleCharacters = castleRights.toCharArray();
             for (Character c: castleCharacters) {
                 if (c.equals('k')) {
@@ -140,7 +138,7 @@ public class Board {
             }
         }
 
-        if (enPassant != "-") {
+        if (!enPassant.equals("-")) {
             int square = toSquare(Integer.parseInt(enPassant));
             if (Square.isValid(square)) {
                 enPassantSquare = square;
@@ -155,7 +153,8 @@ public class Board {
     public void applyMove(Move m) {
         int originSquare = m.getOriginSquare();
         int targetSquare = m.getTargetSquare();
-        if (m.getType() == Move.ENPASSANT_ENABLER) {
+        int type = m.getType();
+        if (type == Move.ENPASSANT_ENABLER) {
             board[targetSquare] = m.getOriginPiece();
             board[originSquare] = Piece.NO_PIECE;
             activeColour = Piece.oppositeColour(activeColour);
@@ -169,7 +168,7 @@ public class Board {
             }
         } else {
             enPassantSquare = Square.NOSQUARE;
-             if (m.getType() == Move.ENPASSANT_CAPTURE) {
+             if (type == Move.ENPASSANT_CAPTURE) {
                 board[targetSquare] = m.getOriginPiece();
                 board[originSquare] = Piece.NO_PIECE;
 
@@ -219,8 +218,8 @@ public class Board {
 
         MoveGenerator mg = new MoveGenerator();
         mg.generateMoves(m.getOriginSquare(), this);
-
         int[] targetSquares = mg.targetSquareToSquareArray();
+        Board copy = copy(this);
 
         if (arrayContains(targetSquares, m.getTargetSquare())) {
             //lets apply the move
@@ -228,12 +227,12 @@ public class Board {
 
             //no move is allowed to leave us in check
             if (isChecked(Piece.oppositeColour(activeColour))) {
-                undoMove(m);
-
+                //undoMove(m);
+                restoreBoard(copy);
                 if (isChecked(activeColour)) {
                     boardRep.setCheck(true);
                     MoveGenerator checkMateMoves = new MoveGenerator();
-                    mg.generateMoves(this);
+                    checkMateMoves.generateMoves(this);
                     boardRep.setCheckMate(isCheckMate(checkMateMoves, activeColour));
                 }
 
@@ -245,7 +244,7 @@ public class Board {
                 boardRep.setCheck(true);
                 //does the move checkmate the other player?
                 MoveGenerator checkMateMoves = new MoveGenerator();
-                mg.generateMoves(this);
+                checkMateMoves.generateMoves(this);
                 boardRep.setCheckMate(isCheckMate(checkMateMoves, activeColour));
 
             }
@@ -342,30 +341,25 @@ public class Board {
         int kingSquare = findKing(colour);
         Board copy = copy(this);
 
-        boolean success = false;
+        boolean success = true;
         if (kingSquare == Square.NOSQUARE) {
-            return success;
+            throw new IllegalArgumentException();
         }
-
         for (Move m: mg.getMoves()) {
             int originPiece = m.getOriginPiece();
-
             applyMove(m);
             if (Piece.getType(originPiece) == Piece.KING) {
                 if (!isChecked(colour)) {
                     success = false;
-                } else {
-                    success = true;
                 }
             } else {
                 if (!isChecked(colour, kingSquare)) {
                     success = false;
-                } else {
-                    success = true;
                 }
             }
 
             restoreBoard(copy);
+            //undoMove(m);
             if (!success) {
                 return success;
             }
@@ -586,7 +580,7 @@ public class Board {
         return (square + (square & 7)) >> 1;
     }
 
-    public boolean getCastleRight(int colour) {
+    public boolean getCastleKingSide(int colour) {
         if (colour == Piece.WHITE) {
             return whiteKingCastle;
         } else if (colour == Piece.BLACK) {
@@ -596,11 +590,11 @@ public class Board {
         }
     }
 
-    public boolean getCastleLeft(int colour) {
+    public boolean getCastleQueenSide(int colour) {
         if (colour == Piece.WHITE) {
             return whiteQueenCastle;
         } else if (colour == Piece.BLACK) {
-            return blackKingCastle;
+            return blackQueenCastle;
         } else {
             throw new IllegalArgumentException();
         }

@@ -50,6 +50,7 @@ public class MoveGenerator {
             }
             int originType = Piece.getType(originPiece);
             int[] directions = Square.getDirection(p.activeColour, originType);
+
             if (originType == Piece.PAWN) {
                 int max = 1;
                 if ((p.activeColour == Piece.BLACK && p.rank(originSquare) == 1) || (p.activeColour == Piece.WHITE && p.rank(originSquare) == 6)) {
@@ -64,10 +65,13 @@ public class MoveGenerator {
                             moves.add(m);
                         } else if (multiplier == 2) {
                             Move m = new Move(Move.ENPASSANT_ENABLER, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                            moves.add(m);
                         } else {
                             Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
                             moves.add(m);
                         }
+                    } else {
+                        break;
                     }
                 }
                 for (int remainingDirections = 1; remainingDirections < 3; remainingDirections++) {
@@ -149,10 +153,13 @@ public class MoveGenerator {
                         moves.add(m);
                     } else if (multiplier == 2) {
                         Move m = new Move(Move.ENPASSANT_ENABLER, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                        moves.add(m);
                     } else {
                         Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
                         moves.add(m);
                     }
+                } else {
+                    break;
                 }
             }
             for (int remainingDirections = 1; remainingDirections < 3; remainingDirections++) {
@@ -206,11 +213,23 @@ public class MoveGenerator {
         //castling
         if (originType == Piece.KING) {
             if (!p.isChecked(p.activeColour)) {
-                if (p.getCastleLeft(p.activeColour)) {
+                if (p.getCastleQueenSide(p.activeColour)) {
+                    if (p.activeColour == Piece.BLACK) {
+                        for (int square = Square.BLACK_QUEENSIDE_ROOK_STARTING_SQUARE + 1; square < Square.BLACK_KING_STARTING_SQUARE; square++) {
 
+                        }
+                    } else {
+
+                    }
                 }
-                if (p.getCastleRight(p.activeColour)) {
+                if (p.getCastleKingSide(p.activeColour)) {
+                    if (p.activeColour == Piece.BLACK) {
+                        for (int square = Square.BLACK_KING_STARTING_SQUARE + 1; square < Square.BLACK_KINGSIDE_ROOK_STARTING_SQUARE; square++) {
 
+                        }
+                    } else {
+
+                    }
                 }
             }
             //to do: if rook moves, then that side loses castle right
