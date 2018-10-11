@@ -14,10 +14,3 @@ matrix:
         - cd ../api
       script:
         - mvn install 
-
-    - language: javascript
-      before_script:
-        - cd chess-engine-frontend 
-        - npm install
-      script:
-        - npm run test
