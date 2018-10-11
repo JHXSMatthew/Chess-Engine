@@ -16,7 +16,7 @@ public class UserController {
     private UserRepository ur;
     @PostMapping("/api/user/register")
     // JSON Format: {"userName": "test","password": "pass","email": "test@gmail.com"}
-    public UserRequestResponse register(@RequestBody UserContainer newUser){
+    public UserRequestResponse handlePostRegister(@RequestBody UserContainer newUser){
         ur.save(newUser);
         UserRequestResponse newUserResponse = new UserRequestResponse();
         newUserResponse.setUserName(newUser.getUserName());
@@ -27,18 +27,19 @@ public class UserController {
 
     // get email
     @GetMapping("/api/user/{userName}")
-    public String getEmail(@PathVariable String userName){
-        Optional<UserContainer> dbModel = ur.findById(userName);
+    public String handleGetInfo(@PathVariable String userName){
+        Optional<UserContainer> dbModel = ur.findAllUserByName(userName);
         return dbModel.map(UserContainer::getEmail).orElse(null);
     }
 
 
     // change password
+    // using form-data
     @PostMapping("api/user/forget/{userName}")
-    public String changePassword(@PathVariable String userName,@RequestParam String newPass){
-        Optional<UserContainer> dbModel = ur.findById(userName);
+    public String handleResetPost(@PathVariable String userName,@RequestParam String newPassWord){
+        Optional<UserContainer> dbModel = ur.findAllUserByName(userName);
         if(dbModel.isPresent()){
-            dbModel.get().setPassword(newPass);
+            dbModel.get().setPassword(newPassWord);
             ur.save(dbModel.get());
             return "Success";
         }else{
@@ -48,8 +49,7 @@ public class UserController {
 
     // Log in
     @PostMapping("api/user/login/")
-    public String handleLogin(@RequestParam("userName") String UserName,@RequestParam("passWord") String password){
-
+    public String handlePostLogin(@RequestParam("userName") String UserName,@RequestParam("passWord") String password){
         return null;
     }
 
