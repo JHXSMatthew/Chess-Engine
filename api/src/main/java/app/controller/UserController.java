@@ -3,8 +3,6 @@ package app.controller;
 import app.model.user.UserContainer;
 import app.model.user.UserRequestResponse;
 import app.repository.UserRepository;
-import engine.ChessEngineDummy;
-import engine.ChessEngineI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,52 +11,31 @@ import java.util.Optional;
 @CrossOrigin
 @RestController
 public class UserController {
-    private static ChessEngineI engine = new ChessEngineDummy();
 
     @Autowired
     private UserRepository ur;
-    @PostMapping("/api/user")
-    public UserRequestResponse newUser(){
-        String GameId = "";
-        String PlayerType = "";
-        String UserName = "test";
-        String PassWord = "password";
-
-        UserContainer newUser = new UserContainer(GameId,PlayerType,UserName,PassWord);
-
+    @PostMapping("/api/user/register")
+    // JSON Format: {"userName": "test","password": "pass","email": "test@gmail.com"}
+    public UserRequestResponse register(@RequestBody UserContainer newUser){
         ur.save(newUser);
-
         UserRequestResponse newUserResponse = new UserRequestResponse();
-        newUserResponse.setGameId(GameId);
-        newUserResponse.setPassWord(PassWord);
-        newUserResponse.setPlayerType(PlayerType);
-        newUserResponse.setUserName(UserName);
+        newUserResponse.setUserName(newUser.getUserName());
+        newUserResponse.setEmail(newUser.getEmail());
 
         return newUserResponse;
     }
 
-    // User join the game can change to readable representation
-    @PutMapping("/api/user/{userName}/{gameId}/{type}")
-    public void JoinTheGame(@PathVariable String username, @PathVariable String id,
-                            @PathVariable String type){
-        Optional<UserContainer> dbModel = ur.findById(username);
-        if(dbModel.isPresent()){
-            dbModel.get().setGameId(id);
-            dbModel.get().setPlayerType(type);
-            ur.save(dbModel.get());
-        }
-    }
-
-    // get the password
+    // get email
     @GetMapping("/api/user/{userName}")
-    public String getPassword(@PathVariable String userName){
+    public String getEmail(@PathVariable String userName){
         Optional<UserContainer> dbModel = ur.findById(userName);
-        return dbModel.map(UserContainer::getPassword).orElse(null);
+        return dbModel.map(UserContainer::getEmail).orElse(null);
     }
 
-    // reset password
+
+    // change password
     @PostMapping("api/user/forget/{userName}")
-    public String resetPassword(@PathVariable String userName,@RequestParam String newPass){
+    public String changePassword(@PathVariable String userName,@RequestParam String newPass){
         Optional<UserContainer> dbModel = ur.findById(userName);
         if(dbModel.isPresent()){
             dbModel.get().setPassword(newPass);
@@ -68,5 +45,12 @@ public class UserController {
             return "Failed";
         }
     }
-    
+
+    // Log in
+    @PostMapping("api/user/login/")
+    public String handleLogin(@RequestParam("userName") String UserName,@RequestParam("passWord") String password){
+
+        return null;
+    }
+
 }

@@ -11,41 +11,22 @@ import java.io.Serializable;
 @Table(name="user_container")
 public class UserContainer implements Serializable {
     @Id
-    @GeneratedValue(generator="system-uuid")
-    @GenericGenerator(name="system-uuid", strategy = "uuid")
-    @Column
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int UserId;
     private String UserName;
     @Column
-    private String GameId;
-    @Column
-    private String PlayerType;
-    @Column
     private String Password;
+    @Column
+    private String Email;
 
 
     public UserContainer(){}
 
-    public UserContainer(String gameId, String playerType, String UserName, String Password){
-        this.GameId = gameId;
-        this.PlayerType = playerType;
+    public UserContainer(int id, String UserName, String Password, String Email){
+        this.UserId = id;
         this.UserName = UserName;
         this.Password = Password;
-    }
-
-    public String getGameId() {
-        return GameId;
-    }
-
-    public void setGameId(String gameId) {
-        GameId = gameId;
-    }
-
-    public String getPlayerType() {
-        return PlayerType;
-    }
-
-    public void setPlayerType(String playerType) {
-        PlayerType = playerType;
+        this.Email = Email;
     }
 
     public String getUserName() {
@@ -62,5 +43,13 @@ public class UserContainer implements Serializable {
 
     public void setPassword(String password) {
         Password = password;
+    }
+
+    public String getEmail() {
+        return Email;
+    }
+
+    public void setEmail(String email) {
+        Email = email;
     }
 }
