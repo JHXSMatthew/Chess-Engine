@@ -209,26 +209,57 @@ public class MoveGenerator {
                 }
             }
         }
-/*
+
         //castling
         if (originType == Piece.KING) {
             if (!p.isChecked(p.activeColour)) {
                 if (p.getCastleQueenSide(p.activeColour)) {
+                    boolean success = true;
                     if (p.activeColour == Piece.BLACK) {
                         for (int square = Square.BLACK_QUEENSIDE_ROOK_STARTING_SQUARE + 1; square < Square.BLACK_KING_STARTING_SQUARE; square++) {
+                            if (p.board[square] != Piece.NO_PIECE) {
+                                success = false;
+                                break;
+                            }
+                        }
+                        if (success) {
 
                         }
                     } else {
+                        for (int square = Square.WHITE_QUEENSIDE_ROOK_STARTING_SQUARE + 1; square < Square.WHITE_KING_STARTING_SQUARE; square++) {
+                            if (p.board[square] != Piece.NO_PIECE) {
+                                success = false;
+                                break;
+                            }
+                        }
+                        if (success) {
+
+                        }
 
                     }
                 }
                 if (p.getCastleKingSide(p.activeColour)) {
+                    boolean success = true;
                     if (p.activeColour == Piece.BLACK) {
                         for (int square = Square.BLACK_KING_STARTING_SQUARE + 1; square < Square.BLACK_KINGSIDE_ROOK_STARTING_SQUARE; square++) {
+                            if (p.board[square] != Piece.NO_PIECE) {
+                                success = false;
+                                break;
+                            }
+                        }
+                        if (success) {
 
                         }
                     } else {
+                        for (int square = Square.WHITE_KING_STARTING_SQUARE + 1; square < Square.WHITE_KINGSIDE_ROOK_STARTING_SQUARE; square++) {
+                            if (p.board[square] != Piece.NO_PIECE) {
+                                success = false;
+                                break;
+                            }
+                        }
+                        if (success) {
 
+                        }
                     }
                 }
             }
@@ -238,7 +269,7 @@ public class MoveGenerator {
             //check if there are any pieces between the king and rook to castle
             //check if any of the king's movements leave the king in check
             //
-        }*/
+        }
 
     }
 
