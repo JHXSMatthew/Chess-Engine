@@ -24,4 +24,8 @@ public interface ChessEngineI {
      * @return the state after move
      */
     State move(String state, int from, int to);
+
+    State promotionMove(String state, int to, int promotionPiece);
+
+    State requestMove(String state);
 }

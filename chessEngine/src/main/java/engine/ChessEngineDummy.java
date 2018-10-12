@@ -20,6 +20,8 @@ public class ChessEngineDummy implements ChessEngineI {
         m.generateMoves(pieceLoc, b);
         return m.targetSquareToIndexArray();
     }
+
+
     @Override
     public State move(String stateString, int from, int to) {
         /*
@@ -34,6 +36,16 @@ public class ChessEngineDummy implements ChessEngineI {
         m.setTargetPiece(b);
 
         return b.psuedoLegalMakeMove(stateString, m);
+    }
+
+    @Override
+    public State promotionMove(String stateString, int to, int promotionPiece) {
+
+    }
+
+    @Override
+    public State requestMove(String stateString) {
+        
     }
 
 }
