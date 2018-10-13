@@ -18,7 +18,7 @@ public class ChessEngineDummy implements ChessEngineI {
         b.deserializeBoard(state);
         MoveGenerator m = new MoveGenerator();
         
-        m.generateMoves(pieceLoc, b);
+        m.generateMoves(Board.toSquare(pieceLoc), b);
         return m.targetSquareToIndexArray();
     }
 
