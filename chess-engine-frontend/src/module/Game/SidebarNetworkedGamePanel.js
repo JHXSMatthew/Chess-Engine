@@ -1,6 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { actionNetworkedCreateLobby, actionNetworkedWantToJoin, actionNetworkedUpdateGameId, actionNetworkedSetGameIdCopied, actionNetworkedJoinGame} from './ChessGameReducer';
+import { actionNetworkedCreateLobby, actionNetworkedWantToJoin, actionNetworkedUpdateGameId,
+         actionNetworkedSetGameIdCopied, actionNetworkedJoinGame,
+         actionCancelStartGame} from './ChessGameReducer';
 
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
@@ -24,6 +26,7 @@ class InvitedNetworkedGamePanel extends React.Component{
           (<div className="d-flex flex-row flex-fill">
             <button className='btn btn-primary' onClick={this.props.createLobby}> Create Lobby </button>
             <button className='btn btn-secondary' onClick={this.props.wantToJoin}> Join Lobby </button>
+            <button className='btn btn-danger' onClick={this.props.cancelStartGame}> Back </button>
           </div>)
           : (
             <div>
@@ -85,7 +88,8 @@ const mapDispatchToProps = dispatch => {
    wantToJoin: ()=> dispatch(actionNetworkedWantToJoin()),
    updateGameId: (gameId) => dispatch(actionNetworkedUpdateGameId(gameId)),
    setCopied: () => dispatch(actionNetworkedSetGameIdCopied(true)),
-   join: (id)=>dispatch(actionNetworkedJoinGame(id))
+   join: (id)=>dispatch(actionNetworkedJoinGame(id)),
+   cancelStartGame: ()=> dispatch(actionCancelStartGame())
   }
 }
 

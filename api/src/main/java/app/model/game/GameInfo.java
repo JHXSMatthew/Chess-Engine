@@ -8,10 +8,6 @@ public class GameInfo {
     @JsonProperty("BoardState")
     private String BoardState;
 
-    public GameInfo(String status, String state) {
-        this.GameStatus = status;
-        this.BoardState = state;
-    }
 
     public GameInfo() {
     }
@@ -31,4 +27,6 @@ public class GameInfo {
     public void setBoardState(String boardState) {
         BoardState = boardState;
     }
+
+
 }

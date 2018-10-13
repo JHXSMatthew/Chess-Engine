@@ -1,20 +1,32 @@
 package app.model;
 
+import app.model.move.MoveHistory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import engine.State;
 
 public class StateContainer {
-    @JsonProperty("state")
+    //DON'T REMOVE THE JSON PROPERTY.
     private String state;
     @JsonProperty("isChecked")
     private boolean isChecked;
     @JsonProperty("isCheckmate")
     private boolean isCheckmate;
-
     @JsonProperty("isResigned")
     private boolean isResigned;
 
     public StateContainer() {
+
+    }
+
+    protected StateContainer(State s) {
+        if(s == null){
+            return;
+        }
+
+        setState(s.getBoardRep());
+        setChecked(s.isCheck());
+        setCheckmate(s.isCheckMate());
+
     }
 
     public boolean isChecked() {
@@ -50,16 +62,11 @@ public class StateContainer {
     }
 
     public static StateContainer build(State s){
-        if(s == null){
-            return null;
-        }
-        StateContainer container = new StateContainer();
-        container.setState(s.getBoardRep());
-        container.setChecked(s.isCheck());
-        container.setCheckmate(s.isCheckMate());
-
-        return container;
+        return new StateContainer(s);
     }
+
+
+
 
 
 }

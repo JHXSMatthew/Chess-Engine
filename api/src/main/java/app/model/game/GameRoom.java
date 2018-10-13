@@ -1,6 +1,7 @@
 package app.model.game;
 
 import app.model.StateContainer;
+import app.model.move.MoveHistory;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -18,9 +19,11 @@ public class GameRoom implements Serializable {
     @Column(name = "uuid", columnDefinition="uuid" ,unique = true)
     private String id;
 
+    //the board state Object
     private String state;
     private boolean icChecked;
     private boolean isCheckmate;
+
 
     @Column(nullable = false)
     private Integer numOfUser;
@@ -80,12 +83,11 @@ public class GameRoom implements Serializable {
     public enum GameStatus{
         lobby,ingame,finished;
 
-
-
         @Override
         public String toString() {
             return super.toString();
         }
     }
+
 
 }
