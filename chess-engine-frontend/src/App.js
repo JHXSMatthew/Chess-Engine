@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import Game from './module/Game/ChessGame'
 import About from './module/About/About';
 import Login from './module/User/Login';
+import UserCenter from './module/User/UserCenter'
+
 import ModalWrapper from './component/ModalWrapper';
 
 import './App.less'
@@ -13,49 +15,73 @@ import {connect} from 'react-redux';
 import { actionToggleModal } from './AppReducer';
 import { actionOnLoadCacheLogin } from './module/User/UserReducer';
 
+import {
+  Collapse,
+  Navbar,
+  NavbarToggler,
+  NavbarBrand,
+  Nav,
+  NavItem,
+  NavLink,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem } from 'reactstrap';
 
 
 
 class Header extends Component{
+
+  constructor(props){
+    super(props)
+
+    this.state = {
+      isOpen: false
+    }
+  }
+
+  toggle = () => {
+    this.setState({
+      isOpen: !this.state.isOpen
+    });
+  }
+  
   render(){
 
     const { auth, info } = this.props;
 
     return (
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <a className="navbar-brand" href="#">Chess Lty Ptd</a>
-      <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span className="navbar-toggler-icon"></span>
-      </button>
-    
-      <div className="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul className="navbar-nav mr-auto">
-          {/* todo: active bind to the react-router */}
-          <li className="nav-item"> 
-            <Link className="nav-link" to="/">Game <span className="sr-only">(current)</span></Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/tute">Tutorial</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/about">About</Link>
-          </li>
-        </ul>
-        {auth ? 
-          <form className="form-inline my-2 my-lg-0">
+      <div>
+        <Navbar color="light" light expand="md">
+          <NavbarBrand href="/">Chess Lty Ptd</NavbarBrand>
+          <NavbarToggler onClick={this.toggle} />
+          <Collapse isOpen={this.state.isOpen} navbar>
+            <Nav className="mr-auto" navbar>
+              <NavItem>
+                <Link className="nav-link" to="/">Game <span className="sr-only">(current)</span></Link>              </NavItem>
+              <NavItem>
+                <Link className="nav-link" to="/tute">Tutorial</Link>
+              </NavItem>
+              <NavItem>
+                <Link className="nav-link" to="/about">About</Link>
+              </NavItem>
+            </Nav>
+            {auth ? 
+          <div className="form-inline my-2 my-lg-0">
             Welcome! <Link className="nav-link" to="/user">{info.userName}</Link>
-          </form>
-        :<form className="form-inline my-2 my-lg-0">
+          </div>
+            :<div className="form-inline my-2 my-lg-0">
 
-          Welcome!  
-          <Link className="nav-link" to="/login">Login</Link>
-           or 
-          <Link className="nav-link" to="/register">Register</Link>
-        
-        </form>
-      }
+              Welcome!  
+              <Link className="nav-link" to="/login">Login</Link>
+              or 
+              <Link className="nav-link" to="/register">Register</Link>
+            
+            </div>
+          }
+          </Collapse>
+        </Navbar>
       </div>
-    </nav>
     )
   }
 }
@@ -80,6 +106,7 @@ class App extends Component {
           <div className="container content-margin">
             
             <Route exact path="/" component={Game}/>
+            <Route path="/user" component={UserCenter}/>
             <Route path="/about" component={About}/>
             <Route path="/login" component={Login}/>
           </div>
