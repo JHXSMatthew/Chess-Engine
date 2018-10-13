@@ -22,4 +22,6 @@ target/
 *.imi
 *.class
 *.jar
-
+.DS_Store
+.classpath
+.project

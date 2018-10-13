@@ -4,7 +4,9 @@ import { connect } from 'react-redux'
 
 import Board from '../../component/Board'
 
-import Style from "./Game.less"
+import Sidebar from './Sidebar'
+
+import Style from "./ChessGame.less"
 
 import {
   actionLoadInitState,
@@ -14,9 +16,17 @@ import {
   actionAvailableMove,
   actionSaveLocalGame,
   actionLoadLocalSavedGame,
+  actionEndGame,
+  actionNewLocalGame,
+  actionUndoRequest,
   actionUpdateGameStateSuccess,
-  actionEndGame
+  actionDestoryNetworkedGameTimer,
+  GAME_STATUS,
+  GAME_TYPE
 } from './ChessGameReducer'
+import { actionUpdateModalInfo } from '../../AppReducer';
+import { SHOW_DEBUG_BUTTONS } from '../../config';
+import { deserializeState } from './Utils';
 
 
 class Game extends React.Component{
@@ -31,69 +41,56 @@ class Game extends React.Component{
     }
   }
 
+  currentTurnToDisplayName = ()=>{
+    const {currentTurn} = this.props;
+    return currentTurn === 'w' ? 'white' : 'black'
+
+  }
+
   componentDidUpdate(){
-    const {boardRep, select} = this.props;
+    const {boardRep, select, isCheckmate, gameStatus, gameType} = this.props;
 
     this.checkMove(boardRep, select);
+
+    if(isCheckmate && gameStatus === GAME_STATUS.INGAME && gameType === GAME_TYPE.LOCAL_GAME){
+      this.props.endLocalGame(false, 'checkmate', this.currentTurnToDisplayName())
+    }
   }
 
 
   render(){
-    const { boardRep,onCellClick,availableMove, select, highlight, lastMove } = this.props
-
-    const {currentTurn, gameType} = this.props
+    const { boardRep,onCellClick,availableMove, select, highlight, 
+      lastMove, endLocalGame, gameType } = this.props
 
     return (
-      <div className='game'>
-        <div className='game-left'>
-          <Board 
-          rep={boardRep}
-          select={select}
-          highlight={highlight}
-          onCellClick={onCellClick}
-          availableMove={availableMove}
-          lastMove={lastMove} />
+      <div>
+        <div className='game'>
+              <div className='game-left'>
+                <Board 
+                rep={boardRep}
+                select={select}
+                highlight={highlight}
+                onCellClick={onCellClick}
+                availableMove={availableMove}
+                lastMove={lastMove} 
+                gameType={gameType}
+                />
+              </div>
+              <div className="game-right">
+                <Sidebar 
+                 endLocalGame={endLocalGame} />
+              </div>
         </div>
-        <div className="game-right">
+
+            
+        {SHOW_DEBUG_BUTTONS &&
           <div>
-            <div className='block'>
-              <h1>{gameType}</h1>
-              <h4>{currentTurn} Move</h4>
-            </div>
-
-            <div>
-
-
-            </div>
-            <div> 
-              <button className='btn btn-primary' onClick={this.props.saveGame}> Save </button>
-              <button className='btn btn-secondary ml-2' onClick={this.props.loadGame}> Load </button>
-              
-              <button className='btn btn-secondary ml-2' data-toggle='modal' data-target='#endGameScreen' 
-                      onClick={this.props.endGame}> Resign </button>
-            </div>
-           
-          </div>
-        </div>
-
-        <div className="modal fade" id="endGameScreen" tabIndex="-1" role="dialog" aria-labelledby="endGameScreenTitle" 
-             aria-hidden="true" data-backdrop="static" data-keyboard="false">
-          <div className="modal-dialog modal-dialog-centered" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLongTitle">Checkmate</h5>
-              </div>
-              <div className="modal-body">
-                You lose.
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-primary" data-dismiss="modal" 
-                        onClick={this.props.loadInitState}>New Game</button>
-              </div>
-            </div>
-          </div>
-        </div>
+            <div>Debug section, turn it off in config.js</div>
+            <button className='btn btn-primary' onClick={()=> {this.props.loadGameState("4k2R/8/R2N2Q1/3P4/8/8/1PPPPPPP/1NB1KB2 w - - 0 1")}}>load check</button>
+          </div>}
       </div>
+
+    
     )
   }
 }
@@ -105,24 +102,39 @@ const mapStateToProps = state =>{
     select: state.game.select,
     highlight: state.game.boardHightLight,
     lastMove: state.game.lastMovePair,
-    gameType: state.game.type,
-    currentTurn: state.game.currentTurn == 'w' ? 'White' : 'Black'
+    gameType: state.game.gameType,
+    gameStatus: state.game.gameStatus,
+    currentTurn: state.game.currentTurn,
+    moveHistory: state.game.moveHistory,
+    isCheckmate: state.game.isCheckmate,
+    isCheck: state.game.isCheck
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadInitState: () => dispatch(actionLoadInitState()),
+    loadGameState: (stateStr) => { console.log(stateStr) 
+      dispatch(actionUpdateGameStateSuccess({
+          state: deserializeState(stateStr),
+          isChecked: true,
+          isCheckmate: false
+         }))},
     move: (from, to)=> { 
-      dispatch(actionClearSelect());
       dispatch(actionMove(from, to));
     },
     onCellClick: (index) => dispatch(actionSelectCell(index)),
     availableMove: (from) => dispatch(actionAvailableMove(from)),
-    clearSelect: ()=> dispatch(actionClearSelect()),
-    saveGame: () => dispatch(actionSaveLocalGame()),
-    loadGame: () => dispatch(actionLoadLocalSavedGame()),
-    endGame: (winLose) => dispatch(actionEndGame(winLose))
+    //end local game
+    endLocalGame: (winLose, reason='Checkmate', who='You') => {
+      dispatch(actionEndGame(winLose))
+      dispatch(actionUpdateModalInfo({
+        content: who + " " + (winLose?"win":'lose') +"!",
+        show: true,
+        title: reason,
+        action: actionLoadInitState()
+      }))
+    },
+    
   }
 }
 

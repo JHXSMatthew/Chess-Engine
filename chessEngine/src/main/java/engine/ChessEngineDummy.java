@@ -1,4 +1,5 @@
 package engine;
+import java.util.Random;
 
 /**
  * Created by JHXSMatthew on 6/9/18.
@@ -20,6 +21,8 @@ public class ChessEngineDummy implements ChessEngineI {
         m.generateMoves(Board.toSquare(pieceLoc), b);
         return m.targetSquareToIndexArray();
     }
+
+
     @Override
     public State move(String stateString, int from, int to) {
         /*
@@ -34,6 +37,34 @@ public class ChessEngineDummy implements ChessEngineI {
         m.setTargetPiece(b);
 
         return b.psuedoLegalMakeMove(stateString, m);
+    }
+
+    @Override
+    public State promotionMove(String stateString, int to, int promotionPiece) {
+        Board b = new Board();
+        b.deserializeBoard(stateString);
+
+        return b.completePromotion(stateString, to, promotionPiece);
+    }
+
+    @Override
+    public State requestMove(String stateString) {
+        Board b = new Board();
+        b.deserializeBoard(stateString);
+
+        MoveGenerator mg = new MoveGenerator();
+        mg.generateMoves(b);
+
+        Random r = new Random();
+        int length = mg.getMoves().size();
+        if (length != 0) {
+            Move m = mg.getMoves().get(r.nextInt(length));
+            return b.psuedoLegalMakeMove(stateString, m);
+        } else {
+            State s = new State();
+            s.setBoardRep(stateString);
+            return s;
+        }
     }
 
 }

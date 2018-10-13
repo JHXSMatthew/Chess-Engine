@@ -22,10 +22,8 @@ export const regMove = (server) =>{
   	var a = [];
   	for (let i = 0; i < 64; i++){
   		if (i === body.from-1 || i === body.from+1 || i === body.from-8 || i === body.from+8){
-  			a[i] = 1;
-  		} else{
-	  		a[i] = 0;
-  		}
+  			a.push(i);
+  		} 
   	}
 
   	return [200, {'Content-Type': 'application/json'}, JSON.stringify({

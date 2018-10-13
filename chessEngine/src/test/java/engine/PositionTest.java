@@ -80,8 +80,13 @@ public class PositionTest {
         //King tests
         State kingMove = engine.move("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR b KQkq - 0 1", 4, 12);
         Assert.assertEquals(kingMove.getBoardRep(), "rnbq1bnr/4k3/8/8/8/8/8/RNBQKBNR w KQkq - 0 1");
+      
+//         State kingMove2 = engine.move("rnbq1bnr/5k2/8/8/8/8/8/RNBQKBNR b KQkq - 0 1", 13, 20);
+      
+//         Assert.assertEquals(kingMove2.getBoardRep(), "rnbq1bnr/8/4k3/8/8/8/8/RNBQKBNR w KQkq - 0 1");
         State kingMove2 = engine.move("rnbq1bnr/5k2/8/8/8/8/8/RNBQKBNR b KQkq - 0 1", 13, 21);
         Assert.assertEquals(kingMove2.getBoardRep(), "rnbq1bnr/8/5k2/8/8/8/8/RNBQKBNR w KQkq - 0 1");
+      
         State kingMove3 = engine.move("rnbq1bnr/8/4k3/8/8/8/8/RNBQKBNR b KQkq - 0 1", 20, 28);
         Assert.assertEquals(kingMove3.getBoardRep(), "rnbq1bnr/8/8/4k3/8/8/8/RNBQKBNR w KQkq - 0 1");
         State kingMove4 = engine.move("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR b KQkq - 0 1", 4, 3); //blocked by own piece
@@ -167,7 +172,46 @@ public class PositionTest {
 
     @Test
     public void moveHintTest(){
+        ChessEngineDummy engine = new ChessEngineDummy();
 
+        int[] moveHint1 = engine.getMoveHint("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR b KQkq - 0 1", 0);
+        for(int i = 0; i < moveHint1.length; i++)
+        {
+            //System.out.println(moveHint1[i]);
+            Assert.assertEquals(moveHint1[i] % 8, 0);
+        }
+
+        int[] moveHint2 = engine.getMoveHint("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR b KQkq - 0 1", 6);
+        int[] moveHint2Result = new int[]{23, 21, 12};
+        for(int i = 0; i < moveHint2.length; i++)
+        {
+            //System.out.println(moveHint2[i]);
+        }
+        Assert.assertArrayEquals(moveHint2, moveHint2Result);
+
+        int[] moveHint3 = engine.getMoveHint("rnbqkbnr/8/8/8/4B3/8/8/RNBQK1NR w KQkq - 0 1", 36);
+        int[] moveHint3Result = new int[]{45, 54, 43, 50, 29, 22, 15, 27, 18, 9, 0};
+        for(int i = 0; i < moveHint3.length; i++)
+        {
+            //System.out.println(moveHint3[i]);
+        }
+        Assert.assertArrayEquals(moveHint3, moveHint3Result);
+
+        int[] moveHint4 = engine.getMoveHint("6k1/r7/3P2b1/1N6/8/3Q4/4K3/8 w KQkq - 0 1", 43);
+        int[] moveHint4Result = new int[]{51, 59, 44, 45, 46, 47, 35, 27, 42, 41, 40, 50, 57, 36, 29, 22, 34};
+        for(int i = 0; i < moveHint4.length; i++)
+        {
+            //System.out.println(moveHint4[i]);
+        }
+        Assert.assertArrayEquals(moveHint4, moveHint4Result);
+
+        int[] moveHint5 = engine.getMoveHint("2k5/8/8/6N1/8/8/8/1K6 w KQkq - 0 1", 30);
+        int[] moveHint5Result = new int[]{47, 45, 36, 15, 13, 20};
+        for(int i = 0; i < moveHint5.length; i++)
+        {
+            //System.out.println(moveHint5[i]);
+        }
+        Assert.assertArrayEquals(moveHint5, moveHint5Result);
     }
 
 }

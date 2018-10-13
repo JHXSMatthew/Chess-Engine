@@ -210,7 +210,35 @@ public class Board {
         draw conditions
      */
 
-    //will need to implement check stalemate
+    public State completePromotion(String stateString, int index, int promotionPieceType) {
+        int square = toSquare(index);
+
+        State boardRep = new State();
+        boardRep.setBoardRep(stateString);
+
+        if (Square.isValid(square)) {
+            int promotionPiece = Piece.valueOf(activeColour, promotionPieceType);
+            board[square] = promotionPiece;
+
+            //does the move check the other player
+            if (isChecked(Piece.oppositeColour(activeColour))) {
+                //does the move checkmate the other player?
+                boardRep.setCheck(true);
+                MoveGenerator mg = new MoveGenerator();
+                mg.generateMoves(this);
+                if (isCheckMate(mg, Piece.oppositeColour(activeColour))) {
+                    boardRep.setCheckMate(true);
+                }
+            }
+
+            activeColour = Piece.oppositeColour(activeColour);
+            boardRep.setBoardRep(serializeBoard());
+        }
+        return boardRep;
+    }
+
+    //will need to implement check statemate
+
     public State psuedoLegalMakeMove(String stateString, Move m) {
         //is the move valid
         State boardRep = new State();
