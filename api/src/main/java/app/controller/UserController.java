@@ -20,7 +20,7 @@ public class UserController {
     private UserRepository ur;
 
 
-    @PostMapping("/api/user/")
+    @PostMapping("/api/user")
     public void handlePostRegister(@RequestBody User newUser){
         //validation
         if(newUser.getUserName() == null

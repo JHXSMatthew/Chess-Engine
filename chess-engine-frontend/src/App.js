@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 
 import Game from './module/Game/ChessGame'
+import About from './module/About/About';
+import Login from './module/User/Login';
 import ModalWrapper from './component/ModalWrapper';
 
 import './App.less'
 
-import { Switch, Route, Link } from 'react-router-dom'; 
+import { BrowserRouter, Switch, Route, Link } from 'react-router-dom'; 
 
 import {connect} from 'react-redux';
 import { actionToggleModal } from './AppReducer';
@@ -15,6 +17,9 @@ import { actionToggleModal } from './AppReducer';
 
 class Header extends Component{
   render(){
+
+    const { auth } = this.props;
+
     return (
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <a className="navbar-brand" href="#">Chess Lty Ptd</a>
@@ -24,18 +29,30 @@ class Header extends Component{
     
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav mr-auto">
-          <li className="nav-item active">
+          {/* todo: active bind to the react-router */}
+          <li className="nav-item"> 
             <Link className="nav-link" to="/">Game <span className="sr-only">(current)</span></Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="tute">Tutorial</Link>
+            <Link className="nav-link" to="/tute">Tutorial</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="about">About</Link>
+            <Link className="nav-link" to="/about">About</Link>
           </li>
         </ul>
-        <form className="form-inline my-2 my-lg-0">
+        {auth ? 
+          <form className="form-inline my-2 my-lg-0">
+            Welcome! <Link className="nav-link" to="/user">{auth.userName}</Link>
+          </form>
+        :<form className="form-inline my-2 my-lg-0">
+
+          Welcome!  
+          <Link className="nav-link" to="/login">Login</Link>
+           or 
+          <Link className="nav-link" to="/register">Register</Link>
+        
         </form>
+      }
       </div>
     </nav>
     )
@@ -44,22 +61,25 @@ class Header extends Component{
 
 class App extends Component {
   render() {
-    console.log(this.props);
     return (
-      <div>
-        <Header/>
-        <ModalWrapper
-          {...this.props.modal}
-          buttonAction={this.props.buttonAction}
-          hideSelf={this.props.hideModal}
-        />
+      <BrowserRouter>
+        <div>
+          <Header auth={this.props.auth}/>
+          <ModalWrapper
+            {...this.props.modal}
+            buttonAction={this.props.buttonAction}
+            hideSelf={this.props.hideModal}
+          />
 
-        <div className="container content-margin">
-          <Switch>
+          <div className="container content-margin">
+            
             <Route exact path="/" component={Game}/>
-          </Switch>
+            <Route path="/about" component={About}/>
+            <Route path="/login" component={Login}/>
+          </div>
         </div>
-      </div>
+          
+      </BrowserRouter>
 
 
     );
@@ -70,7 +90,8 @@ class App extends Component {
 
 const mapStateToProps = state =>{
   return {
-    modal: state.app.modal
+    modal: state.app.modal,
+    auth: state.user.auth
   }
 }
 

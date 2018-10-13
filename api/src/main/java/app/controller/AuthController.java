@@ -42,7 +42,7 @@ public class AuthController {
 
 
 
-    @PostMapping("/api/auth/")
+    @PostMapping("/api/auth")
     public ResponseEntity<Token> post(@RequestBody LoginRequest request) {
         Optional<User> u = userRepo.findAllUserByName(request.getUserName());
         if(u.isPresent()){
@@ -65,7 +65,7 @@ public class AuthController {
         }
     }
 
-    @DeleteMapping("/api/auth/")
+    @DeleteMapping("/api/auth")
     public ResponseEntity delete(@RequestBody Token token) {
        Optional<Token> t = tokenRepo.findTokenByTokenStr(token.getToken());
        if(t.isPresent()){
