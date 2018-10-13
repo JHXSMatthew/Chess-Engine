@@ -1,6 +1,6 @@
 package app.repository;
 
-import app.model.user.UserContainer;
+import app.model.user.User;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends CrudRepository<UserContainer,String> {
+public interface UserRepository extends CrudRepository<User,String> {
 
-    @Query(value = "SELECT * FROM user_container WHERE user_name= ?1",nativeQuery=true)
-    Optional<UserContainer> findAllUserByName(String user_name);
+    @Query(value = "SELECT * FROM user WHERE user_name= ?1",nativeQuery=true)
+    Optional<User> findAllUserByName(String userName);
 }
