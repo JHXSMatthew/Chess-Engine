@@ -4,7 +4,6 @@ const INIT_BOARD_STATE_STR = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 const LOCAL_SAVED_GAME_INDEX = "savedLocalGame"
 const LOCAL_SAVED_GAME_LASTMOVE = "savedLocalLastMove"
 
-
 export const GAME_TYPE = {
   LOCAL_GAME: 'LocalGame',
   INVITE_NETWOKRED: 'InviteNetworked'
@@ -50,7 +49,8 @@ const initState = {
   history: [],
   //the real move history
   moveHistory: [],
-
+  // piece that just moved
+  movePiece: '',
   //networked game
   //game lobby (before game start)
   lobby: lobbyInitState
@@ -97,11 +97,34 @@ export const gameReducer  = (state = initState, action)=>{
       // if clicked on empty squere initially, do nothing
       let newSelectListRep = [];
       let highlight = state.boardHightLight;
+      let selectPiece = ''
+
+      if (state.gameType === GAME_TYPE.INVITE_NETWOKRED){
+        if (state.currentTurn !== state.lobby.playerType){
+          return Object.assign({}, state, {
+            select: newSelectListRep,
+            boardHightLight: [],
+            movePiece: selectPiece
+          })
+        }
+      }
+
       if (state.gameType) {
         if (state.select.length === 0 && state.boardRep[action.index]){
-          newSelectListRep = state.select.concat([action.index])
+          // select a piece
+          if (state.currentTurn !== 'w' && state.boardRep[action.index].charCodeAt(0) >= 97) {
+            // select black piece and black's turn
+            newSelectListRep = state.select.concat([action.index])
+            selectPiece = state.boardRep[action.index]
+          } else if (state.currentTurn === 'w' && state.boardRep[action.index].charCodeAt(0) <= 90){
+            // select white piece and white's turn
+            newSelectListRep = state.select.concat([action.index])
+            selectPiece = state.boardRep[action.index]
+          }
         } else if (state.select.length === 1 && state.select[0] !== action.index) {
+          // select available square
           newSelectListRep = state.select.concat([action.index])
+          selectPiece = state.movePiece
         } else {
           // Empty square initially, or deselect piece
           highlight = []
@@ -109,9 +132,17 @@ export const gameReducer  = (state = initState, action)=>{
       }
       return Object.assign({}, state, {
         select: newSelectListRep,
-        boardHightLight: highlight
+        boardHightLight: highlight,
+        movePiece: selectPiece
       })
     case HIGHLIGHT_AVAILABLE:
+      if (state.gameType === GAME_TYPE.INVITE_NETWOKRED){
+        if (state.currentTurn !== state.lobby.playerType){
+          return Object.assign({}, state, {
+            boardHightLight: [],
+          })
+        }
+      }
       return Object.assign({}, state, {
         boardHightLight: action.available
       })
@@ -161,6 +192,10 @@ export const gameReducer  = (state = initState, action)=>{
     case NETWORKED_TIMER_DESTORY_SUCCESS:
       return Object.assign({}, state, {
         lobby: invitedNetowkredLobbyReducer(state.lobby,action)
+      })
+    case CANCEL_START_GAME:
+      return Object.assign({}, state, {
+        gameType: ""
       })
     default:
       return state;
@@ -510,3 +545,9 @@ export const actionNewNetworkedGame = () =>{
   }
 }
 
+const CANCEL_START_GAME = "CANCEL_START_GAME"
+export const actionCancelStartGame = () =>{
+  return {
+    type: CANCEL_START_GAME
+  }
+}

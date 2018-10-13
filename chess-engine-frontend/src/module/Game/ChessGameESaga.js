@@ -40,7 +40,7 @@ import {
   actionLoadInitState,
 } from './ChessGameReducer'
 
-import { actionUpdateModalInfo } from '../../AppReducer'
+import { actionUpdateModalInfo,actionToggleModal } from '../../AppReducer'
 
 import { MoveApi, NetworkedGameApi} from './ChessGameEAPI'
 
@@ -111,8 +111,18 @@ function* MoveRequest(action){
       yield put(actionUpdateGameStateFail("Illegal move."))
 
     }else{
-      yield put(actionAddMoveHistory({from: action.from , to: action.to}))
+      const movedPiece = yield select((state) => state.game.movePiece)
+      const gameType = yield select((state) => state.game.gameType)
+      yield put(actionAddMoveHistory({piece: movedPiece, from: action.from , to: action.to}))
       yield put(actionUpdateGameStateSuccess({...response.data, state: deserializeState(stateObj.state)}))
+      if (gameType === GAME_TYPE.LOCAL_GAME && stateObj.isChecked && !stateObj.isCheckmate){
+         yield put(actionUpdateModalInfo({
+          content: '',
+          show: true,
+          title: 'Check',
+          action: actionToggleModal(false)
+        }))
+      }
       yield put(actionHighlightLastMove([action.from, action.to]))
     }
 
@@ -288,6 +298,17 @@ function* networkedTimerLoop(gameId){
             //ignore
           }else{
             yield put(actionUpdateGameStateSuccess({...state, state: deserializeState(state.state)}))
+            const updatedGameState = yield select((state) => state.game)
+
+            if (updatedGameState.gameType === GAME_TYPE.INVITE_NETWOKRED && updatedGameState.isChecked &&
+            updatedGameState.currentTurn === updatedGameState.lobby.playerType){
+              yield put(actionUpdateModalInfo({
+                content: '',
+                show: true,
+                title: 'Check',
+                action: actionToggleModal(false)
+              }))
+            }
           }
           
         }else{
@@ -378,7 +399,7 @@ function networkedTimer(gameId){
         }catch(e){
           emitter(END)
         }
-      }, 3000);
+      }, 1000);
 
       return () => {
         clearInterval(iv)
