@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends CrudRepository<User,String> {
+public interface UserRepository extends CrudRepository<User,Integer> {
 
     @Query(value = "SELECT * FROM user WHERE user_name= ?1",nativeQuery=true)
     Optional<User> findAllUserByName(String userName);

@@ -2,13 +2,13 @@ package app.model.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class CreateUserRequestResponse {
+public class UserResponseModel {
     @JsonProperty("userName")
     private String UserName;
     @JsonProperty("email")
     private String Email;
 
-    public CreateUserRequestResponse(){}
+    public UserResponseModel(){}
 
     public String getUserName() {
         return UserName;

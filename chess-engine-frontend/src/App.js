@@ -11,6 +11,7 @@ import { BrowserRouter, Switch, Route, Link } from 'react-router-dom';
 
 import {connect} from 'react-redux';
 import { actionToggleModal } from './AppReducer';
+import { actionOnLoadCacheLogin } from './module/User/UserReducer';
 
 
 
@@ -18,7 +19,7 @@ import { actionToggleModal } from './AppReducer';
 class Header extends Component{
   render(){
 
-    const { auth } = this.props;
+    const { auth, info } = this.props;
 
     return (
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -42,7 +43,7 @@ class Header extends Component{
         </ul>
         {auth ? 
           <form className="form-inline my-2 my-lg-0">
-            Welcome! <Link className="nav-link" to="/user">{auth.userName}</Link>
+            Welcome! <Link className="nav-link" to="/user">{info.userName}</Link>
           </form>
         :<form className="form-inline my-2 my-lg-0">
 
@@ -60,11 +61,16 @@ class Header extends Component{
 }
 
 class App extends Component {
+
+  componentDidMount(){
+    this.props.tryCacheLogin();
+  }
+
   render() {
     return (
       <BrowserRouter>
         <div>
-          <Header auth={this.props.auth}/>
+          <Header auth={this.props.auth} info={this.props.userInfo}/>
           <ModalWrapper
             {...this.props.modal}
             buttonAction={this.props.buttonAction}
@@ -91,14 +97,16 @@ class App extends Component {
 const mapStateToProps = state =>{
   return {
     modal: state.app.modal,
-    auth: state.user.auth
+    auth: state.user.auth,
+    userInfo: state.user.info
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     hideModal: ()=> dispatch(actionToggleModal(false)),
-    buttonAction: (action) => dispatch(action)
+    buttonAction: (action) => dispatch(action),
+    tryCacheLogin: ()=> dispatch(actionOnLoadCacheLogin())
   }
 }
 
