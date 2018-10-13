@@ -23,7 +23,6 @@ function* login(action){
     yield put(actionGetUserInfo(response.data))
     if(action.model.keepLogin){
       localStorage.setItem('auth', JSON.stringify(response.data));
-
     }
 
   }catch(e){

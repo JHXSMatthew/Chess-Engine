@@ -51,7 +51,10 @@ class Header extends Component{
   render(){
 
     const { auth, info } = this.props;
-
+    let userName = "";
+    if(info){
+      userName = info.userName
+    }
     return (
       <div>
         <Navbar color="light" light expand="md">
@@ -70,7 +73,7 @@ class Header extends Component{
             </Nav>
             {auth ? 
           <div className="form-inline my-2 my-lg-0">
-            Welcome! <Link className="nav-link" to="/user">{info.userName}</Link>
+            Welcome! <Link className="nav-link" to="/user">{userName}</Link>
           </div>
             :<div className="form-inline my-2 my-lg-0">
 
@@ -89,12 +92,13 @@ class Header extends Component{
 }
 
 class App extends Component {
-
-  componentDidMount(){
-    this.props.tryCacheLogin();
+  constructor(props){
+    super(props)
+    props.tryCacheLogin();
   }
 
   render() {
+
     return (
       <BrowserRouter>
         <div>

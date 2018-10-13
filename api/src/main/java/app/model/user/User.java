@@ -20,13 +20,58 @@ public class User implements Serializable {
     @Column
     private String email;
 
+    @Column
+    private int MMR = 1000;
 
-    public User(){}
+    @Column
+    private int matchGamePlayed = 0;
+    @Column
+    private int matchGameWin = 0;
 
-    public User(int id, String UserName, String Password, String Email){
-        this.userName = UserName;
-        this.password = Password;
-        this.email = Email;
+
+    @Column
+    private int rankGamePlayed = 0;
+    @Column
+    private int rankGameWin = 0;
+
+    public int getMMR() {
+        return MMR;
+    }
+
+    public void setMMR(int MMR) {
+        this.MMR = MMR;
+    }
+
+    public int getMatchGamePlayed() {
+        return matchGamePlayed;
+    }
+
+    public void setMatchGamePlayed(int matchGamePlayed) {
+        this.matchGamePlayed = matchGamePlayed;
+    }
+
+    public int getMatchGameWin() {
+        return matchGameWin;
+    }
+
+    public void setMatchGameWin(int matchGameWin) {
+        this.matchGameWin = matchGameWin;
+    }
+
+    public int getRankGamePlayed() {
+        return rankGamePlayed;
+    }
+
+    public void setRankGamePlayed(int rankGamePlayed) {
+        this.rankGamePlayed = rankGamePlayed;
+    }
+
+    public int getRankGameWin() {
+        return rankGameWin;
+    }
+
+    public void setRankGameWin(int rankGameWin) {
+        this.rankGameWin = rankGameWin;
     }
 
     public int getUserId() {
