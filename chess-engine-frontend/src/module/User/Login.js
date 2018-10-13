@@ -55,9 +55,9 @@ class SignInView extends React.Component{
 
   componentDidUpdate(){
     if(this.props.err){
-      this.props.clearError()
       const { response } = this.props.err
-      if(response.status === 404){
+      this.props.clearError()
+      if(response.status === 400){
         alert('incorrect password or username..')
       }else{
         alert('internal error. please try again later')
@@ -84,7 +84,7 @@ class SignInView extends React.Component{
               <input type="checkbox" value="remember-me" onChange={this.handleKeepLogin} checked={this.state.auth.keepLogin}/> Keep Me Login
             </label>
             </div>
-            <button className="btn btn-lg btn-primary btn-block" onClick={()=>this.props.onLogin(this.state.auth)}>Login</button> 
+            <button className="btn btn-lg btn-primary btn-block">Login</button> 
             or 
             <Link className="nav-link" to="/register">Register</Link>
 

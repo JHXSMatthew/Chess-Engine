@@ -21,7 +21,10 @@ function* login(action){
 
     yield put(actionUserLoginSuccess(response.data))
     yield put(actionGetUserInfo(response.data))
-    localStorage.setItem('auth', JSON.stringify(response.data));
+    if(action.model.keepLogin){
+      localStorage.setItem('auth', JSON.stringify(response.data));
+
+    }
 
   }catch(e){
     yield put(actionUserLoginFail(e))
@@ -68,7 +71,6 @@ function* loadCacheLogin(action){
     if(val){
       yield put(actionUserLoginSuccess(val))
       yield put(actionGetUserInfo(val))
-
     }
   }catch(e){
 

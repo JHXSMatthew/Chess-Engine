@@ -6,7 +6,7 @@ import java.io.Serializable;
 // maybe need a generated UUID?
 @Entity
 @Table(name="user", indexes = {
-        @Index(name="userName" , columnList = "userName")})
+        @Index(name="userName" , columnList = "userName", unique = true)})
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

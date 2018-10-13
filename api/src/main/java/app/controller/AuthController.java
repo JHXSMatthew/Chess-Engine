@@ -61,7 +61,7 @@ public class AuthController {
                 return ResponseEntity.badRequest().body(null);
             }
         }else{
-            throw  new IllegalStateExceptionInternal();
+            return ResponseEntity.badRequest().body(null);
         }
     }
 

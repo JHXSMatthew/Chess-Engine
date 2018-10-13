@@ -3,7 +3,9 @@ import React, { Component } from 'react';
 import Game from './module/Game/ChessGame'
 import About from './module/About/About';
 import Login from './module/User/Login';
+
 import UserCenter from './module/User/UserCenter'
+import Register from './module/User/Register'
 
 import ModalWrapper from './component/ModalWrapper';
 
@@ -106,6 +108,7 @@ class App extends Component {
           <div className="container content-margin">
             
             <Route exact path="/" component={Game}/>
+            <Route path="/register" component={Register}/>
             <Route path="/user" component={UserCenter}/>
             <Route path="/about" component={About}/>
             <Route path="/login" component={Login}/>
