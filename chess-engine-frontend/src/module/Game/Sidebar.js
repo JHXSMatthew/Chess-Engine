@@ -142,14 +142,39 @@ class Sidebar extends React.Component{
     return (
       !gameType ? 
         (<div className="sidebar">
+          <h5>Local Games</h5>
           <div className="d-flex flex-row flex-fill align-items-end">
-              <button className='btn btn-primary' onClick={newLocalGame}> New Local Game </button>
-              <button className='btn btn-primary' onClick={newNetworkedGame} > New Network Game </button>
+              <button className='btn btn-primary' onClick={newLocalGame}> Play Local Game </button>
+              <button className='btn btn-secondary' onClick={loadGame}> Load Local Game </button>
+          </div>
+          <h5>Netwokred Games</h5>
+          <div className="d-flex flex-row flex-fill align-items-end">
+              <button className='btn btn-primary' onClick={newLocalGame}> Play Casual Game </button>
+              <button className='btn btn-success' onClick={newNetworkedGame} > Play Rank Game </button>
           </div>
           <div className="d-flex flex-row flex-fill align-items-start">
-              <button className='btn btn-primary' onClick={loadGame}> Load Local Game </button>
-              {/* <button className='btn btn-primary' > Load Network Game </button> */}
+            <button className='btn btn-primary' onClick={newNetworkedGame} > Create Game Room </button>
           </div>
+          <h5>AI Games</h5>
+          <div className="d-flex flex-row flex-fill align-items-start">
+            <button className='btn btn-primary' onClick={newNetworkedGame} > Play AI Game </button>
+          </div>
+          <h5 className='pt-4'>Help</h5>
+          <ul>
+            <li>
+              Local Game: You can play the game locally with your friend sits by you.
+            </li>
+            <li>
+              Casual Game: We will find a player to play with you. 
+            </li>
+            <li>
+              Rank Game: like Casual games. You will earn MMR when you win. 
+            </li>
+            <li>
+              Game Room: Create a game room and invite your friend to play with you online! 
+            </li>
+
+          </ul>
         </div>)
         : this.renderSideBarByType(gameType, moveHistoryView)
     )
