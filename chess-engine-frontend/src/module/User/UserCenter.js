@@ -125,7 +125,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
       clearError: ()=> dispatch(actionUserLoginFail(undefined)),
-      logoff: () => dispatch(actionUserLogoff())
+      logoff: () => {dispatch(actionUserLogoff()) ; window.location.reload(); }
   };
 };
 

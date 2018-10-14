@@ -11,7 +11,7 @@ import ModalWrapper from './component/ModalWrapper';
 
 import './App.less'
 
-import { BrowserRouter, Switch, Route, Link } from 'react-router-dom'; 
+import { BrowserRouter, Switch, Route, Link, Redirect} from 'react-router-dom'; 
 
 import {connect} from 'react-redux';
 import { actionToggleModal } from './AppReducer';
@@ -23,12 +23,8 @@ import {
   NavbarToggler,
   NavbarBrand,
   Nav,
-  NavItem,
-  NavLink,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem } from 'reactstrap';
+  NavItem
+ } from 'reactstrap';
 
 
 
@@ -58,7 +54,7 @@ class Header extends Component{
     return (
       <div>
         <Navbar color="light" light expand="md">
-          <NavbarBrand href="/">Chess Lty Ptd</NavbarBrand>
+          <NavbarBrand>Chess Lty Ptd</NavbarBrand>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="mr-auto" navbar>
@@ -108,7 +104,8 @@ class App extends Component {
             buttonAction={this.props.buttonAction}
             hideSelf={this.props.hideModal}
           />
-
+          {this.props.redirect && <Redirect to={this.props.redirect}/>}
+          
           <div className="container content-margin">
             
             <Route exact path="/" component={Game}/>
@@ -132,7 +129,8 @@ const mapStateToProps = state =>{
   return {
     modal: state.app.modal,
     auth: state.user.auth,
-    userInfo: state.user.info
+    userInfo: state.user.info,
+    redirect: state.app.redirect
   }
 }
 

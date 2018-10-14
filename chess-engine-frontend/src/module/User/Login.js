@@ -12,6 +12,7 @@ import { Link, Redirect } from 'react-router-dom';
 
 
 import './Login.css';
+import { actionRedirectLogin } from '../../AppReducer';
 
 
 class SignInView extends React.Component{
@@ -27,6 +28,12 @@ class SignInView extends React.Component{
     this.handleMemberIdChange = this.handleMemberIdChange.bind(this);
     this.hanldePasswordChange = this.hanldePasswordChange.bind(this);
     this.handleKeepLogin = this.handleKeepLogin.bind(this);
+  }
+
+  componentDidMount(){
+    if(this.props.redirect){
+      this.props.clearRedirect();
+    }
   }
 
   handleMemberIdChange(e){
@@ -97,14 +104,16 @@ class SignInView extends React.Component{
 
 const mapStateToProps = (state) => {
   return {
-    ...state.user
+    ...state.user,
+    redirect: state.app.redirect
   }
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
       onLogin: (account) => dispatch(actionUserLogin(account)),
-      clearError: ()=> dispatch(actionUserLoginFail(undefined))
+      clearError: ()=> dispatch(actionUserLoginFail(undefined)),
+      clearRedirect: ()=> dispatch(actionRedirectLogin(false))
   };
 };
 

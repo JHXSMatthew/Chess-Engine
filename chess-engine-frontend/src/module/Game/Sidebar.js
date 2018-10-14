@@ -3,11 +3,12 @@ import React from 'react'
 import { PiecesSVG } from '../../resource/PieceResource'
 import './Sidebar.less';
 
-import { GAME_TYPE, actionNewNetworkedGame, GAME_STATUS, actionMove } from './ChessGameReducer';
+import { GAME_TYPE, actionNewNetworkedGame, GAME_STATUS, actionMove, actionJoinQueue } from './ChessGameReducer';
 
 import UUID from  'uuid/v1';
 
 import InvitedNetworkedGamePanel from './SidebarNetworkedGamePanel'
+import SideBarQueuePanel from "./SideBarQueuePanel";
 
 import { connect } from 'react-redux'
 
@@ -79,6 +80,8 @@ class Sidebar extends React.Component{
 
     if(gameType === GAME_TYPE.INVITE_NETWOKRED && gameStatus === GAME_STATUS.INIT){
       return <InvitedNetworkedGamePanel/>
+    }else if( (gameType === GAME_TYPE.RANKED || gameType === GAME_TYPE.MATCH) && gameStatus === GAME_STATUS.INIT){
+      return <SideBarQueuePanel />
     }else{
         return <div className="sidebar">
           {gameType != GAME_TYPE.LOCAL_GAME && <div className="d-flex flex-row flex-fill">
@@ -134,7 +137,7 @@ class Sidebar extends React.Component{
   }
 
   render(){
-    const {loadGame, newLocalGame, gameType, moveHistory, newNetworkedGame} = this.props;
+    const {loadGame, newLocalGame, gameType, moveHistory, newNetworkedGame, newMatchGame, newRankGame} = this.props;
 
     
     const moveHistoryView = this.getMoveHistoryView(moveHistory);
@@ -149,15 +152,15 @@ class Sidebar extends React.Component{
           </div>
           <h5>Netwokred Games</h5>
           <div className="d-flex flex-row flex-fill align-items-end">
-              <button className='btn btn-primary' onClick={newLocalGame}> Play Casual Game </button>
-              <button className='btn btn-success' onClick={newNetworkedGame} > Play Rank Game </button>
+              <button className='btn btn-primary' onClick={newMatchGame}> Play Casual Game </button>
+              <button className='btn btn-success' onClick={newRankGame} > Play Rank Game </button>
           </div>
           <div className="d-flex flex-row flex-fill align-items-start">
             <button className='btn btn-primary' onClick={newNetworkedGame} > Create Game Room </button>
           </div>
           <h5>AI Games</h5>
           <div className="d-flex flex-row flex-fill align-items-start">
-            <button className='btn btn-primary' onClick={newNetworkedGame} > Play AI Game </button>
+            <button className='btn btn-primary' onClick={()=>{}} disabled={true}> Play AI Game </button>
           </div>
           <h5 className='pt-4'>Help</h5>
           <ul>
@@ -207,6 +210,8 @@ const mapDispatchToProps = dispatch => {
     },
     newLocalGame: () => dispatch(actionNewLocalGame()),
     newNetworkedGame: ()=> dispatch(actionNewNetworkedGame()),
+    newMatchGame: () => dispatch(actionJoinQueue(GAME_TYPE.MATCH)),
+    newRankGame: () => dispatch(actionJoinQueue(GAME_TYPE.RANKED)),
     undoMove: () => dispatch(actionUndoRequest()),
     resignNetworkedGame: ()=> dispatch(actionResignNetworkedGame())
   }
