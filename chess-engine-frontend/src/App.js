@@ -6,6 +6,7 @@ import Login from './module/User/Login';
 
 import UserCenter from './module/User/UserCenter'
 import Register from './module/User/Register'
+import Leaderboard from './module/User/Leaderboard'
 
 import ModalWrapper from './component/ModalWrapper';
 
@@ -70,6 +71,9 @@ class Header extends Component{
               <NavItem>
                 <Link className="nav-link" to="/about">About</Link>
               </NavItem>
+              <NavItem>
+                <Link className="nav-link" to="/leaderboard">Leaderboard</Link>
+              </NavItem>
             </Nav>
             {auth ? 
           <div className="form-inline my-2 my-lg-0">
@@ -116,6 +120,7 @@ class App extends Component {
             <Route path="/user" component={UserCenter}/>
             <Route path="/about" component={About}/>
             <Route path="/login" component={Login}/>
+            <Route path="/leaderboard" component={Leaderboard}/>
           </div>
         </div>
           

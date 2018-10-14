@@ -1,6 +1,9 @@
 import { take , cancel, fork, call, put, takeEvery, select, cancelled } from 'redux-saga/effects'
-import { TYPE_USER_LOGIN, actionUserLoginFail, actionUserLoginSuccess, TYPE_USER_REGISTER, actionUserRegisterSuccess, actionUserLogin, actionUserRegisterFail, TYPE_GET_USER_INFO, actionGetUserInfo, actionGetUserInfoSuccess, actionGetuserInfoFail, TYPE_LOAD_CACHE_LOGIN } from './UserReducer';
-import { UserApi, AuthApi } from './UserEAPI';
+import { TYPE_USER_LOGIN, actionUserLoginFail, actionUserLoginSuccess, TYPE_USER_REGISTER, 
+  actionUserRegisterSuccess, actionUserLogin, actionUserRegisterFail, TYPE_GET_USER_INFO, 
+  actionGetUserInfo, actionGetUserInfoSuccess, actionGetuserInfoFail, TYPE_LOAD_CACHE_LOGIN,
+  actionLoadLeaderboard, LOAD_LEADERBOARD, actionGetLeaderboard, GET_LEADERBOARD } from './UserReducer';
+import { UserApi, AuthApi, RankApi } from './UserEAPI';
 
 
 
@@ -12,6 +15,8 @@ export function* userSaga(){
   yield takeEvery(TYPE_GET_USER_INFO, getUserInfo)
 
   yield takeEvery(TYPE_LOAD_CACHE_LOGIN, loadCacheLogin)
+
+  yield takeEvery(GET_LEADERBOARD, loadLeaderBoard)
 }
 
 function* login(action){
@@ -74,6 +79,15 @@ function* loadCacheLogin(action){
       yield put(actionGetUserInfo(val))
     }
   }catch(e){
+
+  }
+}
+
+function* loadLeaderBoard(action){
+  try{
+    const response = yield call(RankApi.get)
+    yield put(actionLoadLeaderboard(response.data))
+  } catch(e) {
 
   }
 }
