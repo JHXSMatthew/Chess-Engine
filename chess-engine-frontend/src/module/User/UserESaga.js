@@ -1,8 +1,10 @@
 import { take , cancel, fork, call, put, takeEvery, select, cancelled } from 'redux-saga/effects'
-import { TYPE_USER_LOGIN, actionUserLoginFail, actionUserLoginSuccess, TYPE_USER_REGISTER, 
-  actionUserRegisterSuccess, actionUserLogin, actionUserRegisterFail, TYPE_GET_USER_INFO, 
+
+import { TYPE_USER_LOGIN, actionUserLoginFail, actionUserLoginSuccess, TYPE_USER_REGISTER,
+  actionUserRegisterSuccess, actionUserLogin, actionUserRegisterFail, TYPE_GET_USER_INFO,
   actionGetUserInfo, actionGetUserInfoSuccess, actionGetuserInfoFail, TYPE_LOAD_CACHE_LOGIN,
-  actionLoadLeaderboard, LOAD_LEADERBOARD, actionGetLeaderboard, GET_LEADERBOARD } from './UserReducer';
+  actionLoadLeaderboard, LOAD_LEADERBOARD, actionGetLeaderboard, GET_LEADERBOARD,
+  CHANGE_PASSWORD, actionU } from './UserReducer';
 import { UserApi, AuthApi, RankApi } from './UserEAPI';
 
 
@@ -17,6 +19,20 @@ export function* userSaga(){
   yield takeEvery(TYPE_LOAD_CACHE_LOGIN, loadCacheLogin)
 
   yield takeEvery(GET_LEADERBOARD, loadLeaderBoard)
+  yield takeEvery(CHANGE_PASSWORD, changePassword)
+}
+
+function* changePassword(action){
+  try{
+    const { id, old, newp} = action
+    const response = yield call(UserApi.put, id, old, newp);
+    alert("success!")
+    yield put(actionUserLogoff())
+    window.location.reload();
+  }catch(e){
+    alert(e);
+
+  }
 }
 
 function* login(action){

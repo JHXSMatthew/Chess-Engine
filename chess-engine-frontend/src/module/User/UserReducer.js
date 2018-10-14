@@ -140,3 +140,13 @@ export const actionLoadLeaderboard = (info) => {
   }
 }
   
+
+export const CHANGE_PASSWORD = "CHANGE_PASSWORD"
+export const actionChangePassword = (id , old, newp)=>{
+  return {
+    type: CHANGE_PASSWORD,
+    id,
+    old,
+    newp
+  }
+}

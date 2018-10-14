@@ -4,7 +4,7 @@ import { ListGroup, ListGroupItem, Col, Row, Card,CardBody,Badge, Button, Form, 
 import { connect } from 'react-redux'
 
 import UserForm from './UserRegisterForm'
-import { actionUserLoginFail, actionUserLogoff } from './UserReducer';
+import { actionUserLoginFail, actionUserLogoff, actionChangePassword } from './UserReducer';
 
 import { Redirect } from 'react-router'
 
@@ -32,6 +32,7 @@ class UserCenter extends React.Component{
               <CardBody>
                 <Profile
                 {...this.props.info}
+                onPasswordChange={(b,c)=>this.props.changePassword(this.props.info.userName,b,c)}
                 />
               </CardBody>
             </Card>
@@ -44,6 +45,24 @@ class UserCenter extends React.Component{
 }
 
 class Profile extends React.Component{
+
+
+  constructor(props){
+    super(props)
+    this.state = {
+      old: "",
+      new: "",
+      confirm: "",
+    }
+  }
+
+  onChange = (e) =>{
+    const {target} = e;
+    const {id, value} = target;
+    this.setState({
+      [id]: value
+    })
+  }
 
   render(){
     //todo: change password
@@ -89,7 +108,41 @@ class Profile extends React.Component{
               <Input value={matchWin} readOnly />
             </Col>
           </FormGroup>
-        </Form>   
+          
+        </Form> 
+        <h3 className='mt-5'>Change Password</h3>
+
+        <Form onSubmit={ (e)=>{
+            e.preventDefault();
+            if(this.state.new === this.state.confirm){
+              onPasswordChange(this.state.old, this.state.new)
+               
+            }else{
+              alert("please confirm your password.")
+            }
+           
+            
+        } }>
+          <FormGroup row>
+              <Label sm={6}>old password</Label>
+              <Col sm={6}>
+                <Input id="old"  type="password" value={this.state.old} onChange={this.onChange}/>
+              </Col>
+          </FormGroup>
+          <FormGroup row>
+              <Label sm={6}>new password</Label>
+              <Col sm={6}>
+                <Input id="new" type="password"  value={this.state.new} onChange={this.onChange}/>
+              </Col>
+          </FormGroup>
+          <FormGroup row>
+              <Label sm={6}>confirm password</Label>
+              <Col sm={6}>
+                <Input id="confirm" type="password" value={this.state.confirm} onChange={this.onChange}/>
+              </Col>
+          </FormGroup>
+          <Button>Confirm</Button>
+        </Form>  
       </div>
     )
   }
@@ -125,7 +178,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
       clearError: ()=> dispatch(actionUserLoginFail(undefined)),
-      logoff: () => dispatch(actionUserLogoff())
+      logoff: () => {dispatch(actionUserLogoff()) ; window.location.reload(); },
+      changePassword: (id, old, newp)=> dispatch(actionChangePassword(id, old, newp))
   };
 };
 

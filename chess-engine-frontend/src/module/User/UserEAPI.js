@@ -26,7 +26,7 @@ export const UserApi = {
     });
   },
   put : (userName, password, newPassword) =>{ //token: {token, userId}
-    return axios.put(API_ENDPOINT + `/user/${userName}` , {
+    return axios.put(API_ENDPOINT + `/user/${userName}?password=${password}&newPassword=${newPassword}` , {
       password,
       newPassword
     });

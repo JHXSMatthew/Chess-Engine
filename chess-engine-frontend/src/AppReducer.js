@@ -4,6 +4,8 @@ const BACKDROP_TYPE = {
 }
 
 const initState = {
+  redirect: undefined,
+
   modal:{
     backdrop: BACKDROP_TYPE.static, 
     content: "",
@@ -19,6 +21,10 @@ export const appReducer = (state = initState, action )=>{
     case UPDATE_MODAL_INFO:
     case TOGGLE_MODAL:
       return Object.assign({}, state, {modal: modalReducer(state.modal, action)})
+    case TYPE_REDIRECT_LOGIN:
+      return Object.assign({}, state, {
+        redirect: action.flag ? "/login": undefined
+      })
     default:
       return state;
   }
@@ -36,6 +42,14 @@ export const modalReducer = (state = {}, action) =>{
   }
 }
 
+
+export const TYPE_REDIRECT_LOGIN = "TYPE_REDIRECT_LOGIN"
+export const actionRedirectLogin = (flag) =>{
+  return {
+    type: TYPE_REDIRECT_LOGIN,
+    flag
+  }
+}
 
 const UPDATE_MODAL_INFO = "UPDATE_MODAL_INFO"
 export const actionUpdateModalInfo = (modalObj) =>{

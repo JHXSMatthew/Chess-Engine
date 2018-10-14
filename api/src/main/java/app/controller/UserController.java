@@ -61,11 +61,11 @@ public class UserController {
 
     @PutMapping("api/user/{userName}")
     public ResponseEntity put(@PathVariable String userName, @RequestParam String password,
-                                          @RequestBody String newPassWord){
+                                          @RequestParam String newPassword){
         Optional<User> dbModel = ur.findAllUserByName(userName);
         if(dbModel.isPresent()){
             if(dbModel.get().getPassword().equals(password)){
-                dbModel.get().setPassword(newPassWord);
+                dbModel.get().setPassword(newPassword);
                 ur.save(dbModel.get());
                 return ResponseEntity.ok(null);
             }else{

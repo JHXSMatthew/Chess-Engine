@@ -45,6 +45,27 @@ export const NetworkedGameApi = {
 }
 
 
+export const QueueApi = {
+  post: (gameType, token)=>{
+    return axios.post(API_ENDPOINT + '/queue', {
+      gameType,
+      token
+    })
+  },
+  get: (id,token)=>{
+    return axios.get(API_ENDPOINT + `/queue/${id}?token=${token}`)
+  }
+}
 
 
 
+
+export const AIAPI = {
+  postMove : (state, from , to)=>{
+    return axios.post(API_ENDPOINT + "/ai", {
+      state,
+      from,
+      to
+    });
+  }
+}
