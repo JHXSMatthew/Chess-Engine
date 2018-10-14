@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 
-
+import './Login.css';
 
 
 class UserForm extends React.Component{
@@ -29,7 +29,7 @@ class UserForm extends React.Component{
   render(){
     const { onRegister } = this.props;
     return (
-      <Form onSubmit={(e)=>{ 
+      <Form className="form-signin" onSubmit={(e)=>{ 
           e.preventDefault() ; 
           if(this.state.agreed){
             if(this.state.userName && this.state.password && this.state.email){
@@ -38,20 +38,20 @@ class UserForm extends React.Component{
               alert('Please fill all fields')
             }
           }else{
-            alert('Please agree the term and conditions!')
+            alert('Please agree to the terms and conditions!')
           }
         }}>
         <FormGroup>
-            <Label for="exampleEmail">User Name</Label>
-            <Input type="text" name="userName" id="userName" placeholder="Your User Name" value={this.state.userName} onChange={this.onUpdate}/>
+            <Label for="exampleEmail">Username</Label>
+            <Input type="text" name="userName" id="userName" placeholder="Username" value={this.state.userName} onChange={this.onUpdate}/>
           </FormGroup>
           <FormGroup>
             <Label for="examplePassword">Password</Label>
-            <Input type="password" name="password" id="password" placeholder="password" value={this.state.password} onChange={this.onUpdate}/>
+            <Input type="password" name="password" id="password" placeholder="Password" value={this.state.password} onChange={this.onUpdate}/>
           </FormGroup>
           <FormGroup>
             <Label for="exampleEmail">Email</Label>
-            <Input type="email" name="email" id="email" placeholder="email" value={this.state.email} onChange={this.onUpdate}/>
+            <Input type="email" name="email" id="email" placeholder="Email" value={this.state.email} onChange={this.onUpdate}/>
           </FormGroup>
           <FormGroup check>
           <Label check>
@@ -60,10 +60,10 @@ class UserForm extends React.Component{
                 agreed: target.checked
               })
             }}/>{' '}
-              <a href="/"> I agree term of conditions </a>
+              <a href="/"> I agree to the terms and conditions </a>
           </Label>
         </FormGroup>
-          <Button>Register</Button>
+          <Button className="btn btn-info mx-0 my-1">Register</Button>
       </Form>
     )
   }
