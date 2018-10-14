@@ -79,6 +79,10 @@ export const gameReducer  = (state = initState, action)=>{
           isChecked,
           boardRep: boardStrToRepArray(newGameState.boardStr),
       });
+    case UPDATE_GAME_TYPE: 
+      return Object.assign({}, state, {
+        gameType: action.gameType
+      })
     case MOVE_FAIL:
       return Object.assign({}, state, {
         boardHightLight: []
@@ -611,6 +615,14 @@ const NEW_LOCAL_GAME = "NEW_LOCAL_GAME"
 export const actionNewLocalGame = () =>{
   return {
     type: NEW_LOCAL_GAME
+  }
+}
+
+const UPDATE_GAME_TYPE = "UPDATE_GAME_TYPE"
+export const actionUpdateGameType = (gameType) =>{
+  return {
+    type: UPDATE_GAME_TYPE,
+    gameType
   }
 }
 

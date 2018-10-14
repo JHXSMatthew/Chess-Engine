@@ -59,3 +59,13 @@ export const QueueApi = {
 
 
 
+
+export const AIAPI = {
+  postMove : (state, from , to)=>{
+    return axios.post(API_ENDPOINT + "/ai", {
+      state,
+      from,
+      to
+    });
+  }
+}

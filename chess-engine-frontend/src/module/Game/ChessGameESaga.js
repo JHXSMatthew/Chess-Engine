@@ -50,7 +50,7 @@ import {
 
 import { actionUpdateModalInfo,actionToggleModal, actionRedirectLogin } from '../../AppReducer'
 
-import { MoveApi, NetworkedGameApi, QueueApi} from './ChessGameEAPI'
+import { MoveApi, NetworkedGameApi, QueueApi, AIAPI} from './ChessGameEAPI'
 
 import {
   seriliaseState,
@@ -85,6 +85,8 @@ function* MoveRequest(action){
 
     if(gameType === GAME_TYPE.LOCAL_GAME){
       apiToCall = MoveApi.postMove
+    }else if(gameType === GAME_TYPE.AI){
+      apiToCall = AIAPI.postMove;
     }else{
       const playerTypeCheck = yield select((state) => {
         return {
@@ -119,7 +121,7 @@ function* MoveRequest(action){
     }else{
       const movedPiece = yield select((state) => state.game.movePiece)
       const gameType = yield select((state) => state.game.gameType)
-      if (gameType === GAME_TYPE.LOCAL_GAME){
+      if (gameType === GAME_TYPE.LOCAL_GAME || gameType === GAME_TYPE.AI){
         yield put(actionAddMoveHistory({piece: movedPiece, from: action.from , to: action.to}))
         yield put(actionUpdateGameStateSuccess({...response.data, state: deserializeState(stateObj.state)}))
         if (stateObj.isChecked && !stateObj.isCheckmate){
