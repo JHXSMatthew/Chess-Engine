@@ -55,15 +55,18 @@ public class QueueController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
+        QueueEntry entry ;
+
 
         Optional<QueueEntry> mayExsit = queueRepo.findByUserAndAssignedGame(user, null);
         if(mayExsit.isPresent()){
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+           mayExsit.get().setGameType(request.getGameType());
+           entry = mayExsit.get();
+        }else{
+            entry = new QueueEntry();
+            entry.setGameType(request.getGameType());
+            entry.setUser(user);
         }
-
-        QueueEntry entry = new QueueEntry();
-        entry.setGameType(request.getGameType());
-        entry.setUser(user);
 
         queueRepo.save(entry);
 

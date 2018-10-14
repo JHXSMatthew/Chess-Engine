@@ -1,4 +1,5 @@
 import {boardStrToRepArray, indexMorphism} from './Utils'
+import moment from 'moment'
 
 const INIT_BOARD_STATE_STR = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 const LOCAL_SAVED_GAME_INDEX = "savedLocalGame"
@@ -6,7 +7,10 @@ const LOCAL_SAVED_GAME_LASTMOVE = "savedLocalLastMove"
 
 export const GAME_TYPE = {
   LOCAL_GAME: 'LocalGame',
-  INVITE_NETWOKRED: 'InviteNetworked'
+  INVITE_NETWOKRED: 'InviteNetworked',
+  RANKED: 'rank',
+  MATCH: 'match',
+  AI: 'AI'
 }
 
 export const GAME_STATUS = {
@@ -53,7 +57,10 @@ const initState = {
   movePiece: '',
   //networked game
   //game lobby (before game start)
-  lobby: lobbyInitState
+  lobby: lobbyInitState,
+  //queue
+  queueTimer: undefined,
+  queueTimerDot: 0
 }
 
 
@@ -190,12 +197,23 @@ export const gameReducer  = (state = initState, action)=>{
     case NETWORKED_JOIN_GAME_SUCCESS:
     case NETWORKED_JOIN_GAME_FAIL:
     case NETWORKED_TIMER_DESTORY_SUCCESS:
+    case MATCH_GAME_START_SUCCESS:
       return Object.assign({}, state, {
         lobby: invitedNetowkredLobbyReducer(state.lobby,action)
+      })
+    case JOIN_MATCH_QUEUE_SUCCESS:
+      return Object.assign({}, state, {
+        queueStartDateTime: moment().format(),
+        gameStatus: GAME_STATUS.INIT,
+        gameType: action.gameType
       })
     case CANCEL_START_GAME:
       return Object.assign({}, state, {
         gameType: ""
+      })
+    case QUEUE_TIMER_LOOP:
+      return Object.assign({}, state, {
+        queueTimerDot: (state.queueTimerDot+1)%4
       })
     default:
       return state;
@@ -204,6 +222,7 @@ export const gameReducer  = (state = initState, action)=>{
  
 const invitedNetowkredLobbyReducer = (state, action) =>{
   switch(action.type){
+    case MATCH_GAME_START_SUCCESS:
     case NETWORKED_CREATE_LOBBY_SUCCESS:
       return Object.assign({}, state, {
         ...action.data,
@@ -252,6 +271,64 @@ const newGameReducer = (state, action) => {
       };
     default:
       return state;
+  }
+}
+
+export const QUEUE_TIMER_LOOP = "QUEUE_TIMER_LOOP"
+export const actionQueueTimerLoop = ()=>{
+  return {
+    type: QUEUE_TIMER_LOOP
+  }
+}
+
+export const MATCH_GAME_START_SUCCESS = "MATCH_GAME_START_SUCCESS"
+export const actionMatchGameStartSuccess = (data, timerTask)=>{
+  return {
+    type: MATCH_GAME_START_SUCCESS,
+    data,
+    timerTask
+  }
+}
+
+export const MATCH_GAME_START_FAIL = "MATCH_GAME_START_FAIL"
+export const actionMatchGameStartFail = (err)=>{
+  return {
+    type: MATCH_GAME_START_FAIL,
+    err
+  }
+}
+export const MATCH_GAME_START = "MATCH_GAME_START"
+export const actionMatchGameStart = (gameId, playerType)=>{
+  return {
+    type: MATCH_GAME_START,
+    gameId,
+    playerType
+  }
+}
+
+export const JOIN_MATCH_QUEUE_SUCCESS = "JOIN_MATCH_QUEUE_SUCCESS"
+export const actionJoinMatchQueueSuccess = (data, task, gameType)=>{
+  return {
+    type: JOIN_MATCH_QUEUE_SUCCESS,
+    data,
+    task,
+    gameType
+  }
+}
+
+export const JOIN_MATCH_QUEUE_FAIL = "JOIN_MATCH_QUEUE_FAIL"
+export const actionJoinMatchQueueFail = (err)=>{
+  return {
+    type: JOIN_MATCH_QUEUE_FAIL,
+    err
+  }
+}
+
+export const JOIN_MATCH_QUEUE = "JOIN_MATCH_QUEUE"
+export const actionJoinQueue = (gameType) =>{
+  return {
+    type: JOIN_MATCH_QUEUE,
+    gameType
   }
 }
 
