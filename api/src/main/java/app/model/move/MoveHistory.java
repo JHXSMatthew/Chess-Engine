@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 
 @Entity
-@Table(name = "move_history")
+@Table(name = "move_history_new")
 public class MoveHistory  implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
