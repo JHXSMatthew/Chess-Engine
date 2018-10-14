@@ -11,6 +11,8 @@ import app.model.game.GameRoom;
 import app.model.game.JoinGameResponse;
 import app.model.move.MoveRequest;
 import engine.State;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -25,6 +27,7 @@ import java.util.*;
 
 @CrossOrigin
 @RestController
+@Api(value="Game Controller",description="Handle all the game related operations")
 public class GameController {
 
     private static ChessEngineI engine = new ChessEngineDummy();
@@ -34,6 +37,7 @@ public class GameController {
     @Autowired
     private MoveHistoryRepository mhr;
 
+    @ApiOperation(value = "Make a new Game", response = JoinGameResponse.class)
     @PostMapping("/api/game")
     public JoinGameResponse newGame() {
         //construct a new game instance
@@ -57,6 +61,7 @@ public class GameController {
     }
 
     @GetMapping("/api/game/{id}")
+    @ApiOperation(value = "Get game's status and state information", response = GameInfoResponse.class)
     // Get status and state
     public GameInfoResponse getGameInfo(@PathVariable String id) {
         Optional<GameRoom> dbModel = grr.findById(id);
@@ -83,6 +88,7 @@ public class GameController {
     }
 
     @PatchMapping("/api/game/{id}")
+    @ApiOperation(value="handle the network game",response = NetworkedStateContainer.class)
     public NetworkedStateContainer handlePatch(@PathVariable String id, @RequestBody NetworkedMoveRequest request) {
         Optional<GameRoom> dbModel = grr.findById(id);
 
@@ -123,6 +129,7 @@ public class GameController {
     }
 
     @PostMapping("/api/game/{id}/resign")
+    @ApiOperation(value = "To resign the user's playerType")
     public void handleResignPost(@PathVariable String id, @RequestParam String playerType){
         Optional<GameRoom> dbModel = grr.findById(id);
         if(dbModel.isPresent()) {
@@ -133,6 +140,7 @@ public class GameController {
     }
 
     @PutMapping("/api/game/{id}")
+    @ApiOperation(value="Join the game by id", response = JoinGameResponse.class)
     public JoinGameResponse handlePutAction(@PathVariable String id) {
         Optional<GameRoom> dbModel = grr.findById(id);
         if(dbModel.isPresent()){

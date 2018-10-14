@@ -15,6 +15,8 @@ import app.model.user.User;
 import app.repository.TokenRepository;
 import app.repository.UserRepository;
 import engine.State;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.hibernate.HibernateException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ import java.util.UUID;
  */
 @CrossOrigin
 @RestController
+@Api(value = "auth controller",description = "handle the login by token")
 public class AuthController {
 
 
@@ -43,6 +46,7 @@ public class AuthController {
 
 
     @PostMapping("/api/auth")
+    @ApiOperation(value = "get a token")
     public ResponseEntity<Token> post(@RequestBody LoginRequest request) {
         Optional<User> u = userRepo.findAllUserByName(request.getUserName());
         if(u.isPresent()){
@@ -65,6 +69,7 @@ public class AuthController {
         }
     }
 
+    @ApiOperation(value = "delete the token")
     @DeleteMapping("/api/auth")
     public ResponseEntity delete(@RequestBody Token token) {
        Optional<Token> t = tokenRepo.findByToken(token.getToken());

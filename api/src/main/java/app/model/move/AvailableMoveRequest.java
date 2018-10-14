@@ -2,10 +2,13 @@ package app.model.move;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
 
 public class AvailableMoveRequest {
+    @ApiModelProperty(notes = "current game state")
     @JsonProperty("state")
     private String State;
+    @ApiModelProperty(notes = "this move's start point")
     @JsonProperty("from")
     private int from;
 

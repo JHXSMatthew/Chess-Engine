@@ -2,6 +2,7 @@ package app.model.user;
 
 import app.model.queue.QueueEntry;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,30 +15,39 @@ import java.util.Comparator;
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty(notes = "User's id")
     private int userId;
 
     @Column(name= "userName", nullable = false)
+    @ApiModelProperty(notes = "User's user name")
     private String userName;
 
     @Column
     @JsonIgnore
+    @ApiModelProperty(notes = "User's password")
     private String password;
     @Column
     @JsonIgnore
+    @ApiModelProperty(notes = "User's email")
     private String email;
 
     @Column
+    @ApiModelProperty(notes = "User's current MMR")
     private int MMR = 1000;
 
     @Column
+    @ApiModelProperty(notes = "number of match games played ")
     private int matchGamePlayed = 0;
     @Column
+    @ApiModelProperty(notes = "number of match games won")
     private int matchGameWin = 0;
 
 
     @Column
+    @ApiModelProperty(notes = "number of rank game played")
     private int rankGamePlayed = 0;
     @Column
+    @ApiModelProperty(notes = "number of rank game won")
     private int rankGameWin = 0;
 
     public int getMMR() {

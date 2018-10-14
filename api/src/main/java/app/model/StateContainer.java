@@ -3,14 +3,19 @@ package app.model;
 import app.model.move.MoveHistory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import engine.State;
+import io.swagger.annotations.ApiModelProperty;
 
 public class StateContainer {
     //DON'T REMOVE THE JSON PROPERTY.
+    @ApiModelProperty(notes = "Current game state")
     private String state;
+    @ApiModelProperty(notes = "Does current game is checked")
     @JsonProperty("isChecked")
     private boolean isChecked;
+    @ApiModelProperty(notes = "Does current game is check mate")
     @JsonProperty("isCheckmate")
     private boolean isCheckmate;
+    @ApiModelProperty(notes = "Does current game is resigned")
     @JsonProperty("isResigned")
     private boolean isResigned;
 
