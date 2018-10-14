@@ -3,7 +3,7 @@ import React from 'react'
 import { PiecesSVG } from '../../resource/PieceResource'
 import './Sidebar.less';
 
-import { GAME_TYPE, actionNewNetworkedGame, GAME_STATUS, actionMove, actionJoinQueue } from './ChessGameReducer';
+import { GAME_TYPE, actionNewNetworkedGame, GAME_STATUS, actionMove, actionJoinQueue, actionUpdateGameType } from './ChessGameReducer';
 
 import UUID from  'uuid/v1';
 
@@ -159,7 +159,7 @@ class Sidebar extends React.Component{
   }
 
   render(){
-    const {loadGame, newLocalGame, gameType, moveHistory, newNetworkedGame, newMatchGame, newRankGame} = this.props;
+    const {loadGame, newLocalGame, gameType, moveHistory, newNetworkedGame, newMatchGame, newRankGame, newAiGame} = this.props;
 
     
     const moveHistoryView = this.getMoveHistoryView(moveHistory);
@@ -182,7 +182,7 @@ class Sidebar extends React.Component{
           </div>
           <h5>AI Games</h5>
           <div className="d-flex flex-row flex-fill align-items-start">
-            <button className='btn btn-primary' onClick={()=>{}} disabled={true}> Play AI Game </button>
+            <button className='btn btn-primary' onClick={newAiGame}> Play AI Game </button>
           </div>
           <h5 className='pt-4'>Help</h5>
           <ul>
@@ -234,6 +234,7 @@ const mapDispatchToProps = dispatch => {
     newNetworkedGame: ()=> dispatch(actionNewNetworkedGame()),
     newMatchGame: () => dispatch(actionJoinQueue(GAME_TYPE.MATCH)),
     newRankGame: () => dispatch(actionJoinQueue(GAME_TYPE.RANKED)),
+    newAiGame: () => { dispatch(actionNewLocalGame()); dispatch(actionUpdateGameType(GAME_TYPE.AI)) }, 
     undoMove: () => dispatch(actionUndoRequest()),
     resignNetworkedGame: ()=> dispatch(actionResignNetworkedGame())
   }
