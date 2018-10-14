@@ -1,5 +1,7 @@
 package app.model.user;
 
+import org.springframework.stereotype.Indexed;
+
 import javax.persistence.*;
 
 /**
@@ -13,18 +15,19 @@ public class Token {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private int userId;
+    @OneToOne
+    @JoinColumn(unique = true)
+    private User user = null;
 
     @Column( nullable = false)
     private String token;
 
-
-    public int getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getToken() {
@@ -41,5 +44,10 @@ public class Token {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj!=null && obj instanceof Token && ((Token) obj).id == this.id;
     }
 }

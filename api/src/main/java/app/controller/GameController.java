@@ -97,10 +97,16 @@ public class GameController {
                 dbModel.get().setState(StateContainer.build((s)));
 
                 //save to db by transaction
+
                 try {
                     grr.save(dbModel.get());
-                    MoveHistory history = MoveHistory.build(dbModel.get(), request);
-                    mhr.save(history);
+                    MoveHistory history = null;
+                    if(!request.getState().equals(s.getBoardRep())){
+                        //only store legal moves
+                        history = MoveHistory.build(dbModel.get(), request);
+                        mhr.save(history);
+                    }
+
                     return NetworkedStateContainer.build(StateContainer.build(s), history);
 
                 } catch (HibernateException exObj) {

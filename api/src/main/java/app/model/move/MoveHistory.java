@@ -2,6 +2,7 @@ package app.model.move;
 
 import app.model.game.GameRoom;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import engine.Game;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
@@ -9,13 +10,14 @@ import java.io.Serializable;
 
 
 @Entity
-@Table(name = "move_history")
+@Table(name = "move_history_new")
 public class MoveHistory  implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String gameId;
+    @OneToOne
+    private GameRoom game;
 
     @Column(nullable = false)
     private String fromState;
@@ -78,16 +80,13 @@ public class MoveHistory  implements Serializable{
     }
 
 
-    public String getGameId() {
-        return gameId;
+    public GameRoom getGame() {
+        return game;
     }
 
-    public void setGameId(String gameId) {
-        this.gameId = gameId;
+    public void setGame(GameRoom game) {
+        this.game = game;
     }
-
-
-
 
     public static MoveHistory build(GameRoom room, MoveRequest request){
         MoveHistory history = new MoveHistory();
@@ -96,7 +95,7 @@ public class MoveHistory  implements Serializable{
 
         history.setToState(room.getState().getState());
         history.setFromState(request.getState());
-        history.setGameId(room.getId());
+        history.setGame(room);
 
         return history;
 
