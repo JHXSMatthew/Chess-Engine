@@ -42,4 +42,9 @@ public class Token {
     public void setId(int id) {
         this.id = id;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj!=null && obj instanceof Token && ((Token) obj).id == this.id;
+    }
 }

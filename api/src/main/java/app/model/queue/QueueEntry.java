@@ -1,7 +1,9 @@
 package app.model.queue;
 
 import app.model.game.GameRoom;
+import app.model.game.JoinGameResponse;
 import app.model.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
@@ -16,6 +18,7 @@ public class QueueEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @JsonIgnore
     @OneToOne
     private User user = null;
 
@@ -25,6 +28,9 @@ public class QueueEntry {
 
     @OneToOne
     private GameRoom assignedGame = null;
+
+
+    private JoinGameResponse.PlayerType playerType = null;
 
 
     public Integer getId() {
@@ -57,5 +63,13 @@ public class QueueEntry {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public JoinGameResponse.PlayerType getPlayerType() {
+        return playerType;
+    }
+
+    public void setPlayerType(JoinGameResponse.PlayerType playerType) {
+        this.playerType = playerType;
     }
 }

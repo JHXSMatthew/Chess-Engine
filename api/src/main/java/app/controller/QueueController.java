@@ -21,6 +21,7 @@ import engine.State;
 import org.hibernate.HibernateException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,32 +31,28 @@ import java.util.Optional;
 @RestController
 public class QueueController {
 
-    private static ChessEngineI engine = new ChessEngineDummy();
-
 
     @Autowired
     private TokenRepository tokenRepo;
-    @Autowired
-    private UserRepository userRepo;
-    @Autowired
-    private GameRoomRepository grr;
-    @Autowired
-    private MoveHistoryRepository mhr;
     @Autowired
     private QueueRepository queueRepo;
 
 
 
     @PostMapping("/api/queue")
-    public ResponseEntity<JoinQueueResponse> newGame(@RequestBody JoinQueueRequest request) {
+    public ResponseEntity<JoinQueueResponse> post(@RequestBody JoinQueueRequest request) {
         if(request.getGameType() == GameRoom.GameType.networkedInvited){
             return ResponseEntity.badRequest().body(null);
         }
 
         Optional<Token> token = tokenRepo.findTokenByTokenStr(request.getToken());
+        if(!token.isPresent()){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
         User user = token.get().getUser();
         if(user == null){
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
         QueueEntry entry = new QueueEntry();
@@ -70,6 +67,41 @@ public class QueueController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/api/queue/{id}")
+    public ResponseEntity<QueueEntry> get(@PathVariable int id, @RequestParam String token){
+        Optional<Token> t = tokenRepo.findTokenByTokenStr(token);
+        if(!t.isPresent()){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Optional<QueueEntry> entry = queueRepo.findById(id);
+        if(!entry.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+
+        if(entry.get().getUser() != t.get().getUser()){
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok(entry.get());
+
+    }
+
+
+    @DeleteMapping("/api/queue/{id}")
+    public ResponseEntity delete(@PathVariable int id,@RequestParam String token){
+        Optional<Token> t = tokenRepo.findTokenByTokenStr(token);
+        if(!t.isPresent()){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Optional<QueueEntry> entry = queueRepo.findById(id);
+        if(entry.isPresent()){
+            tokenRepo.delete(t.get());
+        }
+
+        return ResponseEntity.ok().build();
+    }
 
 
 }
