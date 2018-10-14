@@ -50,7 +50,9 @@ function* register(action){
 
 function* getUserInfo(action){
   try{
-    const {userId, token} = action
+    const {user, token} = action
+
+    const { userId } = user;
 
     const response = yield call(UserApi.get, userId, token)
     

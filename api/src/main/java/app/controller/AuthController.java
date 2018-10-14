@@ -47,7 +47,7 @@ public class AuthController {
         Optional<User> u = userRepo.findAllUserByName(request.getUserName());
         if(u.isPresent()){
             if(u.get().getPassword().equals(request.getPassword())){
-                Optional<Token> token = tokenRepo.findTokenByUserId(u.get().getUserId());
+                Optional<Token> token = tokenRepo.findByUser(u.get());
                 if(token.isPresent()){
                     return ResponseEntity.ok(token.get());
                 }else{
@@ -67,7 +67,7 @@ public class AuthController {
 
     @DeleteMapping("/api/auth")
     public ResponseEntity delete(@RequestBody Token token) {
-       Optional<Token> t = tokenRepo.findTokenByTokenStr(token.getToken());
+       Optional<Token> t = tokenRepo.findByToken(token.getToken());
        if(t.isPresent()){
            tokenRepo.delete(t.get());
            return ResponseEntity.accepted().body(null);

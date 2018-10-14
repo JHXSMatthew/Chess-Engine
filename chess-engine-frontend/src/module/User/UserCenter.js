@@ -46,6 +46,7 @@ class UserCenter extends React.Component{
 class Profile extends React.Component{
 
   render(){
+    //todo: change password
     const { userName, onPasswordChange, email, MMR , matchPlayed, matchWin, rankGamePlayed, rankGameWin } = this.props
 
     return (
@@ -56,7 +57,7 @@ class Profile extends React.Component{
         <h4 style={{color: "grey", paddingLeft: "10px"}}>{email}</h4>
 
         <h3 className='mt-5'>Ranked Game</h3>
-        <Form className>
+        <Form>
           <FormGroup row>
             <Label sm={3}>MMR</Label>
             <Col sm={2}>

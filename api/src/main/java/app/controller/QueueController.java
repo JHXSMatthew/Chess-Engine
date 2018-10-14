@@ -45,7 +45,7 @@ public class QueueController {
             return ResponseEntity.badRequest().body(null);
         }
 
-        Optional<Token> token = tokenRepo.findTokenByTokenStr(request.getToken());
+        Optional<Token> token = tokenRepo.findByToken(request.getToken());
         if(!token.isPresent()){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
@@ -53,6 +53,12 @@ public class QueueController {
         User user = token.get().getUser();
         if(user == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+
+        Optional<QueueEntry> mayExsit = queueRepo.findByUserAndAssignedGame(user, null);
+        if(mayExsit.isPresent()){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
         QueueEntry entry = new QueueEntry();
@@ -69,7 +75,7 @@ public class QueueController {
 
     @GetMapping("/api/queue/{id}")
     public ResponseEntity<QueueEntry> get(@PathVariable int id, @RequestParam String token){
-        Optional<Token> t = tokenRepo.findTokenByTokenStr(token);
+        Optional<Token> t = tokenRepo.findByToken(token);
         if(!t.isPresent()){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -90,7 +96,7 @@ public class QueueController {
 
     @DeleteMapping("/api/queue/{id}")
     public ResponseEntity delete(@PathVariable int id,@RequestParam String token){
-        Optional<Token> t = tokenRepo.findTokenByTokenStr(token);
+        Optional<Token> t = tokenRepo.findByToken(token);
         if(!t.isPresent()){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

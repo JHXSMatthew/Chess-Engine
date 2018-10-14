@@ -1,5 +1,6 @@
 package app.repository;
 
+import app.model.game.GameRoom;
 import app.model.move.MoveHistory;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -14,7 +15,6 @@ public interface MoveHistoryRepository extends CrudRepository<MoveHistory, Integ
     @Query(value = "SELECT * FROM move_history WHERE game_id= ?1 ORDER BY id DESC LIMIT 1;", nativeQuery=true)
     Optional<MoveHistory> findLastHistoryByGameId(String gameId);
 
-    @Query( value = "SELECT * FROM move_history WHERE game_id= ?1", nativeQuery=true)
-    Optional<List<MoveHistory>> fubdAllHistoryByGameId(String gameId);
+    Optional<List<MoveHistory>> findByGame(GameRoom gameRoom);
 
 }

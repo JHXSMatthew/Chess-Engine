@@ -1,5 +1,7 @@
 package app.model.user;
 
+import org.springframework.stereotype.Indexed;
+
 import javax.persistence.*;
 
 /**
@@ -14,6 +16,7 @@ public class Token {
     private int id;
 
     @OneToOne
+    @JoinColumn(unique = true)
     private User user = null;
 
     @Column( nullable = false)

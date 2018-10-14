@@ -5,7 +5,6 @@ import app.model.game.JoinGameResponse;
 import app.model.queue.QueueEntry;
 import app.repository.GameRoomRepository;
 import app.repository.QueueRepository;
-import app.repository.TokenRepository;
 import app.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +38,6 @@ public class MatchService {
 
     @Scheduled(fixedRate = 1000)
     public void run(){
-        log.info("Match Queue Service awake.");
 
         for(GameRoom.GameType t : GameRoom.GameType.values()){
             //skip network invited
@@ -97,8 +95,6 @@ public class MatchService {
 
 
         }
-
-        log.info("Match Queue Service sleep.");
 
     }
 

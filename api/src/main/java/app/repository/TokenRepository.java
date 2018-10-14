@@ -11,9 +11,7 @@ import java.util.Optional;
 @Repository
 public interface TokenRepository extends CrudRepository<Token,Integer> {
 
-    @Query(value = "SELECT * FROM auth_token WHERE user_Id= ?1",nativeQuery=true)
-    Optional<Token> findTokenByUserId(int userId);
+    Optional<Token> findByUser(User user);
 
-    @Query(value = "SELECT * FROM auth_token WHERE token= ?1",nativeQuery=true)
-    Optional<Token> findTokenByTokenStr(String tokenStr);
+    Optional<Token> findByToken(String token);
 }

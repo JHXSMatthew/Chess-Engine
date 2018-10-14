@@ -38,11 +38,14 @@ public class UserController {
 
     @GetMapping("api/user/{id}")
     public ResponseEntity<UserResponseModel> get(@PathVariable int id, @RequestParam String token){
-        Optional<Token> t = tokenRepo.findTokenByUserId(id);
-        if(t.isPresent()){
+        Optional<User> user = ur.findById(id);
+        if(!user.isPresent()){
+            return ResponseEntity.badRequest().build();
+        }
 
+        Optional<Token> t = tokenRepo.findByUser(user.get());
+        if(t.isPresent()){
             if(t.get().getToken().equals(token)){
-                Optional<User> user = ur.findById(id);
                 UserResponseModel responseModel = new UserResponseModel();
                 BeanUtils.copyProperties(user.get(), responseModel);
                 return ResponseEntity.ok(responseModel);
