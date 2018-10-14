@@ -3,6 +3,7 @@ package app.model.user;
 import app.model.queue.QueueEntry;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -23,11 +24,11 @@ public class User implements Serializable {
     private String userName;
 
     @Column
-    @JsonIgnore
     @ApiModelProperty(notes = "User's password")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
     @Column
-    @JsonIgnore
     @ApiModelProperty(notes = "User's email")
     private String email;
 

@@ -12,6 +12,7 @@ import { Link, Redirect } from 'react-router-dom';
 
 
 import './Login.css';
+import { actionRedirectLogin } from '../../AppReducer';
 
 
 class SignInView extends React.Component{
@@ -27,6 +28,12 @@ class SignInView extends React.Component{
     this.handleMemberIdChange = this.handleMemberIdChange.bind(this);
     this.hanldePasswordChange = this.hanldePasswordChange.bind(this);
     this.handleKeepLogin = this.handleKeepLogin.bind(this);
+  }
+
+  componentDidMount(){
+    if(this.props.redirect){
+      this.props.clearRedirect();
+    }
   }
 
   handleMemberIdChange(e){
@@ -56,12 +63,15 @@ class SignInView extends React.Component{
   componentDidUpdate(){
     if(this.props.err){
       const { response } = this.props.err
-      this.props.clearError()
-      if(response.status === 400){
-        alert('incorrect password or username..')
-      }else{
-        alert('internal error. please try again later')
+      if(response){
+        this.props.clearError()
+        if(response.status === 400){
+          alert('incorrect password or username..')
+        }else{
+          alert('internal error. please try again later')
+        }
       }
+      
     }
   }
 
@@ -97,14 +107,16 @@ class SignInView extends React.Component{
 
 const mapStateToProps = (state) => {
   return {
-    ...state.user
+    ...state.user,
+    redirect: state.app.redirect
   }
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
       onLogin: (account) => dispatch(actionUserLogin(account)),
-      clearError: ()=> dispatch(actionUserLoginFail(undefined))
+      clearError: ()=> dispatch(actionUserLoginFail(undefined)),
+      clearRedirect: ()=> dispatch(actionRedirectLogin(false))
   };
 };
 
