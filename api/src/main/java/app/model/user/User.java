@@ -1,7 +1,10 @@
 package app.model.user;
 
+import app.model.queue.QueueEntry;
+
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Comparator;
 
 // maybe need a generated UUID?
 @Entity
@@ -105,4 +108,17 @@ public class User implements Serializable {
     public void setEmail(String email) {
         this.email = email;
     }
+
+
+    public static MMRComparator comparator = new MMRComparator();
+
+    static class MMRComparator implements Comparator<User>
+    {
+
+        @Override
+        public int compare(User o1, User o2) {
+            return o1.getMMR() - o2.getMMR();
+        }
+    }
+
 }

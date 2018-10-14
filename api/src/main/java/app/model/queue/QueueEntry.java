@@ -72,4 +72,6 @@ public class QueueEntry {
     public void setPlayerType(JoinGameResponse.PlayerType playerType) {
         this.playerType = playerType;
     }
+
+
 }
