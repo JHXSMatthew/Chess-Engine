@@ -53,7 +53,7 @@ public class AuthController {
                 }else{
                     Token t = new Token();
                     t.setToken(UUID.randomUUID().toString());
-                    t.setUserId(u.get().getUserId());
+                    t.setUser(u.get());
                     tokenRepo.save(t);
                     return ResponseEntity.ok(t);
                 }

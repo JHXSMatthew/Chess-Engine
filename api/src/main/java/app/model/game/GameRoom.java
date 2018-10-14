@@ -2,6 +2,7 @@ package app.model.game;
 
 import app.model.StateContainer;
 import app.model.move.MoveHistory;
+import app.model.user.User;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -16,7 +17,7 @@ public class GameRoom implements Serializable {
     @Id
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     @GeneratedValue(generator = "uuid")
-    @Column(name = "uuid", columnDefinition="uuid" ,unique = true)
+    @Column(name = "uuid" ,unique = true)
     private String id;
 
     //the board state Object
@@ -36,6 +37,31 @@ public class GameRoom implements Serializable {
     }
 
     public String resignedPlayer;
+
+    @Column(nullable = false)
+    private GameType gameType = GameType.networkedInvited;
+
+    @OneToOne
+    private User playerA = null;
+
+    @OneToOne
+    private User playerB = null;
+
+    public User getPlayerA() {
+        return playerA;
+    }
+
+    public void setPlayerA(User playerA) {
+        this.playerA = playerA;
+    }
+
+    public User getPlayerB() {
+        return playerB;
+    }
+
+    public void setPlayerB(User playerB) {
+        this.playerB = playerB;
+    }
 
     public String getId() {
         return id;
@@ -64,6 +90,14 @@ public class GameRoom implements Serializable {
         this.icChecked = state.isChecked();
     }
 
+    public GameType getGameType() {
+        return gameType;
+    }
+
+    public void setGameType(GameType gameType) {
+        this.gameType = gameType;
+    }
+
     public Integer getNumOfUser() {
         return numOfUser;
     }
@@ -80,13 +114,20 @@ public class GameRoom implements Serializable {
         this.resignedPlayer = resignedPlayer;
     }
 
-    public enum GameStatus{
-        lobby,ingame,finished;
+    public enum GameStatus {
+        lobby, ingame, finished;
 
         @Override
         public String toString() {
             return super.toString();
         }
+    }
+
+    public enum GameType{
+        networkedInvited, match, rank;
+
+        @Override
+        public String toString() { return super.toString(); }
     }
 
 
