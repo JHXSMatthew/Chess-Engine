@@ -63,12 +63,15 @@ class SignInView extends React.Component{
   componentDidUpdate(){
     if(this.props.err){
       const { response } = this.props.err
-      this.props.clearError()
-      if(response.status === 400){
-        alert('incorrect password or username..')
-      }else{
-        alert('internal error. please try again later')
+      if(response){
+        this.props.clearError()
+        if(response.status === 400){
+          alert('incorrect password or username..')
+        }else{
+          alert('internal error. please try again later')
+        }
       }
+      
     }
   }
 
