@@ -41,6 +41,8 @@ public class GameRoom implements Serializable {
     @Column(nullable = false)
     private GameType gameType = GameType.networkedInvited;
 
+    //a = black
+    //b = white
     @OneToOne
     private User playerA = null;
 

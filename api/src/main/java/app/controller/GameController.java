@@ -33,6 +33,9 @@ public class GameController {
     private GameRoomRepository grr;
     @Autowired
     private MoveHistoryRepository mhr;
+    @Autowired
+    private UserRepository ur;
+
 
     @PostMapping("/api/game")
     public JoinGameResponse newGame() {
@@ -92,6 +95,8 @@ public class GameController {
                         request.getFrom(), request.getTo());
                 if(s.isCheckMate()){
                     dbModel.get().setStatus(GameRoom.GameStatus.finished);
+                    handleStats(dbModel.get(), request.getPlyaerType().equals("b"));
+
                 }
                 //set field
                 dbModel.get().setState(StateContainer.build((s)));
@@ -128,7 +133,11 @@ public class GameController {
         if(dbModel.isPresent()) {
             dbModel.get().setResignedPlayer(playerType);
             dbModel.get().setStatus(GameRoom.GameStatus.finished);
+
+            handleStats(dbModel.get(), playerType.equals("w"));
             grr.save(dbModel.get());
+
+
         }
     }
 
@@ -154,6 +163,47 @@ public class GameController {
         }else{
             throw new ResourceNotFoundException();
         }
+
+    }
+
+
+    private void handleStats(GameRoom room, boolean isBlackWin){
+        if(room.getGameType() != GameRoom.GameType.networkedInvited){
+            return;
+        }
+
+        if(room.getStatus() != GameRoom.GameStatus.finished){
+            return;
+        }
+
+        if(room.getGameType() == GameRoom.GameType.rank){
+            room.getPlayerA().setRankGamePlayed(room.getPlayerA().getRankGamePlayed() + 1);
+            room.getPlayerB().setRankGamePlayed(room.getPlayerB().getRankGamePlayed() + 1);
+
+            if(isBlackWin){
+                room.getPlayerA().setRankGameWin(room.getPlayerA().getRankGameWin() + 1);
+                room.getPlayerA().setMMR(room.getPlayerA().getMMR() + 50);
+
+            }else{
+                room.getPlayerB().setRankGameWin(room.getPlayerB().getRankGameWin() + 1);
+                room.getPlayerB().setMMR(room.getPlayerA().getMMR() + 50);
+
+
+            }
+        }else if(room.getGameType() == GameRoom.GameType.match){
+            room.getPlayerA().setMatchGamePlayed(room.getPlayerA().getMatchGamePlayed() + 1);
+            room.getPlayerB().setMatchGamePlayed(room.getPlayerB().getMatchGamePlayed() + 1);
+
+            if(isBlackWin){
+                room.getPlayerA().setMatchGameWin(room.getPlayerA().getMatchGameWin() + 1);
+            }else{
+                room.getPlayerB().setMatchGameWin(room.getPlayerB().getMatchGameWin() + 1);
+
+
+            }
+        }
+        ur.save(room.getPlayerA());
+        ur.save(room.getPlayerB());
 
     }
 
