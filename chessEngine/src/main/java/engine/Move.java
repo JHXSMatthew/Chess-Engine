@@ -9,6 +9,10 @@ public class Move {
     private int promotion;  //promotion pieceType
 
     static final int NORMAL = 0;
+    static final int PROMOTION = 1;
+    static final int CASTLE = 2;
+    static final int ENPASSANT_ENABLER = 3;
+    static final int ENPASSANT_CAPTURE = 4;
 
     public Move(int type, int originSquare, int targetSquare, int originPiece, int targetPiece, int promotion) {
         this.type = type;
