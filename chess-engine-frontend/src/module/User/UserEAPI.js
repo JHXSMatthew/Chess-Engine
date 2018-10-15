@@ -36,3 +36,9 @@ export const UserApi = {
   },
   
 }
+
+export const RankApi = {
+  get : () => {
+    return axios.get(API_ENDPOINT + `/ranking`)
+  }
+}

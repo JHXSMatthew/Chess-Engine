@@ -309,6 +309,7 @@ function* networkedTimerLoop(gameId){
           }else{
             yield put(actionUpdateGameStateSuccess({...state, state: deserializeState(state.state)}))
             const updatedGameState = yield select((state) => state.game)
+            console.log("lastMove: ", obj.state.lastMove)
             const lastMoveFrom = obj.state.lastMove.from
             const lastMoveTo = obj.state.lastMove.to
             const lastMovePiece = updatedGameState.boardRep[lastMoveTo]
