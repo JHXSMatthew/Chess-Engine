@@ -172,7 +172,7 @@ class Sidebar extends React.Component{
               <button className='btn btn-primary' onClick={newLocalGame}> Play Local Game </button>
               <button className='btn btn-secondary' onClick={loadGame}> Load Local Game </button>
           </div>
-          <h5>Netwokred Games</h5>
+          <h5>Networked Games</h5>
           <div className="d-flex flex-row flex-fill align-items-end">
               <button className='btn btn-primary' onClick={newMatchGame}> Play Casual Game </button>
               <button className='btn btn-success' onClick={newRankGame} > Play Rank Game </button>
@@ -187,13 +187,13 @@ class Sidebar extends React.Component{
           <h5 className='pt-4'>Help</h5>
           <ul>
             <li>
-              Local Game: You can play the game locally with your friend sits by you.
+              Local Game: Play against your friend on the same computer.
             </li>
             <li>
-              Casual Game: We will find a player to play with you. 
+              Casual Game: Find a player online to play against. 
             </li>
             <li>
-              Rank Game: like Casual games. You will earn MMR when you win. 
+              Rank Game: Find a player online to play against and earn MMR. 
             </li>
             <li>
               Game Room: Create a game room and invite your friend to play with you online! 

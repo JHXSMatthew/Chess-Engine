@@ -4,7 +4,7 @@ import { TYPE_USER_LOGIN, actionUserLoginFail, actionUserLoginSuccess, TYPE_USER
   actionUserRegisterSuccess, actionUserLogin, actionUserRegisterFail, TYPE_GET_USER_INFO,
   actionGetUserInfo, actionGetUserInfoSuccess, actionGetuserInfoFail, TYPE_LOAD_CACHE_LOGIN,
   actionLoadLeaderboard, LOAD_LEADERBOARD, actionGetLeaderboard, GET_LEADERBOARD,
-  CHANGE_PASSWORD, actionU } from './UserReducer';
+  CHANGE_PASSWORD, actionU, actionUserLogoff } from './UserReducer';
 import { UserApi, AuthApi, RankApi } from './UserEAPI';
 
 
