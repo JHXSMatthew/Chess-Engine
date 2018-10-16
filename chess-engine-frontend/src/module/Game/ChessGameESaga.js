@@ -54,7 +54,8 @@ import { MoveApi, NetworkedGameApi, QueueApi, AIAPI} from './ChessGameEAPI'
 
 import {
   seriliaseState,
-  deserializeState
+  deserializeState,
+  compareBoardRep
 } from './Utils'
 
 
@@ -121,18 +122,30 @@ function* MoveRequest(action){
     }else{
       const movedPiece = yield select((state) => state.game.movePiece)
       const gameType = yield select((state) => state.game.gameType)
+      const prevState = yield select((state) => state.game.boardRep)
       if (gameType === GAME_TYPE.LOCAL_GAME || gameType === GAME_TYPE.AI){
         yield put(actionAddMoveHistory({piece: movedPiece, from: action.from , to: action.to}))
         yield put(actionUpdateGameStateSuccess({...response.data, state: deserializeState(stateObj.state)}))
-        if (stateObj.isChecked && !stateObj.isCheckmate){
-           yield put(actionUpdateModalInfo({
-            content: '',
-            show: true,
-            title: 'Check',
-            action: actionToggleModal(false)
-          }))
+        if (gameType === GAME_TYPE.AI) {
+          // add Ai move to history and highlight lastmove from Ai instead
+          // movedpiece
+          const newState = yield select((state) => state.game.boardRep)
+          prevState[action.from] = 0
+          prevState[action.to] = movedPiece
+          var aiMove =  compareBoardRep(prevState, newState)
+          yield put(actionAddMoveHistory({piece: aiMove.piece, from: aiMove.from , to: aiMove.to}))
+          yield put(actionHighlightLastMove([aiMove.from, aiMove.to]))
+        } else {
+          if (stateObj.isChecked && !stateObj.isCheckmate){
+             yield put(actionUpdateModalInfo({
+              content: '',
+              show: true,
+              title: 'Check',
+              action: actionToggleModal(false)
+            }))
+          }
+          yield put(actionHighlightLastMove([action.from, action.to]))
         }
-        yield put(actionHighlightLastMove([action.from, action.to]))
       }
     }
 
