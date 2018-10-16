@@ -46,9 +46,11 @@ import {
   actionMatchGameStartSuccess,
   MATCH_GAME_START,
   actionQueueTimerLoop,
+  PROMOTE_PAWN,
+  actionPromotePawn
 } from './ChessGameReducer'
 
-import { actionUpdateModalInfo,actionToggleModal, actionRedirectLogin } from '../../AppReducer'
+import { actionUpdateModalInfo,actionToggleModal, actionRedirectLogin, actionShowPromotionModal } from '../../AppReducer'
 
 import { MoveApi, NetworkedGameApi, QueueApi, AIAPI} from './ChessGameEAPI'
 
@@ -75,6 +77,7 @@ export function* gameSaga(){
   //queue
   yield takeEvery(JOIN_MATCH_QUEUE, JoinQueue)
   yield takeEvery(MATCH_GAME_START, MatchGameStart)
+  yield takeEvery(PROMOTE_PAWN, PromotePawn)
 }
 
 
@@ -145,6 +148,17 @@ function* MoveRequest(action){
             }))
           }
           yield put(actionHighlightLastMove([action.from, action.to]))
+          if ((movedPiece === 'p' && action.to >= 56) || (movedPiece === 'P' && action.to <= 7) ||
+              // TODO: When push to production, REMOVE BELOW TEST CONDITION
+               movedPiece === 'P' && action.to === 47){
+            console.log("--- promotion modal:", movedPiece, action.to)
+            yield put(actionShowPromotionModal({
+              content: movedPiece,
+              show: true,
+              title: 'Promotion',
+              action: actionPromotePawn()
+            }))
+          }
         }
       }
     }
@@ -535,4 +549,13 @@ function queueTimer(queueEntryId, token){
       clearInterval(iv);
     }
   })
+}
+
+function* PromotePawn(piece){
+  try {
+    const promoPiece = yield select((state) => state.game.promoSelected) 
+    console.log("API PROMOTION: ", promoPiece)
+  } catch (e) {
+
+  }
 }
