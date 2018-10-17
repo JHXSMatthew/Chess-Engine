@@ -4,17 +4,20 @@ public class State {
     private String boardRep;
     private boolean isCheckMate;
     private boolean isCheck;
+    private boolean isPromotion;
 
-    public State(String boardRep, boolean isCheckMate, boolean isCheck) {
+    public State(String boardRep, boolean isCheckMate, boolean isCheck, boolean isPromotion) {
         this.boardRep = boardRep;
         this.isCheckMate = isCheckMate;
         this.isCheck = isCheck;
+        this.isPromotion = isPromotion;
     }
 
     public State() {
         this.boardRep = "";
         this.isCheckMate = false;
         this.isCheck = false;
+        this.isPromotion = false;
     }
 
     public String getBoardRep() {
@@ -39,5 +42,12 @@ public class State {
 
     public void setCheck(boolean check) {
         isCheck = check;
+    }
+
+    public boolean isPromotion() {
+        return isPromotion;
+    }
+    public void setPromotion(boolean promotion) {
+        isPromotion = promotion;
     }
 }
