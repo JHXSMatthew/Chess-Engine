@@ -137,6 +137,23 @@ public class Board {
                 }
             }
         }
+        if (blackKingCastle) {
+            if (board[Square.BLACK_KINGSIDE_ROOK_STARTING_SQUARE] != Piece.BLACK_ROOK) {
+                blackKingCastle = false;
+            }
+        } else if (whiteKingCastle) {
+            if (board[Square.WHITE_KINGSIDE_ROOK_STARTING_SQUARE] != Piece.WHITE_ROOK) {
+                whiteKingCastle = false;
+            }
+        } else if (blackQueenCastle) {
+            if (board[Square.BLACK_QUEENSIDE_ROOK_STARTING_SQUARE] != Piece.BLACK_ROOK) {
+                blackQueenCastle = false;
+            }
+        } else if (whiteQueenCastle) {
+            if (board[Square.WHITE_QUEENSIDE_ROOK_STARTING_SQUARE] != Piece.WHITE_ROOK) {
+                whiteQueenCastle = false;
+            }
+        }
 
         if (!enPassant.equals("-")) {
             int square = toSquare(Integer.parseInt(enPassant));
@@ -153,6 +170,7 @@ public class Board {
     public void applyMove(Move m) {
         int originSquare = m.getOriginSquare();
         int targetSquare = m.getTargetSquare();
+
         int type = m.getType();
         if (type == Move.ENPASSANT_ENABLER) {
             board[targetSquare] = m.getOriginPiece();
@@ -168,7 +186,7 @@ public class Board {
             }
         } else {
             enPassantSquare = Square.NOSQUARE;
-             if (type == Move.ENPASSANT_CAPTURE) {
+            if (type == Move.ENPASSANT_CAPTURE) {
                 board[targetSquare] = m.getOriginPiece();
                 board[originSquare] = Piece.NO_PIECE;
 
@@ -180,13 +198,49 @@ public class Board {
                     throw new IllegalArgumentException();
                 }
 
-                activeColour = Piece.oppositeColour(activeColour);
-            } else { //else if (m.getType() == Move.NORMAL) {
-                 board[targetSquare] = m.getOriginPiece();
-                 board[originSquare] = Piece.NO_PIECE;
-                 activeColour = Piece.oppositeColour(activeColour);
-             }
+            } else if (type == Move.CASTLE) {
+                board[targetSquare] = m.getOriginPiece();
+                board[originSquare] = Piece.NO_PIECE;
 
+                if (board[targetSquare] == Square.BLACK_KINGSIDE_FINISHING_SQUARE) {
+                    board[Square.BLACK_KINGSIDE_ROOK_STARTING_SQUARE] = Piece.NO_PIECE;
+                    board[Square.BLACK_KINGSIDE_FINISHING_SQUARE + Square.W] = Piece.valueOf(activeColour, Piece.ROOK);
+                } else if (board[targetSquare] == Square.BLACK_QUEENSIDE_FINISHING_SQUARE) {
+                    board[Square.BLACK_QUEENSIDE_ROOK_STARTING_SQUARE] = Piece.NO_PIECE;
+                    board[Square.BLACK_QUEENSIDE_FINISHING_SQUARE + Square.E] = Piece.valueOf(activeColour, Piece.ROOK);
+                } else if (board[targetSquare] == Square.WHITE_KINGSIDE_FINISHING_SQUARE) {
+                    board[Square.WHITE_KINGSIDE_ROOK_STARTING_SQUARE] = Piece.NO_PIECE;
+                    board[Square.WHITE_KINGSIDE_FINISHING_SQUARE + Square.W] = Piece.valueOf(activeColour, Piece.ROOK);
+                } else if (board[targetSquare] == Square.WHITE_QUEENSIDE_FINISHING_SQUARE) {
+                    board[Square.WHITE_QUEENSIDE_ROOK_STARTING_SQUARE] = Piece.NO_PIECE;
+                    board[Square.WHITE_QUEENSIDE_FINISHING_SQUARE + Square.E] = Piece.valueOf(activeColour, Piece.ROOK);
+                } else {
+                    throw new IllegalArgumentException();
+                }
+
+                removeCastleKingSide(activeColour);
+                removeCastleQueenSide(activeColour);
+            } else { //else if (m.getType() == Move.NORMAL) {
+                int pieceType = Piece.getType(m.getOriginPiece());
+                if (pieceType == Piece.KING) {
+                    removeCastleKingSide(activeColour);
+                    removeCastleQueenSide(activeColour);
+                } else if (pieceType == Piece.ROOK) {
+                    if (originSquare == Square.WHITE_KINGSIDE_ROOK_STARTING_SQUARE) {
+                        removeCastleKingSide(activeColour);
+                    } else if (originSquare == Square.WHITE_QUEENSIDE_ROOK_STARTING_SQUARE) {
+                        removeCastleQueenSide(activeColour);
+                    } else if (originSquare == Square.BLACK_QUEENSIDE_ROOK_STARTING_SQUARE) {
+                        removeCastleQueenSide(activeColour);
+                    } else if (originSquare == Square.BLACK_KINGSIDE_ROOK_STARTING_SQUARE) {
+                        removeCastleKingSide(activeColour);
+                    }
+                }
+
+                board[targetSquare] = m.getOriginPiece();
+                board[originSquare] = Piece.NO_PIECE;
+            }
+            activeColour = Piece.oppositeColour(activeColour);
         }
 
     }
@@ -216,22 +270,19 @@ public class Board {
         State boardRep = new State();
         boardRep.setBoardRep(stateString);
 
-        if (Square.isValid(square)) {
-            int promotionPiece = Piece.valueOf(activeColour, promotionPieceType);
+        if (Square.isValid(square) && promotionPieceType != Piece.NO_PIECE_TYPE && promotionPieceType != Piece.PAWN) {
+            int promotionPiece = Piece.valueOf(Piece.oppositeColour(activeColour), promotionPieceType);
             board[square] = promotionPiece;
 
             //does the move check the other player
-            if (isChecked(Piece.oppositeColour(activeColour))) {
+            if (isChecked(activeColour)) {
                 //does the move checkmate the other player?
                 boardRep.setCheck(true);
                 MoveGenerator mg = new MoveGenerator();
                 mg.generateMoves(this);
-                if (isCheckMate(mg, Piece.oppositeColour(activeColour))) {
-                    boardRep.setCheckMate(true);
-                }
+                boardRep.setCheckMate(isCheckMate(mg, activeColour));
             }
 
-            activeColour = Piece.oppositeColour(activeColour);
             boardRep.setBoardRep(serializeBoard());
         }
         return boardRep;
@@ -246,16 +297,22 @@ public class Board {
 
         MoveGenerator mg = new MoveGenerator();
         mg.generateMoves(m.getOriginSquare(), this);
-        int[] targetSquares = mg.targetSquareToSquareArray();
-        Board copy = copy(this);
 
-        if (arrayContains(targetSquares, m.getTargetSquare())) {
+        Move match = new Move();
+        for (Move moves: mg.getMoves()) {
+            if (moves.getTargetSquare() == m.getTargetSquare()) {
+                match = moves;
+                break;
+            }
+        }
+
+        if (match.getType() != Move.EMPTY) {
             //lets apply the move
-            applyMove(m);
+            Board copy = copy(this);
+            applyMove(match);
 
             //no move is allowed to leave us in check
             if (isChecked(Piece.oppositeColour(activeColour))) {
-                //undoMove(m);
                 restoreBoard(copy);
                 if (isChecked(activeColour)) {
                     boardRep.setCheck(true);
@@ -264,21 +321,23 @@ public class Board {
                     boardRep.setCheckMate(isCheckMate(checkMateMoves, activeColour));
                 }
 
+                boardRep.setBoardRep(serializeBoard());
                 return boardRep;
             }
 
+            //if the move is a promotion, we first must get user input for the type of promotion Piece, then we check if isCheck and isCheckMate
+            if (match.getType() == Move.PROMOTION) {
+                boardRep.setPromotion(true);
             //does the move check the other player
-            if (isChecked(activeColour)) {
+            } else if (isChecked(activeColour)) {
                 boardRep.setCheck(true);
                 //does the move checkmate the other player?
                 MoveGenerator checkMateMoves = new MoveGenerator();
                 checkMateMoves.generateMoves(this);
                 boardRep.setCheckMate(isCheckMate(checkMateMoves, activeColour));
-
             }
-
-            boardRep.setBoardRep(serializeBoard());
         }
+        boardRep.setBoardRep(serializeBoard());
         return boardRep;
     }
 
@@ -623,6 +682,24 @@ public class Board {
             return whiteQueenCastle;
         } else if (colour == Piece.BLACK) {
             return blackQueenCastle;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+    public void removeCastleKingSide(int colour) {
+        if (colour == Piece.WHITE) {
+            whiteKingCastle = false;
+        } else if (colour == Piece.BLACK) {
+            blackKingCastle = false;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+    public void removeCastleQueenSide(int colour) {
+        if (colour == Piece.WHITE) {
+            whiteQueenCastle = false;
+        } else if (colour == Piece.BLACK) {
+            blackQueenCastle = false;
         } else {
             throw new IllegalArgumentException();
         }

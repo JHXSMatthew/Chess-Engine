@@ -121,6 +121,108 @@ public class MoveGenerator {
                     }
                 }
             }
+            if (originType == Piece.KING && !p.isChecked(p.activeColour)) {
+                if (p.getCastleQueenSide(p.activeColour)) {
+                    boolean success = true;
+                    if (p.activeColour == Piece.BLACK) { //check if any pieces between king and queenside rook
+                        for (int square = Square.BLACK_QUEENSIDE_ROOK_STARTING_SQUARE + 1; square < Square.BLACK_KING_STARTING_SQUARE; square++) {
+                            if (p.board[square] != Piece.NO_PIECE) {
+                                success = false;
+                                break;
+                            }
+                        }
+                        if (success) {
+                            Board copy = p.copy(p);
+                            for (Move m : Move.generateBlackQueenSideMoves()) {
+                                p.applyMove(m);
+                                if (p.isChecked(p.activeColour)) {
+                                    success = false;
+                                    break;
+                                }
+                            }
+                            p.restoreBoard(copy);
+                            if (success) {
+                                Move m = new Move(Move.CASTLE, originSquare, Square.BLACK_KING_STARTING_SQUARE + Square.W + Square.W,
+                                        originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                                moves.add(m);
+                            }
+                        }
+                    } else { //check if there are any pieces between the king and queenside rook
+                        for (int square = Square.WHITE_QUEENSIDE_ROOK_STARTING_SQUARE + 1; square < Square.WHITE_KING_STARTING_SQUARE; square++) {
+                            if (p.board[square] != Piece.NO_PIECE) {
+                                success = false;
+                                break;
+                            }
+                        }
+                        if (success) {
+                            Board copy = p.copy(p);
+                            for (Move m : Move.generateWhiteQueenSideMoves()) {
+                                p.applyMove(m);
+                                if (p.isChecked(p.activeColour)) {
+                                    success = false;
+                                    break;
+                                }
+                            }
+                            p.restoreBoard(copy);
+                            if (success) {
+                                Move m = new Move(Move.CASTLE, originSquare, Square.WHITE_KING_STARTING_SQUARE + Square.W + Square.W,
+                                        originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                                moves.add(m);
+                            }
+                        }
+                    }
+                }
+                if (p.getCastleKingSide(p.activeColour)) {
+                    boolean success = true;
+                    if (p.activeColour == Piece.BLACK) {
+                        for (int square = Square.BLACK_KING_STARTING_SQUARE + 1; square < Square.BLACK_KINGSIDE_ROOK_STARTING_SQUARE; square++) {
+                            if (p.board[square] != Piece.NO_PIECE) {
+                                success = false;
+                                break;
+                            }
+                        }
+                        if (success) {
+                            Board copy = p.copy(p);
+                            for (Move m : Move.generateBlackKingSideMoves()) {
+                                p.applyMove(m);
+                                if (p.isChecked(p.activeColour)) {
+                                    success = false;
+                                    break;
+                                }
+                            }
+                            p.restoreBoard(copy);
+                            if (success) {
+                                Move m = new Move(Move.CASTLE, originSquare, Square.BLACK_KING_STARTING_SQUARE + Square.E + Square.E,
+                                        originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                                moves.add(m);
+                            }
+                        }
+                    } else {
+                        for (int square = Square.WHITE_KING_STARTING_SQUARE + 1; square < Square.WHITE_KINGSIDE_ROOK_STARTING_SQUARE; square++) {
+                            if (p.board[square] != Piece.NO_PIECE) {
+                                success = false;
+                                break;
+                            }
+                        }
+                        if (success) {
+                            Board copy = p.copy(p);
+                            for (Move m : Move.generateWhiteKingSideMoves()) {
+                                p.applyMove(m);
+                                if (p.isChecked(p.activeColour)) {
+                                    success = false;
+                                    break;
+                                }
+                            }
+                            p.restoreBoard(copy);
+                            if (success) {
+                                Move m = new Move(Move.CASTLE, originSquare, Square.WHITE_KING_STARTING_SQUARE + Square.E + Square.E,
+                                        originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                                moves.add(m);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -214,7 +316,7 @@ public class MoveGenerator {
         if (originType == Piece.KING && !p.isChecked(p.activeColour)) {
             if (p.getCastleQueenSide(p.activeColour)) {
                 boolean success = true;
-                if (p.activeColour == Piece.BLACK) {
+                if (p.activeColour == Piece.BLACK) { //check if any pieces between king and queenside rook
                     for (int square = Square.BLACK_QUEENSIDE_ROOK_STARTING_SQUARE + 1; square < Square.BLACK_KING_STARTING_SQUARE; square++) {
                         if (p.board[square] != Piece.NO_PIECE) {
                             success = false;
@@ -222,9 +324,22 @@ public class MoveGenerator {
                         }
                     }
                     if (success) {
-
+                        Board copy = p.copy(p);
+                        for (Move m: Move.generateBlackQueenSideMoves()) {
+                            p.applyMove(m);
+                            if (p.isChecked(p.activeColour)) {
+                                success = false;
+                                break;
+                            }
+                        }
+                        p.restoreBoard(copy);
+                        if (success) {
+                            Move m = new Move(Move.CASTLE, originSquare, Square.BLACK_KING_STARTING_SQUARE + Square.W + Square.W,
+                                    originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                            moves.add(m);
+                        }
                     }
-                } else {
+                } else { //check if there are any pieces between the king and queenside rook
                     for (int square = Square.WHITE_QUEENSIDE_ROOK_STARTING_SQUARE + 1; square < Square.WHITE_KING_STARTING_SQUARE; square++) {
                         if (p.board[square] != Piece.NO_PIECE) {
                             success = false;
@@ -232,9 +347,21 @@ public class MoveGenerator {
                         }
                     }
                     if (success) {
-
+                        Board copy = p.copy(p);
+                        for (Move m: Move.generateWhiteQueenSideMoves()) {
+                            p.applyMove(m);
+                            if (p.isChecked(p.activeColour)) {
+                                success = false;
+                                break;
+                            }
+                        }
+                        p.restoreBoard(copy);
+                        if (success) {
+                            Move m = new Move(Move.CASTLE, originSquare, Square.WHITE_KING_STARTING_SQUARE + Square.W + Square.W,
+                                    originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                            moves.add(m);
+                        }
                     }
-
                 }
             }
             if (p.getCastleKingSide(p.activeColour)) {
@@ -247,7 +374,20 @@ public class MoveGenerator {
                         }
                     }
                     if (success) {
-
+                        Board copy = p.copy(p);
+                        for (Move m: Move.generateBlackKingSideMoves()) {
+                            p.applyMove(m);
+                            if (p.isChecked(p.activeColour)) {
+                                success = false;
+                                break;
+                            }
+                        }
+                        p.restoreBoard(copy);
+                        if (success) {
+                            Move m = new Move(Move.CASTLE, originSquare, Square.BLACK_KING_STARTING_SQUARE + Square.E + Square.E,
+                                    originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                            moves.add(m);
+                        }
                     }
                 } else {
                     for (int square = Square.WHITE_KING_STARTING_SQUARE + 1; square < Square.WHITE_KINGSIDE_ROOK_STARTING_SQUARE; square++) {
@@ -257,7 +397,20 @@ public class MoveGenerator {
                         }
                     }
                     if (success) {
-
+                        Board copy = p.copy(p);
+                        for (Move m: Move.generateWhiteKingSideMoves()) {
+                            p.applyMove(m);
+                            if (p.isChecked(p.activeColour)) {
+                                success = false;
+                                break;
+                            }
+                        }
+                        p.restoreBoard(copy);
+                        if (success) {
+                            Move m = new Move(Move.CASTLE, originSquare, Square.WHITE_KING_STARTING_SQUARE + Square.E + Square.E,
+                                    originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                            moves.add(m);
+                        }
                     }
                 }
             }
