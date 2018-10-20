@@ -137,7 +137,13 @@ public class Board {
                 }
             }
         }
-        if (blackKingCastle) {
+        if (board[Square.BLACK_KING_STARTING_SQUARE] != Piece.BLACK_KING) {
+            blackKingCastle = false;
+            blackQueenCastle = false;
+        } else if (board[Square.WHITE_KING_STARTING_SQUARE] != Piece.WHITE_KING) {
+            whiteKingCastle = false;
+            whiteQueenCastle = false;
+        } else if (blackKingCastle) {
             if (board[Square.BLACK_KINGSIDE_ROOK_STARTING_SQUARE] != Piece.BLACK_ROOK) {
                 blackKingCastle = false;
             }
