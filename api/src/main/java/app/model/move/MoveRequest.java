@@ -10,7 +10,7 @@ public class MoveRequest {
     @JsonProperty("to")
     private int to;
     @JsonProperty("promotionPos")
-    private int promotion;
+    private String promotion;
 
     public MoveRequest() {
     }
@@ -39,11 +39,11 @@ public class MoveRequest {
         this.state = state;
     }
 
-    public int getPromotion() {
+    public String getPromotion() {
         return promotion;
     }
 
-    public void setPromotion(int promotion) {
+    public void setPromotion(String promotion) {
         this.promotion = promotion;
     }
 }
