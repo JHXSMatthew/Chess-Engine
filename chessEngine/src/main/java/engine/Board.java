@@ -10,7 +10,6 @@ public class Board {
 
     public boolean whiteQueenCastle;
     public boolean whiteKingCastle;
-
     public boolean blackQueenCastle;
     public boolean blackKingCastle;
 
@@ -226,19 +225,24 @@ public class Board {
 
                 removeCastleKingSide(activeColour);
                 removeCastleQueenSide(activeColour);
-            } else { //else if (m.getType() == Move.NORMAL) {
+                // a bit hacky, but essentially will complete the promotion if the promotion piece is already entered. this is only for the
+                // ai version of the move generator
+            } else if (type == Move.PROMOTION && m.getPromotion() != Piece.NO_PIECE_TYPE) {
+                board[targetSquare] = Piece.valueOf(activeColour, m.getPromotion());
+                board[originSquare] = Piece.NO_PIECE;
+            } else { // all normal moves, and promotion moves that don't have a promotion piece (user generated move generator)
                 int pieceType = Piece.getType(m.getOriginPiece());
                 if (pieceType == Piece.KING) {
                     removeCastleKingSide(activeColour);
                     removeCastleQueenSide(activeColour);
                 } else if (pieceType == Piece.ROOK) {
-                    if (originSquare == Square.WHITE_KINGSIDE_ROOK_STARTING_SQUARE) {
+                    if (originSquare == Square.WHITE_KINGSIDE_ROOK_STARTING_SQUARE && activeColour == Piece.WHITE) {
                         removeCastleKingSide(activeColour);
-                    } else if (originSquare == Square.WHITE_QUEENSIDE_ROOK_STARTING_SQUARE) {
+                    } else if (originSquare == Square.WHITE_QUEENSIDE_ROOK_STARTING_SQUARE && activeColour == Piece.WHITE) {
                         removeCastleQueenSide(activeColour);
-                    } else if (originSquare == Square.BLACK_QUEENSIDE_ROOK_STARTING_SQUARE) {
+                    } else if (originSquare == Square.BLACK_QUEENSIDE_ROOK_STARTING_SQUARE && activeColour == Piece.BLACK) {
                         removeCastleQueenSide(activeColour);
-                    } else if (originSquare == Square.BLACK_KINGSIDE_ROOK_STARTING_SQUARE) {
+                    } else if (originSquare == Square.BLACK_KINGSIDE_ROOK_STARTING_SQUARE && activeColour == Piece.BLACK) {
                         removeCastleKingSide(activeColour);
                     }
                 }
@@ -251,24 +255,6 @@ public class Board {
 
     }
 
-    //everything verified ahead of this call. currently only used for isCheckMate
-    public void undoMove(Move m) {
-        int originSquare = m.getOriginSquare();
-        int targetSquare = m.getTargetSquare();
-
-        board[targetSquare] = m.getTargetPiece();
-        board[originSquare] = m.getOriginPiece();
-        activeColour = Piece.oppositeColour(activeColour);
-    }
-    /*
-        basic move evaluation
-        isattacked
-        ischecked
-        ischeckmate
-        psuedo legal move generation
-        special moves (en passant castle promotion)
-        draw conditions
-     */
 
     public State completePromotion(String stateString, int index, int promotionPieceType) {
         int square = toSquare(index);
@@ -285,7 +271,7 @@ public class Board {
                 //does the move checkmate the other player?
                 boardRep.setCheck(true);
                 MoveGenerator mg = new MoveGenerator();
-                mg.generateMoves(this);
+                mg.generateMoves(this, MoveGenerator.userMode);
                 boardRep.setCheckMate(isCheckMate(mg, activeColour));
             }
 
@@ -295,14 +281,13 @@ public class Board {
     }
 
     //will need to implement check statemate
-
     public State psuedoLegalMakeMove(String stateString, Move m) {
         //is the move valid
         State boardRep = new State();
         boardRep.setBoardRep(stateString);
 
         MoveGenerator mg = new MoveGenerator();
-        mg.generateMoves(m.getOriginSquare(), this);
+        mg.generateMoves(m.getOriginSquare(), this, MoveGenerator.userMode);
 
         Move match = new Move();
         for (Move moves: mg.getMoves()) {
@@ -323,7 +308,7 @@ public class Board {
                 if (isChecked(activeColour)) {
                     boardRep.setCheck(true);
                     MoveGenerator checkMateMoves = new MoveGenerator();
-                    checkMateMoves.generateMoves(this);
+                    checkMateMoves.generateMoves(this, MoveGenerator.userMode);
                     boardRep.setCheckMate(isCheckMate(checkMateMoves, activeColour));
                 }
 
@@ -339,95 +324,12 @@ public class Board {
                 boardRep.setCheck(true);
                 //does the move checkmate the other player?
                 MoveGenerator checkMateMoves = new MoveGenerator();
-                checkMateMoves.generateMoves(this);
+                checkMateMoves.generateMoves(this, MoveGenerator.userMode);
                 boardRep.setCheckMate(isCheckMate(checkMateMoves, activeColour));
             }
         }
         boardRep.setBoardRep(serializeBoard());
         return boardRep;
-    }
-
-    public boolean validateMove (Move m) {
-        int originSquare = m.getOriginSquare();
-        int targetSquare = m.getTargetSquare();
-        boolean success = false;
-
-        if (!Square.isValid(originSquare) || !Square.isValid(targetSquare)) {
-            return success;
-        }
-
-        int originPiece = m.getOriginPiece();
-        if (!Piece.isValid(originPiece)) {
-            return success;
-        }
-        if (Piece.getColour(originPiece) != activeColour) {
-            return success;
-        }
-
-        int originType = Piece.getType(originPiece);
-
-        int[] directions = Square.getDirection(activeColour, originType);
-
-        //start with pawns
-        if (originType == Piece.PAWN) {
-            int max = 1;
-            if ((activeColour == Piece.BLACK && rank(originSquare) == 1) || (activeColour == Piece.WHITE && rank(originSquare) == 6)) {
-                max = 2;
-            }
-            for (int multiplier = 1; multiplier <= max; multiplier++) {
-                int currentSquare = originSquare + directions[0] * multiplier;
-                if (Square.isValid(currentSquare) && currentSquare == targetSquare && board[currentSquare] == Piece.NO_PIECE) {
-                    success = true;
-                    break;
-                }
-            }
-            if (!success) {
-                for (int remainingDirections = 1; remainingDirections < 3; remainingDirections++) {
-                    int currentSquare = originSquare + directions[remainingDirections];
-                    if (Square.isValid(currentSquare) && currentSquare == targetSquare &&
-                            board[targetSquare] != Piece.NO_PIECE && Piece.getColour(board[targetSquare]) != activeColour) {
-                        success = true;
-                        break;
-                    }
-                }
-            }
-        } else if (!Piece.isSliding(originType)) { //kings/knights
-            for (int i = 0; i < directions.length; i++) {
-                int currentSquare = originSquare + directions[i];
-                if (Square.isValid(currentSquare) && currentSquare == targetSquare &&
-                        ((board[targetSquare] == Piece.NO_PIECE) || (board[targetSquare] != Piece.NO_PIECE && Piece.getColour(board[targetSquare]) != activeColour))){
-                    success = true;
-                    break;
-                }
-            }
-        } else { //sliding pieces
-            for (int i = 0; i < directions.length; i++) {
-                int currentSquare = originSquare + directions[i];
-                while (Square.isValid(currentSquare) ) {
-                    if ((currentSquare == targetSquare) &&
-                            ((board[targetSquare] == Piece.NO_PIECE) || (board[targetSquare] != Piece.NO_PIECE && Piece.getColour(board[targetSquare]) != activeColour))) {
-                        success = true;
-                        break;
-                    } else if (board[currentSquare] != Piece.NO_PIECE) {
-                        break;
-                    }
-                    currentSquare = currentSquare + directions[i];
-                }
-                if (success) {
-                    break;
-                }
-            }
-        }
-        return success;
-    }
-
-    public boolean arrayContains(int[] arr, int val) {
-        for (int num: arr) {
-            if (num == val) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public boolean isCheckMate(MoveGenerator mg, int colour) {
@@ -554,6 +456,82 @@ public class Board {
             }
         }
         return false;
+    }
+
+    //evaluates the value of the board with respect to the input colour
+    public int evaluateBoard(int colour) {
+        int oppositeColour = Piece.oppositeColour(colour);
+
+        int materialScore = 0;
+        //calculate material score
+        int mobilityScore = 0;
+
+        for (int square: Square.values) {
+            if (board[square] != Piece.NO_PIECE) {
+
+                //material score
+                if (Piece.getColour(board[square]) == colour) {
+                    materialScore += Piece.getValue(board[square]);
+                } else {
+                    materialScore -= Piece.getValue(board[square]);
+                }
+
+                if (Piece.getType(board[square]) == Piece.BISHOP) {
+                    int score = evaluateMobility(square, Square.bishopDirections);
+
+                    if (Piece.getColour(board[square]) == colour) {
+                        mobilityScore += score * 5;
+                    } else {
+                        mobilityScore -= score * 5;
+                    }
+                } else if (Piece.getType(board[square]) == Piece.ROOK) {
+                    int score = evaluateMobility(square, Square.rookDirections);
+
+                    if (Piece.getColour(board[square]) == colour) {
+                        mobilityScore += score * 2;
+                    } else {
+                        mobilityScore -= score * 2;
+                    }
+                } else if (Piece.getType(board[square]) == Piece.KNIGHT) {
+                    int score = evaluateMobility(square, Square.bishopDirections);
+
+                    if (Piece.getColour(board[square]) == colour) {
+                        mobilityScore += score * 4;
+                    } else {
+                        mobilityScore -= score * 4;
+                    }
+                } else if (Piece.getType(board[square]) == Piece.QUEEN) {
+                    int score = evaluateMobility(square, Square.queenDirections);
+
+                    if (Piece.getColour(board[square]) == colour) {
+                        mobilityScore += score;
+                    } else {
+                        mobilityScore -= score;
+                    }
+                }
+            }
+        }
+        mobilityScore = mobilityScore * 80/100;
+        return materialScore + mobilityScore;
+    }
+
+    public int evaluateMobility(int square, int[] directions) {
+        int mobility = 0;
+        boolean sliding = Piece.isSliding(Piece.getType(board[square]));
+        for (int direction: directions) {
+            int targetSquare = square + direction;
+
+            while(Square.isValid(targetSquare)) {
+                mobility++;
+                if (sliding && board[targetSquare] == Piece.NO_PIECE) {
+                    targetSquare += direction;
+                } else {
+                    break;
+                }
+            }
+
+        }
+        return mobility;
     }
 
     public String serializeBoard() {

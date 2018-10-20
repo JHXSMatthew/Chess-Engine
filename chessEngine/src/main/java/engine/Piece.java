@@ -48,19 +48,25 @@ public class Piece {
         }
     }
 
-    static int getValue(int pieceType) {
-        switch (pieceType) {
-            case PAWN:
+    static int getValue(int piece) {
+        switch (piece) {
+            case WHITE_PAWN:
+            case BLACK_PAWN:
                 return PAWN_VALUE;
-            case KNIGHT:
+            case WHITE_KNIGHT:
+            case BLACK_KNIGHT:
                 return KNIGHT_VALUE;
-            case BISHOP:
+            case WHITE_BISHOP:
+            case BLACK_BISHOP:
                 return BISHOP_VALUE;
-            case ROOK:
+            case WHITE_ROOK:
+            case BLACK_ROOK:
                 return ROOK_VALUE;
-            case QUEEN:
+            case WHITE_QUEEN:
+            case BLACK_QUEEN:
                 return QUEEN_VALUE;
-            case KING:
+            case WHITE_KING:
+            case BLACK_KING:
                 return KING_VALUE;
             default:
                 throw new IllegalArgumentException();
@@ -188,6 +194,8 @@ public class Piece {
                 throw new IllegalArgumentException();
         }
     }
+
+
 
 
 

@@ -18,7 +18,7 @@ public class ChessEngineDummy implements ChessEngineI {
         b.deserializeBoard(state);
         MoveGenerator m = new MoveGenerator();
         
-        m.generateMoves(Board.toSquare(pieceLoc), b);
+        m.generateMoves(Board.toSquare(pieceLoc), b, MoveGenerator.userMode);
         return m.targetSquareToIndexArray();
     }
 
@@ -53,7 +53,7 @@ public class ChessEngineDummy implements ChessEngineI {
         b.deserializeBoard(stateString);
 
         MoveGenerator mg = new MoveGenerator();
-        mg.generateMoves(b);
+        mg.generateMoves(b, MoveGenerator.aiMode);
 
         Random r = new Random();
         int length = mg.getMoves().size();
