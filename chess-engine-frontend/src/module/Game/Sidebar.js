@@ -90,7 +90,7 @@ class Sidebar extends React.Component{
 
   resign = (gameType)=>{
     const {endLocalGame,resignNetworkedGame} = this.props
-    if(gameType === GAME_TYPE.LOCAL_GAME){
+    if(gameType === GAME_TYPE.LOCAL_GAME || gameType === GAME_TYPE.AI){
       endLocalGame(false, "Resign")
     }else{
       resignNetworkedGame();
