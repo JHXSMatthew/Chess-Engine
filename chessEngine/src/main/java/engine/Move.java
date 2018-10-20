@@ -1,4 +1,5 @@
 package engine;
+import java.util.*;
 
 public class Move {
     private int type; //normal, special (en passant, castle, promotion)
@@ -31,6 +32,13 @@ public class Move {
         this.targetPiece = Piece.NO_PIECE;
         this.promotion = Piece.NO_PIECE_TYPE;
     }
+
+    public List<Move> generateWhiteKingSideMOves() {
+        ArrayList<Move>  moves = new ArrayList<Move>();
+
+        Move m1 =
+    }
+
 
     public void setOriginPiece (Board b) {
         if (Square.isValid(originSquare)) {
