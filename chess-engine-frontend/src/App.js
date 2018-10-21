@@ -1,65 +1,128 @@
 import React, { Component } from 'react';
 
 import Game from './module/Game/ChessGame'
+import About from './module/About/About';
+import Login from './module/User/Login';
+
+import UserCenter from './module/User/UserCenter'
+import Register from './module/User/Register'
+import Leaderboard from './module/User/Leaderboard'
+
 import ModalWrapper from './component/ModalWrapper';
 
 import './App.less'
 
-import { Switch, Route, Link } from 'react-router-dom'; 
+import { BrowserRouter, Switch, Route, Link, Redirect} from 'react-router-dom'; 
 
 import {connect} from 'react-redux';
 import { actionToggleModal } from './AppReducer';
+import { actionOnLoadCacheLogin } from './module/User/UserReducer';
+import { actionPromotePawn } from './module/Game/ChessGameReducer';
 
+import {
+  Collapse,
+  Navbar,
+  NavbarToggler,
+  NavbarBrand,
+  Nav,
+  NavItem
+ } from 'reactstrap';
 
 
 
 class Header extends Component{
+
+  constructor(props){
+    super(props)
+
+    this.state = {
+      isOpen: false
+    }
+  }
+
+  toggle = () => {
+    this.setState({
+      isOpen: !this.state.isOpen
+    });
+  }
+  
   render(){
+
+    const { auth, info } = this.props;
+    let userName = "";
+    if(info){
+      userName = info.userName
+    }
     return (
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <a className="navbar-brand" href="#">Chess Lty Ptd</a>
-      <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span className="navbar-toggler-icon"></span>
-      </button>
-    
-      <div className="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul className="navbar-nav mr-auto">
-          <li className="nav-item active">
-            <Link className="nav-link" to="/">Game <span className="sr-only">(current)</span></Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="tute">Tutorial</Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="about">About</Link>
-          </li>
-        </ul>
-        <form className="form-inline my-2 my-lg-0">
-        </form>
+      <div>
+        <Navbar color="light" light expand="md">
+          <NavbarBrand>Chess Lty Ptd</NavbarBrand>
+          <NavbarToggler onClick={this.toggle} />
+          <Collapse isOpen={this.state.isOpen} navbar>
+            <Nav className="mr-auto" navbar>
+              <NavItem>
+                <Link className="nav-link" to="/">Game <span className="sr-only">(current)</span></Link>              </NavItem>
+              {/* <NavItem>
+                <Link className="nav-link" to="/tute">Tutorial</Link>
+              </NavItem> */}
+              <NavItem>
+                <Link className="nav-link" to="/about">About</Link>
+              </NavItem>
+              <NavItem>
+                <Link className="nav-link" to="/leaderboard">Leaderboard</Link>
+              </NavItem>
+            </Nav>
+            {auth ? 
+          <div className="form-inline my-2 my-lg-0">
+            Welcome! <Link className="nav-link" to="/user">{userName}</Link>
+          </div>
+            :<div className="form-inline my-2 my-lg-0">
+
+              Welcome!  
+              <Link className="nav-link" to="/login">Login</Link>
+              or 
+              <Link className="nav-link" to="/register">Register</Link>
+            
+            </div>
+          }
+          </Collapse>
+        </Navbar>
       </div>
-    </nav>
     )
   }
 }
 
 class App extends Component {
-  render() {
-    console.log(this.props);
-    return (
-      <div>
-        <Header/>
-        <ModalWrapper
-          {...this.props.modal}
-          buttonAction={this.props.buttonAction}
-          hideSelf={this.props.hideModal}
-        />
+  constructor(props){
+    super(props)
+    props.tryCacheLogin();
+  }
 
-        <div className="container content-margin">
-          <Switch>
+  render() {
+
+    return (
+      <BrowserRouter>
+        <div>
+          <Header auth={this.props.auth} info={this.props.userInfo}/>
+          <ModalWrapper
+            {...this.props.modal}
+            buttonAction={this.props.buttonAction}
+            hideSelf={this.props.hideModal}
+          />
+          {this.props.redirect && <Redirect to={this.props.redirect}/>}
+          
+          <div className="container content-margin">
+            
             <Route exact path="/" component={Game}/>
-          </Switch>
+            <Route path="/register" component={Register}/>
+            <Route path="/user" component={UserCenter}/>
+            <Route path="/about" component={About}/>
+            <Route path="/login" component={Login}/>
+            <Route path="/leaderboard" component={Leaderboard}/>
+          </div>
         </div>
-      </div>
+          
+      </BrowserRouter>
 
 
     );
@@ -70,14 +133,18 @@ class App extends Component {
 
 const mapStateToProps = state =>{
   return {
-    modal: state.app.modal
+    modal: state.app.modal,
+    auth: state.user.auth,
+    userInfo: state.user.info,
+    redirect: state.app.redirect
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     hideModal: ()=> dispatch(actionToggleModal(false)),
-    buttonAction: (action) => dispatch(action)
+    buttonAction: (action) => dispatch(action),
+    tryCacheLogin: ()=> dispatch(actionOnLoadCacheLogin())
   }
 }
 

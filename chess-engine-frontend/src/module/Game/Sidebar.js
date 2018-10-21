@@ -3,13 +3,16 @@ import React from 'react'
 import { PiecesSVG } from '../../resource/PieceResource'
 import './Sidebar.less';
 
-import { GAME_TYPE, actionNewNetworkedGame, GAME_STATUS, actionMove } from './ChessGameReducer';
+import { GAME_TYPE, actionNewNetworkedGame, GAME_STATUS, actionMove, actionJoinQueue, actionUpdateGameType } from './ChessGameReducer';
 
 import UUID from  'uuid/v1';
 
 import InvitedNetworkedGamePanel from './SidebarNetworkedGamePanel'
+import SideBarQueuePanel from "./SideBarQueuePanel";
 
 import { connect } from 'react-redux'
+
+import { indexToCoord } from './Utils';
 
 import {
   actionLoadInitState,
@@ -25,6 +28,12 @@ import { actionUpdateModalInfo } from '../../AppReducer';
 
 class Sidebar extends React.Component{
 
+  componentDidUpdate(){
+    var el = this.refs.historyList;
+    if (el){
+      el.scrollTop = el.scrollHeight;
+    }
+  }
 
   getMoveHistoryView = (data)=>{
     if(data.length <= 0){
@@ -36,13 +45,29 @@ class Sidebar extends React.Component{
     const f = (a,b)=>{
       return (
         <div key={UUID()} className='d-flex flex-row flex-fill'>
-          <div className='pl-3'>
-            {a.from}:{a.to}
+          <div className="w-50 p-1 d-flex flex-row">
+            <div className="w-25">
+              {PiecesSVG[a.piece]}
+            </div>
+            <div className="w-50 py-1">
+              {indexToCoord(a.from)}:{indexToCoord(a.to)}
+            </div>
           </div>
-          <div className='pl-4'>
-            {b? b.from+ ":" + b.to: ""}
-          </div>
+          {b?
+            <div className="w-50 p-1 d-flex flex-row">
+              <div className="w-25">
+                {PiecesSVG[b.piece]}
+              </div>
+              <div className="w-50 py-1">
+                {indexToCoord(b.from)}:{indexToCoord(b.to)}
+              </div>
+            </div>
+          : ""
+          }
         </div>)
+          // <div className='pl-5'>
+          //   {b? PiecesSVG[b.piece]+";"+ indexToCoord(b.from)+ ":" + indexToCoord(b.to): ""}
+          // </div>
     }
 
     for(let i in data){
@@ -65,7 +90,7 @@ class Sidebar extends React.Component{
 
   resign = (gameType)=>{
     const {endLocalGame,resignNetworkedGame} = this.props
-    if(gameType === GAME_TYPE.LOCAL_GAME){
+    if(gameType === GAME_TYPE.LOCAL_GAME || gameType === GAME_TYPE.AI){
       endLocalGame(false, "Resign")
     }else{
       resignNetworkedGame();
@@ -77,6 +102,8 @@ class Sidebar extends React.Component{
 
     if(gameType === GAME_TYPE.INVITE_NETWOKRED && gameStatus === GAME_STATUS.INIT){
       return <InvitedNetworkedGamePanel/>
+    }else if( (gameType === GAME_TYPE.RANKED || gameType === GAME_TYPE.MATCH) && gameStatus === GAME_STATUS.INIT){
+      return <SideBarQueuePanel />
     }else{
         return <div className="sidebar">
           {gameType != GAME_TYPE.LOCAL_GAME && <div className="d-flex flex-row flex-fill">
@@ -95,7 +122,11 @@ class Sidebar extends React.Component{
           <div className="d-flex flex-row flex-fill">
             <div className="p-2">Move History: </div>
           </div>
-          <div className='history'>
+          {/*<div className="d-flex flex-row flex-fill">
+                      <div className="pl-3">White </div>
+                      <div className="pl-5">Black</div>
+                    </div>*/}
+          <div className='history' ref='historyList'>
             {moveHistoryView}
           </div>
           <div className="d-flex flex-row flex-fill">
@@ -118,17 +149,17 @@ class Sidebar extends React.Component{
             <div className="p-2">Timer: </div>
             <div className="p-2">5:00/60:00</div>
           </div> */}
-          <div className="d-flex flex-row flex-fill">
+          {gameType != GAME_TYPE.LOCAL_GAME && <div className="d-flex flex-row flex-fill">
             <div className="p-2">You: </div>
             <div className="p-2">{PiecesSVG[opponentColor=== 'w'? 'p' : 'P']}</div>
-          </div>
+          </div>}
         </div>
     }
   
   }
 
   render(){
-    const {loadGame, newLocalGame, gameType, moveHistory, newNetworkedGame} = this.props;
+    const {loadGame, newLocalGame, gameType, moveHistory, newNetworkedGame, newMatchGame, newRankGame, newAiGame} = this.props;
 
     
     const moveHistoryView = this.getMoveHistoryView(moveHistory);
@@ -136,14 +167,39 @@ class Sidebar extends React.Component{
     return (
       !gameType ? 
         (<div className="sidebar">
+          <h5>Local Games</h5>
           <div className="d-flex flex-row flex-fill align-items-end">
-              <button className='btn btn-primary' onClick={newLocalGame}> New Local Game </button>
-              <button className='btn btn-primary' onClick={newNetworkedGame} > New Network Game </button>
+              <button className='btn btn-primary' onClick={newLocalGame}> Play Local Game </button>
+              <button className='btn btn-secondary' onClick={loadGame}> Load Local Game </button>
+          </div>
+          <h5>Networked Games</h5>
+          <div className="d-flex flex-row flex-fill align-items-end">
+              <button className='btn btn-primary' onClick={newMatchGame}> Play Casual Game </button>
+              <button className='btn btn-success' onClick={newRankGame} > Play Rank Game </button>
           </div>
           <div className="d-flex flex-row flex-fill align-items-start">
-              <button className='btn btn-primary' onClick={loadGame}> Load Local Game </button>
-              {/* <button className='btn btn-primary' > Load Network Game </button> */}
+            <button className='btn btn-primary' onClick={newNetworkedGame} >Game Room</button>
           </div>
+          <h5>AI Games</h5>
+          <div className="d-flex flex-row flex-fill align-items-start">
+            <button className='btn btn-primary' onClick={newAiGame}> Play AI Game </button>
+          </div>
+          <h5 className='pt-4'>Help</h5>
+          <ul>
+            <li>
+              Local Game: Play against your friend on the same computer.
+            </li>
+            <li>
+              Casual Game: Find a player online to play against. 
+            </li>
+            <li>
+              Rank Game: Find a player online to play against and earn MMR. 
+            </li>
+            <li>
+              Game Room: Create a game room and invite your friend to play with you online! 
+            </li>
+
+          </ul>
         </div>)
         : this.renderSideBarByType(gameType, moveHistoryView)
     )
@@ -176,6 +232,9 @@ const mapDispatchToProps = dispatch => {
     },
     newLocalGame: () => dispatch(actionNewLocalGame()),
     newNetworkedGame: ()=> dispatch(actionNewNetworkedGame()),
+    newMatchGame: () => dispatch(actionJoinQueue(GAME_TYPE.MATCH)),
+    newRankGame: () => dispatch(actionJoinQueue(GAME_TYPE.RANKED)),
+    newAiGame: () => { dispatch(actionNewLocalGame()); dispatch(actionUpdateGameType(GAME_TYPE.AI)) }, 
     undoMove: () => dispatch(actionUndoRequest()),
     resignNetworkedGame: ()=> dispatch(actionResignNetworkedGame())
   }

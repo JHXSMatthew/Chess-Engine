@@ -68,6 +68,7 @@ public class MoveGenerator {
                             } else {
                                 throw new IllegalArgumentException();
                             }
+
                         } else if (multiplier == 2) {
                             Move m = new Move(Move.ENPASSANT_ENABLER, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
                             moves.add(m);
@@ -102,6 +103,7 @@ public class MoveGenerator {
                                 } else {
                                     throw new IllegalArgumentException();
                                 }
+
                             } else {
                                 Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
                                 moves.add(m);
@@ -320,6 +322,7 @@ public class MoveGenerator {
                             } else {
                                 throw new IllegalArgumentException();
                             }
+
                         } else {
                             Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
                             moves.add(m);
@@ -397,6 +400,7 @@ public class MoveGenerator {
                         for (Move m: Move.generateWhiteQueenSideMoves()) {
                             p.applyMove(m);
                             if (p.isChecked(p.activeColour)) {
+
                                 success = false;
                                 break;
                             }
@@ -424,6 +428,7 @@ public class MoveGenerator {
                         for (Move m: Move.generateBlackKingSideMoves()) {
                             p.applyMove(m);
                             if (p.isChecked(p.activeColour)) {
+
                                 success = false;
                                 break;
                             }
@@ -456,10 +461,12 @@ public class MoveGenerator {
                             Move m = new Move(Move.CASTLE, originSquare, Square.WHITE_KING_STARTING_SQUARE + Square.E + Square.E,
                                     originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
                             moves.add(m);
+
                         }
                     }
                 }
             }
+
         }
     }
 }
