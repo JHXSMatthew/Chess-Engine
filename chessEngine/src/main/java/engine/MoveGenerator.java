@@ -52,7 +52,7 @@ public class MoveGenerator {
                     int currentSquare = originSquare + directions[0] * multiplier;
                     if (Square.isValid(currentSquare) && p.board[currentSquare] == Piece.NO_PIECE) {
                         //pawn promotion
-                        if (p.activeColour == Piece.BLACK && p.rank(originSquare) == 7 || p.activeColour == Piece.WHITE && p.rank(originSquare) == 0) {
+                        if (p.activeColour == Piece.BLACK && p.rank(currentSquare) == 7 || p.activeColour == Piece.WHITE && p.rank(currentSquare) == 0) {
                             if (mode == userMode) {
                                 Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
                                 moves.add(m);
@@ -86,7 +86,7 @@ public class MoveGenerator {
                             Move m = new Move(Move.ENPASSANT_CAPTURE, originSquare, currentSquare, originPiece, Piece.valueOf(Piece.oppositeColour(p.activeColour), Piece.PAWN), Piece.NO_PIECE_TYPE);
                             moves.add(m);
                         } else if (p.board[currentSquare] != Piece.NO_PIECE && Piece.getColour(p.board[currentSquare]) != p.activeColour) {
-                            if (p.activeColour == Piece.BLACK && p.rank(originSquare) == 7 || p.activeColour == Piece.WHITE && p.rank(originSquare) == 0) {
+                            if (p.activeColour == Piece.BLACK && p.rank(currentSquare) == 7 || p.activeColour == Piece.WHITE && p.rank(currentSquare) == 0) {
                                 if (mode == userMode) {
                                     Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
                                     moves.add(m);
@@ -270,7 +270,7 @@ public class MoveGenerator {
                 int currentSquare = originSquare + directions[0] * multiplier;
                 if (Square.isValid(currentSquare) && p.board[currentSquare] == Piece.NO_PIECE) {
                     //pawn promotion
-                    if (p.activeColour == Piece.BLACK && p.rank(originSquare) == 7 || p.activeColour == Piece.WHITE && p.rank(originSquare) == 0) {
+                    if (p.activeColour == Piece.BLACK && p.rank(currentSquare) == 7 || p.activeColour == Piece.WHITE && p.rank(currentSquare) == 0) {
                         if (mode == userMode) {
                             Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
                             moves.add(m);
@@ -304,7 +304,7 @@ public class MoveGenerator {
                         Move m = new Move(Move.ENPASSANT_CAPTURE, originSquare, currentSquare, originPiece, Piece.valueOf(Piece.oppositeColour(p.activeColour), Piece.PAWN), Piece.NO_PIECE_TYPE);
                         moves.add(m);
                     } else if (p.board[currentSquare] != Piece.NO_PIECE && Piece.getColour(p.board[currentSquare]) != p.activeColour) {
-                        if (p.activeColour == Piece.BLACK && p.rank(originSquare) == 7 || p.activeColour == Piece.WHITE && p.rank(originSquare) == 0) {
+                        if (p.activeColour == Piece.BLACK && p.rank(currentSquare) == 7 || p.activeColour == Piece.WHITE && p.rank(currentSquare) == 0) {
                             if (mode == userMode) {
                                 Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
                                 moves.add(m);

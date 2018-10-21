@@ -17,7 +17,7 @@ public class AI {
         for (Move m: mg.getMoves()) {
             copy.psuedoLegalMakeMove(m);
             if (copy.isValid) {//try other values of depth maybe
-                Integer boardValue = minimaxHelper(2, copy, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
+                Integer boardValue = minimaxHelper(4, copy, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
                 copy.restoreBoard(b);
 
                 if (boardValue >= value) {
