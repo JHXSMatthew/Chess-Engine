@@ -26,8 +26,14 @@ public class MoveController {
     @ApiOperation(value = "handle single move",response = StateContainer.class)
     public StateContainer handleMove(@RequestBody MoveRequest info) {
         State returnValue = engine.move(info.getState(), info.getFrom(), info.getTo());
+        boolean flag = returnValue.isPromotion();
+        StateContainer result = new StateContainer();
+        result.setState(returnValue.getBoardRep());
+        result.setChecked(returnValue.isCheck());
+        result.setCheckmate(returnValue.isCheckMate());
+        result.setPromotion(flag);
 
-        return StateContainer.build(returnValue);
+        return result;
     }
 
     @ApiOperation(value = "Get all the available move",response = AvailableMoveResponse.class)
@@ -41,10 +47,10 @@ public class MoveController {
     }
 
 
-    @PostMapping(value = "/api/move/checkPromotion")
-    public boolean checkPromotion(@RequestBody State state){
-        return state.isPromotion();
-    }
+//    @PostMapping(value = "/api/move/checkPromotion")
+//    public boolean checkPromotion(@RequestBody State state){
+//        return state.isPromotion();
+//    }
 
     private static final HashMap<String,Integer> pieceMapping = new HashMap<String,Integer>();
     static {
