@@ -6,6 +6,7 @@ import app.model.StateContainer;
 import app.model.move.AvailableMoveRequest;
 import app.model.move.AvailableMoveResponse;
 import app.model.move.MoveRequest;
+import app.model.move.PromotionMove;
 import engine.State;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,22 +41,25 @@ public class MoveController {
     }
 
 
-    //State promotionMove(String state, int to, int promotionPiece);
+    // State promotionMove(String state, int to, int promotionPiece);
     @PostMapping(value = "/api/move/PromotionMove")
-    public StateContainer HandlePromotion(@RequestBody MoveRequest info){
+    public StateContainer HandlePromotion(@RequestBody PromotionMove info){
 
         HashMap<String,Integer> pieceMapping = new HashMap<>();
-        pieceMapping.put("WHITE_PAWN",0);
-        pieceMapping.put("WHITE_KNIGHT",1);
-        pieceMapping.put("WHITE_BISHOP",2);
-        pieceMapping.put("WHITE_ROOK",3);
-        pieceMapping.put("WHITE_KING",5);
-        pieceMapping.put("BLACK_PAWN",6);
-        pieceMapping.put("BLACK_KNIGHT",7);
-        pieceMapping.put("BLACK_BISHOP",8);
-        pieceMapping.put("BLACK_ROOK",9);
-        pieceMapping.put("BLACK_QUEEN",10);
-        pieceMapping.put("BLACK_KING",11);
+
+        pieceMapping.put("P",0);
+        pieceMapping.put("N",1);
+        pieceMapping.put("B",2);
+        pieceMapping.put("R",3);
+        pieceMapping.put("Q",4);
+        pieceMapping.put("K",5);
+
+        pieceMapping.put("p",6);
+        pieceMapping.put("n",7);
+        pieceMapping.put("b",8);
+        pieceMapping.put("r",9);
+        pieceMapping.put("q",10);
+        pieceMapping.put("k",11);
 
         int promotionPiece = pieceMapping.get(info.getPromotion());
         State returnValue = engine.promotionMove(info.getState(),info.getTo(),promotionPiece);
