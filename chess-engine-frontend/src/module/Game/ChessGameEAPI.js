@@ -16,8 +16,12 @@ import axios from 'axios'
   		from
   	})
   },
-  postPromotion: (state, to, promotionPiece) => {
-    // return axios.post(API_ENDPOINT + "/")
+  postPromotion: (state, to, promotionPos) => {
+    return axios.post(API_ENDPOINT + "/move/PromotionMove", {
+      state,
+      to,
+      promotionPos
+    })
   }
 }
 

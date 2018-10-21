@@ -148,18 +148,17 @@ function* MoveRequest(action){
             }))
           }
           yield put(actionHighlightLastMove([action.from, action.to]))
-          if ((movedPiece === 'p' && action.to >= 56) || (movedPiece === 'P' && action.to <= 7) ||
-              // TODO: When push to production, REMOVE BELOW TEST CONDITION
-               movedPiece === 'P' && action.to === 47){
-            console.log("--- promotion modal:", movedPiece, action.to)
-            yield put(actionShowPromotionModal({
-              content: movedPiece,
-              show: true,
-              title: 'Promotion',
-              action: actionPromotePawn()
-            }))
-          }
         }
+      }
+      console.log("-----", stateObj)
+      if (stateObj.isPromotion){
+        console.log("--- promotion modal:", movedPiece, action.to)
+        yield put(actionShowPromotionModal({
+          content: movedPiece,
+          show: true,
+          title: 'Promotion',
+          action: actionPromotePawn()
+        }))
       }
     }
 
@@ -554,8 +553,23 @@ function queueTimer(queueEntryId, token){
 function* PromotePawn(piece){
   try {
     const promoPiece = yield select((state) => state.game.promoSelected) 
-    console.log("API PROMOTION: ", promoPiece)
-  } catch (e) {
+    const currentBoardState = yield select((state) => seriliaseState(state.game))
+    const to = yield select((state) => state.game.lastMovePair[1])
+    const response = yield call(MoveApi.postPromotion, currentBoardState, to, promoPiece)
+    const stateObj = response.data;
 
+    yield put(actionUpdateGameStateSuccess({...response.data, state: deserializeState(stateObj.state)}))
+    yield put(actionAddMoveHistory({piece: promoPiece, from: to , to: to}))
+
+    if (stateObj.isChecked && !stateObj.isCheckmate){
+       yield put(actionUpdateModalInfo({
+        content: '',
+        show: true,
+        title: 'Check',
+        action: actionToggleModal(false)
+      }))
+    }
+  } catch (e) {
+    console.log("error", e)
   }
 }

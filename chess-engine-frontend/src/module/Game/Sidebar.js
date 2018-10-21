@@ -46,19 +46,19 @@ class Sidebar extends React.Component{
       return (
         <div key={UUID()} className='d-flex flex-row flex-fill'>
           <div className="w-50 p-1 d-flex flex-row">
-            <div className="w-50">
+            <div className="w-25">
               {PiecesSVG[a.piece]}
             </div>
-            <div className="w-50 py-4">
+            <div className="w-50 py-1">
               {indexToCoord(a.from)}:{indexToCoord(a.to)}
             </div>
           </div>
           {b?
             <div className="w-50 p-1 d-flex flex-row">
-              <div className="w-50">
+              <div className="w-25">
                 {PiecesSVG[b.piece]}
               </div>
-              <div className="w-50 py-4">
+              <div className="w-50 py-1">
                 {indexToCoord(b.from)}:{indexToCoord(b.to)}
               </div>
             </div>
