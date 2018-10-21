@@ -24,6 +24,11 @@ export function* userSaga(){
 
   yield takeEvery(GET_LEADERBOARD, loadLeaderBoard)
   yield takeEvery(CHANGE_PASSWORD, changePassword)
+
+  yield takeEvery(TYPE_LOAD_USER_GAME_HISTORY, getGameHistory)
+  yield takeEvery(TYPE_LOAD_MOVE_HISTORY_FOR_GAME, getMoveHistory)
+
+  
 }
 
 function* changePassword(action){
@@ -37,8 +42,7 @@ function* changePassword(action){
     alert(e);
 
   }
-  yield takeEvery(TYPE_LOAD_USER_GAME_HISTORY, getGameHistory)
-  yield takeEvery(TYPE_LOAD_MOVE_HISTORY_FOR_GAME, getMoveHistory)
+ 
 }
 
 function* login(action){

@@ -45,8 +45,8 @@ class Sidebar extends React.Component{
     const f = (a,b)=>{
       return (
         <div key={UUID()} className='d-flex flex-row flex-fill'>
-          <div className="w-50 p-1 d-flex flex-row">
-            <div className="w-50">
+          <div className="w-50 p-0 d-flex flex-row">
+            <div className="w-30">
               {PiecesSVG[a.piece]}
             </div>
             <div className="w-50 py-4">
@@ -54,8 +54,8 @@ class Sidebar extends React.Component{
             </div>
           </div>
           {b?
-            <div className="w-50 p-1 d-flex flex-row">
-              <div className="w-50">
+            <div className="w-50 p-0 d-flex flex-row">
+              <div className="w-30">
                 {PiecesSVG[b.piece]}
               </div>
               <div className="w-50 py-4">
@@ -178,7 +178,7 @@ class Sidebar extends React.Component{
               <button className='btn btn-success' onClick={newRankGame} > Play Rank Game </button>
           </div>
           <div className="d-flex flex-row flex-fill align-items-start">
-            <button className='btn btn-primary' onClick={newNetworkedGame} > Create Game Room </button>
+            <button className='btn btn-primary' onClick={newNetworkedGame} >Game Room</button>
           </div>
           <h5>AI Games</h5>
           <div className="d-flex flex-row flex-fill align-items-start">
