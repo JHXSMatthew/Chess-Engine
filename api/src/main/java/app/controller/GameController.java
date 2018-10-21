@@ -65,11 +65,10 @@ public class GameController {
         if(token == null || token.isEmpty()){
             return ResponseEntity.badRequest().build();
         }
-
         Optional<Token> tObj = tokenRepository.findByToken(token);
         if(tObj.isPresent()){
             tObj.get().getUser();
-            Optional<List<GameRoom>> history = grr.findOrderByPlayerAOrPlayerB(tObj.get().getUser(), tObj.get().getUser());
+            Optional<List<GameRoom>> history = grr.findOrderByPlayerAOrPlayerBOrderByIdDesc(tObj.get().getUser(), tObj.get().getUser());
             if(history.isPresent()){
                 List<GameRoom> result = history.get().stream().filter((v) -> {
                     return v.getStatus() == GameRoom.GameStatus.finished;
@@ -136,7 +135,7 @@ public class GameController {
                         request.getFrom(), request.getTo());
                 if(s.isCheckMate()){
                     dbModel.get().setStatus(GameRoom.GameStatus.finished);
-                    handleStats(dbModel.get(), request.getPlyaerType().equals("b"));
+                    handleResult(dbModel.get(), request.getPlyaerType().equals("b"));
 
                 }
                 //set field
@@ -175,7 +174,7 @@ public class GameController {
             dbModel.get().setResignedPlayer(playerType);
             dbModel.get().setStatus(GameRoom.GameStatus.finished);
 
-            handleStats(dbModel.get(), playerType.equals("w"));
+            handleResult(dbModel.get(), playerType.equals("w"));
             grr.save(dbModel.get());
 
 
@@ -208,14 +207,16 @@ public class GameController {
     }
 
 
-    private void handleStats(GameRoom room, boolean isBlackWin){
-        if(room.getGameType() != GameRoom.GameType.networkedInvited){
-            return;
-        }
+
+
+    private void handleResult(GameRoom room, boolean isBlackWin){
+
 
         if(room.getStatus() != GameRoom.GameStatus.finished){
             return;
         }
+
+        room.setWinner(isBlackWin ? room.getPlayerA() : room.getPlayerB());
 
         if(room.getGameType() == GameRoom.GameType.rank){
             room.getPlayerA().setRankGamePlayed(room.getPlayerA().getRankGamePlayed() + 1);
@@ -245,6 +246,7 @@ public class GameController {
         }
         ur.save(room.getPlayerA());
         ur.save(room.getPlayerB());
+        grr.save(room);
 
     }
 

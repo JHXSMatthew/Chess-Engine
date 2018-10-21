@@ -39,8 +39,7 @@ function* login(action){
 function* getGameHistory(action){
   try{
     const userToken = yield select((state) => state.user.auth.token)
-    const response= call(gameHistoryApi.getHistory, userToken)
-    
+    const response= yield call(gameHistoryApi.getHistory, userToken)
     yield put(actionLoadUserGameHistorySuccess(response.data))
   }catch(err){
     yield put(actionUserLogin(err)) //todo change this
@@ -49,7 +48,7 @@ function* getGameHistory(action){
 
 function* getMoveHistory(action){
   try{
-    const response= call(gameHistoryApi.getMoveHistory, action.gameId)
+    const response= yield call(gameHistoryApi.getMoveHistory, action.gameId)
     
     yield put(actionLoadGameMoveHistorySuccess(action.gameId,response.data))
   }catch(err){

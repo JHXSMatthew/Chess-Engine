@@ -12,6 +12,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import { gameHistory } from '../Game/ChessGameEAPI';
 
+import moment from "moment";
 
 
 
@@ -28,6 +29,9 @@ class UserCenter extends React.Component{
   }
 
   updateSelect = (val) =>{
+    if(val === 1){
+      this.props.loadGameHistory();
+    }
     this.setState({
       select: val
     })
@@ -38,8 +42,7 @@ class UserCenter extends React.Component{
       case 0:
         return <Profile {...props.info} />
       case 1:
-        props.loadGameHistory();
-        return <GameHistory loadGameHistoryMove={props.loadGameHistoryMove} {...props.info}/>
+        return <GameHistory loadGameHistoryMove={props.loadGameHistoryMove} {...props}/>
       default:
         return <Profile {...props.info} />
     }
@@ -50,7 +53,7 @@ class UserCenter extends React.Component{
     const { logoff } = this.props
     const { select } = this.state;
     const content = this.getContent(select, this.props);
-
+    
     return (
       <div className='container'>
         {!this.props.auth && <Redirect to="/"/>}
@@ -76,28 +79,59 @@ class UserCenter extends React.Component{
 }
 
 
-const products = [ ];
-const columns = [{
-  dataField: '',
-  text: 'GameId'
-}, {
-  dataField: 'name',
-  text: 'Play As'
-},{
-  dataField: 'b',
-  text: 'Win/Lost'
-}, {
+const columns = [ {
   dataField: 'date',
   text: 'Date'
+},
+{
+  dataField: 'gameType',
+  text: 'Game Type'
+}, 
+{
+  dataField: 'playAs',
+  text: 'Play As'
+},{
+  dataField: 'result',
+  text: 'Result'
 }];
 
 class GameHistory extends React.Component{
   
 
 
+
   render(){
+    const preCheckValue = (this.props.gameHistory) ? this.props.gameHistory : []
+    
+    for(let game of preCheckValue){
+      game.date = moment(game.date).format("YYYY-MM-DD hh:mm")
+      if(game.winner){
+        if(this.props.info.userName === game.winner.userName){
+            game.result = "Win"
+        }else{
+          game.result = 'lost'
+        }
+      }else{
+        game.result = "processing"
+      }
+
+      if(game.playerA){
+        if(game.playerA.userName === this.props.info.userName ){
+          game.playAs = "black"
+        }else{
+          game.playAs = "white"
+        }
+      }
+      const sign =  game.result === 'lost' ? '-' : '+'
+      if(game.gameType === 'rank'){
+        game.gameType = `rank (${sign}50)`
+      }
+      
+    }
+    console.log(preCheckValue);
+
     return (
-      <BootstrapTable keyField='id' data={ this.props.gameHistory } columns={ columns } />
+      <BootstrapTable keyField='id' data={ preCheckValue } columns={ columns } />
     )
   }
 

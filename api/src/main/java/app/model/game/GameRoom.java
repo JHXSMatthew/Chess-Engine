@@ -27,6 +27,10 @@ public class GameRoom implements Serializable {
     private boolean isCheckmate;
 
 
+    @OneToOne
+    private User Winner = null;
+
+
     @Column(nullable = false)
     private Integer numOfUser;
 
@@ -118,6 +122,22 @@ public class GameRoom implements Serializable {
 
     public void setResignedPlayer(String resignedPlayer) {
         this.resignedPlayer = resignedPlayer;
+    }
+
+    public Calendar getDate() {
+        return date;
+    }
+
+    public void setDate(Calendar date) {
+        this.date = date;
+    }
+
+    public User getWinner() {
+        return Winner;
+    }
+
+    public void setWinner(User winner) {
+        Winner = winner;
     }
 
     public enum GameStatus {
