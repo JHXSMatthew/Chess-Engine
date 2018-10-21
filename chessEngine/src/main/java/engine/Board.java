@@ -197,9 +197,9 @@ public class Board {
                 board[originSquare] = Piece.NO_PIECE;
 
                 if (Piece.getColour(m.getOriginPiece()) == Piece.WHITE) {
-                    board[targetSquare + Square.S] = Piece.NO_PIECE;
-                } else if (Piece.getColour(m.getOriginPiece()) == Piece.BLACK) {
                     board[targetSquare + Square.N] = Piece.NO_PIECE;
+                } else if (Piece.getColour(m.getOriginPiece()) == Piece.BLACK) {
+                    board[targetSquare + Square.S] = Piece.NO_PIECE;
                 } else {
                     throw new IllegalArgumentException();
                 }
