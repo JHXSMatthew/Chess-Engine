@@ -9,6 +9,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.UUID;
 
 @Entity
@@ -40,6 +41,9 @@ public class GameRoom implements Serializable {
 
     @Column(nullable = false)
     private GameType gameType = GameType.networkedInvited;
+
+    @Column (nullable = false)
+    private Calendar date = Calendar.getInstance();
 
     //a = black
     //b = white

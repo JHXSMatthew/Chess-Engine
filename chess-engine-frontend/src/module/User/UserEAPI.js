@@ -34,5 +34,4 @@ export const UserApi = {
   get: (id, token)=>{
     return axios.get(API_ENDPOINT + `/user/${id}?token=${token}`)
   },
-  
 }

@@ -1,6 +1,9 @@
 import { take , cancel, fork, call, put, takeEvery, select, cancelled } from 'redux-saga/effects'
-import { TYPE_USER_LOGIN, actionUserLoginFail, actionUserLoginSuccess, TYPE_USER_REGISTER, actionUserRegisterSuccess, actionUserLogin, actionUserRegisterFail, TYPE_GET_USER_INFO, actionGetUserInfo, actionGetUserInfoSuccess, actionGetuserInfoFail, TYPE_LOAD_CACHE_LOGIN } from './UserReducer';
+import { TYPE_USER_LOGIN, actionUserLoginFail, actionLoadGameMoveHistorySuccess, actionUserLoginSuccess, TYPE_USER_REGISTER, actionUserRegisterSuccess, actionUserLogin, actionUserRegisterFail, TYPE_GET_USER_INFO, actionGetUserInfo, actionGetUserInfoSuccess, actionGetuserInfoFail, TYPE_LOAD_CACHE_LOGIN, actionLoadUserGameHistorySuccess, TYPE_LOAD_MOVE_HISTORY_FOR_GAME, actionLoadGameMoveHistory, TYPE_LOAD_USER_GAME_HISTORY } from './UserReducer';
 import { UserApi, AuthApi } from './UserEAPI';
+import { gameHistoryApi } from '../Game/ChessGameEAPI';
+
+
 
 
 
@@ -12,6 +15,9 @@ export function* userSaga(){
   yield takeEvery(TYPE_GET_USER_INFO, getUserInfo)
 
   yield takeEvery(TYPE_LOAD_CACHE_LOGIN, loadCacheLogin)
+
+  yield takeEvery(TYPE_LOAD_USER_GAME_HISTORY, getGameHistory)
+  yield takeEvery(TYPE_LOAD_MOVE_HISTORY_FOR_GAME, getMoveHistory)
 }
 
 function* login(action){
@@ -27,6 +33,27 @@ function* login(action){
 
   }catch(e){
     yield put(actionUserLoginFail(e))
+  }
+}
+
+function* getGameHistory(action){
+  try{
+    const userToken = yield select((state) => state.user.auth.token)
+    const response= call(gameHistoryApi.getHistory, userToken)
+    
+    yield put(actionLoadUserGameHistorySuccess(response.data))
+  }catch(err){
+    yield put(actionUserLogin(err)) //todo change this
+  }
+}
+
+function* getMoveHistory(action){
+  try{
+    const response= call(gameHistoryApi.getMoveHistory, action.gameId)
+    
+    yield put(actionLoadGameMoveHistorySuccess(action.gameId,response.data))
+  }catch(err){
+    yield put(actionUserLogin(err)) //todo change this
   }
 }
 

@@ -4,18 +4,51 @@ import { ListGroup, ListGroupItem, Col, Row, Card,CardBody,Badge, Button, Form, 
 import { connect } from 'react-redux'
 
 import UserForm from './UserRegisterForm'
-import { actionUserLoginFail, actionUserLogoff } from './UserReducer';
+import { actionUserLoginFail, actionUserLogoff, actionLoadUserGameHistory } from './UserReducer';
 
 import { Redirect } from 'react-router'
+import BootstrapTable from 'react-bootstrap-table-next';
+
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import { gameHistory } from '../Game/ChessGameEAPI';
+
 
 
 
 
 class UserCenter extends React.Component{
 
+
+  constructor(props){
+    super(props)
+
+    this.state = {
+      select: 0
+    }
+  }
+
+  updateSelect = (val) =>{
+    this.setState({
+      select: val
+    })
+  }
+
+  getContent = (select, props) => {
+    switch(select){
+      case 0:
+        return <Profile {...props.info} />
+      case 1:
+        return <GameHistory loadGameHistory={props.loadGameHistory} loadGameHistoryMove={props.loadGameHistoryMove} {...props.info}/>
+      default:
+        return <Profile {...props.info} />
+    }
+  }
+
   render(){
 
     const { logoff } = this.props
+    const { select } = this.state;
+    const content = this.getContent(select, this.props);
 
     return (
       <div className='container'>
@@ -25,14 +58,12 @@ class UserCenter extends React.Component{
         </Row>
         <Row className='mt-3'>
           <Col xs="3">
-            <UserCenterSideBar logoff={logoff}/>
+            <UserCenterSideBar onSelect={this.updateSelect} logoff={logoff}/>
           </Col>
           <Col xs="9">
             <Card>
               <CardBody>
-                <Profile
-                {...this.props.info}
-                />
+                {content}
               </CardBody>
             </Card>
           </Col>
@@ -41,6 +72,36 @@ class UserCenter extends React.Component{
     )
 
   }
+}
+
+
+const products = [ ];
+const columns = [{
+  dataField: '',
+  text: 'GameId'
+}, {
+  dataField: 'name',
+  text: 'Play As'
+},{
+  dataField: 'b',
+  text: 'Win/Lost'
+}, {
+  dataField: 'date',
+  text: 'Date'
+}];
+
+class GameHistory extends React.Component{
+  
+  componentDidMount(){
+    this.props.loadGameHistory();
+  }
+
+  render(){
+    return (
+      <BootstrapTable keyField='id' data={ products } columns={ columns } />
+    )
+  }
+
 }
 
 class Profile extends React.Component{
@@ -98,13 +159,13 @@ class Profile extends React.Component{
 class UserCenterSideBar extends React.Component{
 
   render(){
-    const {logoff} = this.props;
+    const {logoff, onSelect} = this.props;
 
     return (
       <div>
         <ListGroup>
-          <ListGroupItem active tag="button" action>Profile</ListGroupItem>
-          <ListGroupItem tag="button" action disabled>Game History</ListGroupItem>
+          <ListGroupItem tag="button" action onClick={ () => onSelect(0) }>Profile</ListGroupItem>
+          <ListGroupItem tag="button" action onClick={ () => onSelect(1) }>Game History</ListGroupItem>
           <ListGroupItem tag="button" action disabled>Friend</ListGroupItem>
           <ListGroupItem tag="button" action onClick={logoff}>Log off</ListGroupItem>
       </ListGroup>
@@ -118,14 +179,15 @@ class UserCenterSideBar extends React.Component{
 
 const mapStateToProps = (state) => {
   return {
-    ...state.user
+    ...state.user,
   }
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
       clearError: ()=> dispatch(actionUserLoginFail(undefined)),
-      logoff: () => {dispatch(actionUserLogoff()) ; window.location.reload(); }
+      logoff: () => {dispatch(actionUserLogoff()) ; window.location.reload(); },
+      loadGameHistory: ()=> {dispatch(actionLoadUserGameHistory())}
   };
 };
 

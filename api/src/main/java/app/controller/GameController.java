@@ -69,7 +69,7 @@ public class GameController {
         Optional<Token> tObj = tokenRepository.findByToken(token);
         if(tObj.isPresent()){
             tObj.get().getUser();
-            Optional<List<GameRoom>> history = grr.findOrderByPlayerAOrPlayerB(tObj.get().getUser());
+            Optional<List<GameRoom>> history = grr.findOrderByPlayerAOrPlayerB(tObj.get().getUser(), tObj.get().getUser());
             if(history.isPresent()){
                 List<GameRoom> result = history.get().stream().filter((v) -> {
                     return v.getStatus() == GameRoom.GameStatus.finished;
@@ -88,7 +88,7 @@ public class GameController {
     @GetMapping("/api/game/{id}")
     // Get status and state
     public GameInfoResponse getGameInfo(@PathVariable String id) {
-        Optional<GameRoom> dbModel = grr.findById(id);
+        Optional<GameRoom> dbModel = grr .findById(id);
         if(dbModel.isPresent()){
             GameInfoResponse info = new GameInfoResponse();
             Optional<MoveHistory> mhs = mhr.findLastHistoryByGameId(id);

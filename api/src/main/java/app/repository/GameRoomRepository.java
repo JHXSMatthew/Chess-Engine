@@ -12,5 +12,5 @@ import java.util.UUID;
 @Repository
 public interface GameRoomRepository extends CrudRepository<GameRoom, String> {
 
-    Optional<List<GameRoom>> findOrderByPlayerAOrPlayerB(User u);
+    Optional<List<GameRoom>> findOrderByPlayerAOrPlayerB(User playerA, User playerB);
 }
