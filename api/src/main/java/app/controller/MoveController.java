@@ -7,6 +7,8 @@ import app.model.move.AvailableMoveRequest;
 import app.model.move.AvailableMoveResponse;
 import app.model.move.MoveRequest;
 import app.model.move.PromotionMove;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import engine.State;
 import org.springframework.web.bind.annotation.*;
 
