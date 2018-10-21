@@ -1,11 +1,13 @@
 package app.service;
 
+import app.model.StateContainer;
 import app.model.game.GameRoom;
 import app.model.game.JoinGameResponse;
 import app.model.queue.QueueEntry;
 import app.repository.GameRoomRepository;
 import app.repository.QueueRepository;
 import app.repository.UserRepository;
+import engine.ChessEngineDummy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +49,7 @@ public class MatchService {
 
 
             //find all requests
-            Optional<List<QueueEntry>> entryList = queueRepo.findQueryNotMatchedByType(t);
+            Optional<List<QueueEntry>> entryList = queueRepo.findBygameTypeAndAssignedGame(t, null);
 
             if(!entryList.isPresent() || entryList.get().size() == 1) {
                 continue;
@@ -75,6 +77,10 @@ public class MatchService {
                 room.setStatus(GameRoom.GameStatus.ingame);
                 room.setPlayerA(matchPair.fst().getUser());
                 room.setPlayerB(matchPair.snd().getUser());
+                StateContainer container = new StateContainer();
+                container.setState(new ChessEngineDummy().getInitState());
+                room.setState(container);
+
                 //save to db
                 gameRepo.save(room);
 

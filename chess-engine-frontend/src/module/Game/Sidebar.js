@@ -3,11 +3,12 @@ import React from 'react'
 import { PiecesSVG } from '../../resource/PieceResource'
 import './Sidebar.less';
 
-import { GAME_TYPE, actionNewNetworkedGame, GAME_STATUS, actionMove } from './ChessGameReducer';
+import { GAME_TYPE, actionNewNetworkedGame, GAME_STATUS, actionMove, actionJoinQueue, actionUpdateGameType } from './ChessGameReducer';
 
 import UUID from  'uuid/v1';
 
 import InvitedNetworkedGamePanel from './SidebarNetworkedGamePanel'
+import SideBarQueuePanel from "./SideBarQueuePanel";
 
 import { connect } from 'react-redux'
 
@@ -89,7 +90,7 @@ class Sidebar extends React.Component{
 
   resign = (gameType)=>{
     const {endLocalGame,resignNetworkedGame} = this.props
-    if(gameType === GAME_TYPE.LOCAL_GAME){
+    if(gameType === GAME_TYPE.LOCAL_GAME || gameType === GAME_TYPE.AI){
       endLocalGame(false, "Resign")
     }else{
       resignNetworkedGame();
@@ -101,6 +102,8 @@ class Sidebar extends React.Component{
 
     if(gameType === GAME_TYPE.INVITE_NETWOKRED && gameStatus === GAME_STATUS.INIT){
       return <InvitedNetworkedGamePanel/>
+    }else if( (gameType === GAME_TYPE.RANKED || gameType === GAME_TYPE.MATCH) && gameStatus === GAME_STATUS.INIT){
+      return <SideBarQueuePanel />
     }else{
         return <div className="sidebar">
           {gameType != GAME_TYPE.LOCAL_GAME && <div className="d-flex flex-row flex-fill">
@@ -156,7 +159,7 @@ class Sidebar extends React.Component{
   }
 
   render(){
-    const {loadGame, newLocalGame, gameType, moveHistory, newNetworkedGame} = this.props;
+    const {loadGame, newLocalGame, gameType, moveHistory, newNetworkedGame, newMatchGame, newRankGame, newAiGame} = this.props;
 
     
     const moveHistoryView = this.getMoveHistoryView(moveHistory);
@@ -164,14 +167,39 @@ class Sidebar extends React.Component{
     return (
       !gameType ? 
         (<div className="sidebar">
+          <h5>Local Games</h5>
           <div className="d-flex flex-row flex-fill align-items-end">
-              <button className='btn btn-primary' onClick={newLocalGame}> New Local Game </button>
-              <button className='btn btn-primary' onClick={newNetworkedGame} > New Network Game </button>
+              <button className='btn btn-primary' onClick={newLocalGame}> Play Local Game </button>
+              <button className='btn btn-secondary' onClick={loadGame}> Load Local Game </button>
+          </div>
+          <h5>Networked Games</h5>
+          <div className="d-flex flex-row flex-fill align-items-end">
+              <button className='btn btn-primary' onClick={newMatchGame}> Play Casual Game </button>
+              <button className='btn btn-success' onClick={newRankGame} > Play Rank Game </button>
           </div>
           <div className="d-flex flex-row flex-fill align-items-start">
-              <button className='btn btn-primary' onClick={loadGame}> Load Local Game </button>
-              {/* <button className='btn btn-primary' > Load Network Game </button> */}
+            <button className='btn btn-primary' onClick={newNetworkedGame} > Create Game Room </button>
           </div>
+          <h5>AI Games</h5>
+          <div className="d-flex flex-row flex-fill align-items-start">
+            <button className='btn btn-primary' onClick={newAiGame}> Play AI Game </button>
+          </div>
+          <h5 className='pt-4'>Help</h5>
+          <ul>
+            <li>
+              Local Game: Play against your friend on the same computer.
+            </li>
+            <li>
+              Casual Game: Find a player online to play against. 
+            </li>
+            <li>
+              Rank Game: Find a player online to play against and earn MMR. 
+            </li>
+            <li>
+              Game Room: Create a game room and invite your friend to play with you online! 
+            </li>
+
+          </ul>
         </div>)
         : this.renderSideBarByType(gameType, moveHistoryView)
     )
@@ -204,6 +232,9 @@ const mapDispatchToProps = dispatch => {
     },
     newLocalGame: () => dispatch(actionNewLocalGame()),
     newNetworkedGame: ()=> dispatch(actionNewNetworkedGame()),
+    newMatchGame: () => dispatch(actionJoinQueue(GAME_TYPE.MATCH)),
+    newRankGame: () => dispatch(actionJoinQueue(GAME_TYPE.RANKED)),
+    newAiGame: () => { dispatch(actionNewLocalGame()); dispatch(actionUpdateGameType(GAME_TYPE.AI)) }, 
     undoMove: () => dispatch(actionUndoRequest()),
     resignNetworkedGame: ()=> dispatch(actionResignNetworkedGame())
   }

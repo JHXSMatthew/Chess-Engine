@@ -80,6 +80,7 @@ public class PositionTest {
         //King tests
         State kingMove = engine.move("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR b KQkq - 0 1", 4, 12);
         Assert.assertEquals(kingMove.getBoardRep(), "rnbq1bnr/4k3/8/8/8/8/8/RNBQKBNR w KQ - 0 1");
+
       
 //         State kingMove2 = engine.move("rnbq1bnr/5k2/8/8/8/8/8/RNBQKBNR b KQkq - 0 1", 13, 20);
       
@@ -150,7 +151,7 @@ public class PositionTest {
         Assert.assertEquals(checkmateMove9.getBoardRep(), "r4r2/ppp1Nppk/8/7R/8/1P6/P4PPP/6K1 b KQ - 0 1");
         Assert.assertEquals(checkmateMove9.isCheck(), true);
         Assert.assertEquals(checkmateMove9.isCheckMate(), true);
-        
+
         //Check checks
         State checkMove = engine.move("8/6k1/8/4b3/8/K7/8/3q4 b KQkq - 0 1", 28, 19);
         Assert.assertEquals(checkMove.getBoardRep(), "8/6k1/3b4/8/8/K7/8/3q4 w KQ - 0 1");
@@ -168,7 +169,6 @@ public class PositionTest {
         //Check illegal moves (moves that put yourself in check)
         State illegalMove = engine.move("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR b KQkq - 0 1", 4, 11);
         Assert.assertEquals(illegalMove.getBoardRep(), "rnbqkbnr/8/8/8/8/8/8/RNBQKBNR b KQkq - 0 1");
-
     }
 
     @Test

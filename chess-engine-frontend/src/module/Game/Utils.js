@@ -102,3 +102,22 @@ export const indexToCoord = (index) =>{
   var number = 8-Math.floor(index/8);
   return letter+number;
 }
+
+export const compareBoardRep = (prev, next) =>{
+  console.log("prev:", prev)
+  console.log("next:", next)
+  var lastMove = {from: "", to: "", piece: ""};
+  for (let i = 0; i < 64; i++){
+    if (prev[i] === next[i]){
+      continue;
+    }
+    if (prev[i] !== 0){
+      lastMove.from = i;
+      lastMove.piece = prev[i]
+    }
+    if (next[i] !== 0){
+      lastMove.to = i;
+    }
+  }
+  return lastMove;
+}

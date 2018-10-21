@@ -176,7 +176,41 @@ public class Board {
     public void applyMove(Move m) {
         int originSquare = m.getOriginSquare();
         int targetSquare = m.getTargetSquare();
+        int type = m.getType();
+        if (type == Move.ENPASSANT_ENABLER) {
+            board[targetSquare] = m.getOriginPiece();
+            board[originSquare] = Piece.NO_PIECE;
+            activeColour = Piece.oppositeColour(activeColour);
 
+            if (Piece.getColour(m.getOriginPiece()) == Piece.WHITE) {
+                enPassantSquare = m.getTargetSquare() + Square.N;
+            } else if (Piece.getColour(m.getOriginPiece()) == Piece.BLACK) {
+                enPassantSquare = m.getTargetSquare() + Square.S;
+            } else {
+                throw new IllegalArgumentException();
+            }
+        } else {
+            enPassantSquare = Square.NOSQUARE;
+             if (type == Move.ENPASSANT_CAPTURE) {
+                board[targetSquare] = m.getOriginPiece();
+                board[originSquare] = Piece.NO_PIECE;
+
+                if (Piece.getColour(m.getOriginPiece()) == Piece.WHITE) {
+                    board[targetSquare + Square.S] = Piece.NO_PIECE;
+                } else if (Piece.getColour(m.getOriginPiece()) == Piece.BLACK) {
+                    board[targetSquare + Square.N] = Piece.NO_PIECE;
+                } else {
+                    throw new IllegalArgumentException();
+                }
+
+                activeColour = Piece.oppositeColour(activeColour);
+            } else { //else if (m.getType() == Move.NORMAL) {
+                 board[targetSquare] = m.getOriginPiece();
+                 board[originSquare] = Piece.NO_PIECE;
+                 activeColour = Piece.oppositeColour(activeColour);
+             }
+
+        }
         int type = m.getType();
         if (type == Move.ENPASSANT_ENABLER) {
             board[targetSquare] = m.getOriginPiece();
@@ -282,12 +316,14 @@ public class Board {
 
             //does the move check the other player
             if (isChecked(activeColour)) {
+
                 //does the move checkmate the other player?
                 boardRep.setCheck(true);
                 MoveGenerator mg = new MoveGenerator();
                 mg.generateMoves(this);
                 boardRep.setCheckMate(isCheckMate(mg, activeColour));
             }
+
 
             boardRep.setBoardRep(serializeBoard());
         }
@@ -313,12 +349,14 @@ public class Board {
         }
 
         if (match.getType() != Move.EMPTY) {
+
             //lets apply the move
             Board copy = copy(this);
             applyMove(match);
 
             //no move is allowed to leave us in check
             if (isChecked(Piece.oppositeColour(activeColour))) {
+
                 restoreBoard(copy);
                 if (isChecked(activeColour)) {
                     boardRep.setCheck(true);
@@ -336,6 +374,7 @@ public class Board {
                 boardRep.setPromotion(true);
             //does the move check the other player
             } else if (isChecked(activeColour)) {
+
                 boardRep.setCheck(true);
                 //does the move checkmate the other player?
                 MoveGenerator checkMateMoves = new MoveGenerator();
@@ -710,6 +749,7 @@ public class Board {
             throw new IllegalArgumentException();
         }
     }
+
 }
 
 

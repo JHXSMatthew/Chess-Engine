@@ -18,6 +18,8 @@ import app.repository.*;
 import engine.ChessEngineDummy;
 import engine.ChessEngineI;
 import engine.State;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.hibernate.HibernateException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,7 @@ import java.util.Optional;
 
 @CrossOrigin
 @RestController
+@Api(value = "Queue controller",description = "Handle the Queue actions")
 public class QueueController {
 
 
@@ -38,7 +41,7 @@ public class QueueController {
     private QueueRepository queueRepo;
 
 
-
+    @ApiOperation(value="join the queue")
     @PostMapping("/api/queue")
     public ResponseEntity<JoinQueueResponse> post(@RequestBody JoinQueueRequest request) {
         if(request.getGameType() == GameRoom.GameType.networkedInvited){
@@ -55,15 +58,18 @@ public class QueueController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
+        QueueEntry entry ;
+
 
         Optional<QueueEntry> mayExsit = queueRepo.findByUserAndAssignedGame(user, null);
         if(mayExsit.isPresent()){
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+           mayExsit.get().setGameType(request.getGameType());
+           entry = mayExsit.get();
+        }else{
+            entry = new QueueEntry();
+            entry.setGameType(request.getGameType());
+            entry.setUser(user);
         }
-
-        QueueEntry entry = new QueueEntry();
-        entry.setGameType(request.getGameType());
-        entry.setUser(user);
 
         queueRepo.save(entry);
 
@@ -74,6 +80,7 @@ public class QueueController {
     }
 
     @GetMapping("/api/queue/{id}")
+    @ApiOperation(value = "get current queue info")
     public ResponseEntity<QueueEntry> get(@PathVariable int id, @RequestParam String token){
         Optional<Token> t = tokenRepo.findByToken(token);
         if(!t.isPresent()){

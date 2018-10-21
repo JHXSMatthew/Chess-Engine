@@ -25,6 +25,7 @@ public class Move {
         this.promotion = Piece.NO_PIECE_TYPE;
     }
 
+
     public Move(int type, int originSquare, int targetSquare, int originPiece, int targetPiece, int promotion) {
         this.type = type;
         this.originSquare = originSquare;

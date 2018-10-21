@@ -12,6 +12,7 @@ import { Link, Redirect } from 'react-router-dom';
 
 
 import './Login.css';
+import { actionRedirectLogin } from '../../AppReducer';
 
 
 class SignInView extends React.Component{
@@ -27,6 +28,12 @@ class SignInView extends React.Component{
     this.handleMemberIdChange = this.handleMemberIdChange.bind(this);
     this.hanldePasswordChange = this.hanldePasswordChange.bind(this);
     this.handleKeepLogin = this.handleKeepLogin.bind(this);
+  }
+
+  componentDidMount(){
+    if(this.props.redirect){
+      this.props.clearRedirect();
+    }
   }
 
   handleMemberIdChange(e){
@@ -56,12 +63,15 @@ class SignInView extends React.Component{
   componentDidUpdate(){
     if(this.props.err){
       const { response } = this.props.err
-      this.props.clearError()
-      if(response.status === 400){
-        alert('incorrect password or username..')
-      }else{
-        alert('internal error. please try again later')
+      if(response){
+        this.props.clearError()
+        if(response.status === 400){
+          alert('incorrect password or username..')
+        }else{
+          alert('internal error. please try again later')
+        }
       }
+      
     }
   }
 
@@ -76,15 +86,15 @@ class SignInView extends React.Component{
         <form className='form-signin' onSubmit={(e)=> {e.preventDefault() ; this.props.onLogin(this.state.auth)}}>
           <h1 className="h3 mb-3 font-weight-normal"> Chess Engine Lty Ptd</h1>
             <label htmlFor="inputMemberId" className="sr-only">UserName</label>
-            <input type="text" id="inputMemberId" className="form-control" placeholder="userName" onChange={this.handleMemberIdChange} required autoFocus/>
+            <input type="text" id="inputMemberId" className="form-control" placeholder="Username" onChange={this.handleMemberIdChange} required autoFocus/>
             <label htmlFor="inputPassword" className="sr-only">Password</label>
-            <input type="password" id="inputPassword" className="form-control" placeholder="password" onChange={this.hanldePasswordChange} required/>
+            <input type="password" id="inputPassword" className="form-control" placeholder="Password" onChange={this.hanldePasswordChange} required/>
             <div className="checkbox mb-3">
             <label>
-              <input type="checkbox" value="remember-me" onChange={this.handleKeepLogin} checked={this.state.auth.keepLogin}/> Keep Me Login
+              <input type="checkbox" value="remember-me" onChange={this.handleKeepLogin} checked={this.state.auth.keepLogin}/> Keep Me Logged In
             </label>
             </div>
-            <button className="btn btn-lg btn-primary btn-block">Login</button> 
+            <button className="btn btn-lg btn-primary btn-block m-0">Login</button> 
             or 
             <Link className="nav-link" to="/register">Register</Link>
 
@@ -97,14 +107,16 @@ class SignInView extends React.Component{
 
 const mapStateToProps = (state) => {
   return {
-    ...state.user
+    ...state.user,
+    redirect: state.app.redirect
   }
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
       onLogin: (account) => dispatch(actionUserLogin(account)),
-      clearError: ()=> dispatch(actionUserLoginFail(undefined))
+      clearError: ()=> dispatch(actionUserLoginFail(undefined)),
+      clearRedirect: ()=> dispatch(actionRedirectLogin(false))
   };
 };
 

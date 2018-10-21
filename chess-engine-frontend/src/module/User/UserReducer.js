@@ -22,6 +22,10 @@ export const userReducer  = (state=initState, action) =>{
       return Object.assign({}, state, {
         info: action.info
       })
+    case LOAD_LEADERBOARD:
+      return Object.assign({}, state, {
+        info: action.info
+      })
     default:
       return state;
 
@@ -120,4 +124,29 @@ export const actionOnLoadCacheLogin = ()=> {
     type: TYPE_LOAD_CACHE_LOGIN
   }
 }
+
+export const GET_LEADERBOARD = "GET_LEADERBOARD"
+export const actionGetLeaderboard = () => {
+  return {
+    type: GET_LEADERBOARD,
+  }
+}
   
+export const LOAD_LEADERBOARD = "LOAD_LEADERBOARD"
+export const actionLoadLeaderboard = (info) => {
+  return {
+    type: LOAD_LEADERBOARD,
+    info
+  }
+}
+  
+
+export const CHANGE_PASSWORD = "CHANGE_PASSWORD"
+export const actionChangePassword = (id , old, newp)=>{
+  return {
+    type: CHANGE_PASSWORD,
+    id,
+    old,
+    newp
+  }
+}

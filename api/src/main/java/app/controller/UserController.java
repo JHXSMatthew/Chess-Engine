@@ -6,6 +6,8 @@ import app.model.user.User;
 import app.model.user.UserResponseModel;
 import app.repository.TokenRepository;
 import app.repository.UserRepository;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import java.util.Optional;
 
 @CrossOrigin
 @RestController
+@Api(value="User System",description="Handle all the user actions")
 public class UserController {
 
     @Autowired
@@ -24,7 +27,7 @@ public class UserController {
     @Autowired
     private TokenRepository tokenRepo;
 
-
+    @ApiOperation(value="Make a new User")
     @PostMapping("/api/user")
     public void post(@RequestBody User newUser){
         //validation
@@ -36,6 +39,7 @@ public class UserController {
         ur.save(newUser);
     }
 
+    @ApiOperation(value="Get user's information by user's id")
     @GetMapping("api/user/{id}")
     public ResponseEntity<UserResponseModel> get(@PathVariable int id, @RequestParam String token){
         Optional<User> user = ur.findById(id);
@@ -60,12 +64,13 @@ public class UserController {
 
 
     @PutMapping("api/user/{userName}")
+    @ApiOperation(value="update user's information by user name")
     public ResponseEntity put(@PathVariable String userName, @RequestParam String password,
-                                          @RequestBody String newPassWord){
+                                          @RequestParam String newPassword){
         Optional<User> dbModel = ur.findAllUserByName(userName);
         if(dbModel.isPresent()){
             if(dbModel.get().getPassword().equals(password)){
-                dbModel.get().setPassword(newPassWord);
+                dbModel.get().setPassword(newPassword);
                 ur.save(dbModel.get());
                 return ResponseEntity.ok(null);
             }else{

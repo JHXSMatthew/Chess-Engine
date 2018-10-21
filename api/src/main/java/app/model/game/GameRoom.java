@@ -3,6 +3,7 @@ package app.model.game;
 import app.model.StateContainer;
 import app.model.move.MoveHistory;
 import app.model.user.User;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -18,11 +19,15 @@ public class GameRoom implements Serializable {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     @GeneratedValue(generator = "uuid")
     @Column(name = "uuid" ,unique = true)
+    @ApiModelProperty(notes = "the id for certain game")
     private String id;
 
     //the board state Object
+    @ApiModelProperty(notes="current game state")
     private String state;
+    @ApiModelProperty(notes = "is checked or not")
     private boolean icChecked;
+    @ApiModelProperty(notes = "is checkmate or not")
     private boolean isCheckmate;
 
 
@@ -41,6 +46,8 @@ public class GameRoom implements Serializable {
     @Column(nullable = false)
     private GameType gameType = GameType.networkedInvited;
 
+    //a = black
+    //b = white
     @OneToOne
     private User playerA = null;
 

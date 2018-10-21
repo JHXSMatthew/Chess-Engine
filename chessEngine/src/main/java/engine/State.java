@@ -47,4 +47,11 @@ public class State {
     public void setPromotion(boolean promotion) {
         this.isPromotion = promotion;
     }
+
+    public boolean isPromotion() {
+        return isPromotion;
+    }
+    public void setPromotion(boolean promotion) {
+        isPromotion = promotion;
+    }
 }

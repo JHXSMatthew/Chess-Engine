@@ -351,6 +351,7 @@ public class MoveGenerator {
                         for (Move m: Move.generateWhiteQueenSideMoves()) {
                             p.applyMove(m);
                             if (p.isChecked(p.activeColour)) {
+
                                 success = false;
                                 break;
                             }
@@ -378,6 +379,7 @@ public class MoveGenerator {
                         for (Move m: Move.generateBlackKingSideMoves()) {
                             p.applyMove(m);
                             if (p.isChecked(p.activeColour)) {
+
                                 success = false;
                                 break;
                             }
@@ -400,7 +402,7 @@ public class MoveGenerator {
                         Board copy = p.copy(p);
                         for (Move m: Move.generateWhiteKingSideMoves()) {
                             p.applyMove(m);
-                            if (p.isChecked(p.activeColour)) {
+
                                 success = false;
                                 break;
                             }
@@ -410,11 +412,11 @@ public class MoveGenerator {
                             Move m = new Move(Move.CASTLE, originSquare, Square.WHITE_KING_STARTING_SQUARE + Square.E + Square.E,
                                     originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
                             moves.add(m);
+
                         }
                     }
                 }
             }
-
             //to do: if rook moves, then that side loses castle right
             //       if king moves, both sides (king and queen side) lose castle right
             //if we're in check, we cannot castle

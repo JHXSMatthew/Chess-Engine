@@ -26,7 +26,7 @@ export const UserApi = {
     });
   },
   put : (userName, password, newPassword) =>{ //token: {token, userId}
-    return axios.put(API_ENDPOINT + `/user/${userName}` , {
+    return axios.put(API_ENDPOINT + `/user/${userName}?password=${password}&newPassword=${newPassword}` , {
       password,
       newPassword
     });
@@ -35,4 +35,10 @@ export const UserApi = {
     return axios.get(API_ENDPOINT + `/user/${id}?token=${token}`)
   },
   
+}
+
+export const RankApi = {
+  get : () => {
+    return axios.get(API_ENDPOINT + `/ranking`)
+  }
 }

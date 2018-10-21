@@ -12,19 +12,23 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
+
 @RestController
+@Api(value = "move controller",description = "Handle all the move request")
 public class MoveController {
 
     private static ChessEngineI engine = new ChessEngineDummy();
 
 
     @RequestMapping(value = "/api/move", method = RequestMethod.POST)
+    @ApiOperation(value = "handle single move",response = StateContainer.class)
     public StateContainer handleMove(@RequestBody MoveRequest info) {
         State returnValue = engine.move(info.getState(), info.getFrom(), info.getTo());
 
         return StateContainer.build(returnValue);
     }
 
+    @ApiOperation(value = "Get all the available move",response = AvailableMoveResponse.class)
     @RequestMapping(value = "/api/move/available", method = RequestMethod.POST)
     public AvailableMoveResponse handleAvailableMove(@RequestBody AvailableMoveRequest am) {
         int[] hint = engine.getMoveHint(am.getState(), am.getFrom());

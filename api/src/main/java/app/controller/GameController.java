@@ -11,6 +11,8 @@ import app.model.game.GameRoom;
 import app.model.game.JoinGameResponse;
 import app.model.move.MoveRequest;
 import engine.State;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -25,6 +27,7 @@ import java.util.*;
 
 @CrossOrigin
 @RestController
+@Api(value="Game Controller",description="Handle all the game related operations")
 public class GameController {
 
     private static ChessEngineI engine = new ChessEngineDummy();
@@ -33,7 +36,11 @@ public class GameController {
     private GameRoomRepository grr;
     @Autowired
     private MoveHistoryRepository mhr;
+    @Autowired
+    private UserRepository ur;
 
+
+    @ApiOperation(value = "Make a new Game", response = JoinGameResponse.class)
     @PostMapping("/api/game")
     public JoinGameResponse newGame() {
         //construct a new game instance
@@ -57,6 +64,7 @@ public class GameController {
     }
 
     @GetMapping("/api/game/{id}")
+    @ApiOperation(value = "Get game's status and state information", response = GameInfoResponse.class)
     // Get status and state
     public GameInfoResponse getGameInfo(@PathVariable String id) {
         Optional<GameRoom> dbModel = grr.findById(id);
@@ -83,6 +91,7 @@ public class GameController {
     }
 
     @PatchMapping("/api/game/{id}")
+    @ApiOperation(value="handle the network game",response = NetworkedStateContainer.class)
     public NetworkedStateContainer handlePatch(@PathVariable String id, @RequestBody NetworkedMoveRequest request) {
         Optional<GameRoom> dbModel = grr.findById(id);
 
@@ -92,6 +101,8 @@ public class GameController {
                         request.getFrom(), request.getTo());
                 if(s.isCheckMate()){
                     dbModel.get().setStatus(GameRoom.GameStatus.finished);
+                    handleStats(dbModel.get(), request.getPlyaerType().equals("b"));
+
                 }
                 //set field
                 dbModel.get().setState(StateContainer.build((s)));
@@ -123,16 +134,22 @@ public class GameController {
     }
 
     @PostMapping("/api/game/{id}/resign")
+    @ApiOperation(value = "To resign the user's playerType")
     public void handleResignPost(@PathVariable String id, @RequestParam String playerType){
         Optional<GameRoom> dbModel = grr.findById(id);
         if(dbModel.isPresent()) {
             dbModel.get().setResignedPlayer(playerType);
             dbModel.get().setStatus(GameRoom.GameStatus.finished);
+
+            handleStats(dbModel.get(), playerType.equals("w"));
             grr.save(dbModel.get());
+
+
         }
     }
 
     @PutMapping("/api/game/{id}")
+    @ApiOperation(value="Join the game by id", response = JoinGameResponse.class)
     public JoinGameResponse handlePutAction(@PathVariable String id) {
         Optional<GameRoom> dbModel = grr.findById(id);
         if(dbModel.isPresent()){
@@ -154,6 +171,47 @@ public class GameController {
         }else{
             throw new ResourceNotFoundException();
         }
+
+    }
+
+
+    private void handleStats(GameRoom room, boolean isBlackWin){
+        if(room.getGameType() != GameRoom.GameType.networkedInvited){
+            return;
+        }
+
+        if(room.getStatus() != GameRoom.GameStatus.finished){
+            return;
+        }
+
+        if(room.getGameType() == GameRoom.GameType.rank){
+            room.getPlayerA().setRankGamePlayed(room.getPlayerA().getRankGamePlayed() + 1);
+            room.getPlayerB().setRankGamePlayed(room.getPlayerB().getRankGamePlayed() + 1);
+
+            if(isBlackWin){
+                room.getPlayerA().setRankGameWin(room.getPlayerA().getRankGameWin() + 1);
+                room.getPlayerA().setMMR(room.getPlayerA().getMMR() + 50);
+
+            }else{
+                room.getPlayerB().setRankGameWin(room.getPlayerB().getRankGameWin() + 1);
+                room.getPlayerB().setMMR(room.getPlayerA().getMMR() + 50);
+
+
+            }
+        }else if(room.getGameType() == GameRoom.GameType.match){
+            room.getPlayerA().setMatchGamePlayed(room.getPlayerA().getMatchGamePlayed() + 1);
+            room.getPlayerB().setMatchGamePlayed(room.getPlayerB().getMatchGamePlayed() + 1);
+
+            if(isBlackWin){
+                room.getPlayerA().setMatchGameWin(room.getPlayerA().getMatchGameWin() + 1);
+            }else{
+                room.getPlayerB().setMatchGameWin(room.getPlayerB().getMatchGameWin() + 1);
+
+
+            }
+        }
+        ur.save(room.getPlayerA());
+        ur.save(room.getPlayerB());
 
     }
 
