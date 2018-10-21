@@ -402,7 +402,7 @@ public class MoveGenerator {
                         Board copy = p.copy(p);
                         for (Move m: Move.generateWhiteKingSideMoves()) {
                             p.applyMove(m);
-
+                            if (p.isChecked(p.activeColour)) {
                                 success = false;
                                 break;
                             }
