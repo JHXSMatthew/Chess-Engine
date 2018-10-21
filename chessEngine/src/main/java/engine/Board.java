@@ -635,6 +635,9 @@ public class Board {
         if (blackQueenCastle) {
             out = out + "q";
         }
+        if (!blackQueenCastle && !blackKingCastle && !whiteQueenCastle && !whiteKingCastle) {
+            out = out + "-";
+        }
 
         out = out + " ";
         if (enPassantSquare == Square.NOSQUARE) {
