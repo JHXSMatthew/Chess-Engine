@@ -51,7 +51,4 @@ public class State {
     public boolean isPromotion() {
         return isPromotion;
     }
-    public void setPromotion(boolean promotion) {
-        isPromotion = promotion;
-    }
 }

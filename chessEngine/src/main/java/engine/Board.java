@@ -176,41 +176,7 @@ public class Board {
     public void applyMove(Move m) {
         int originSquare = m.getOriginSquare();
         int targetSquare = m.getTargetSquare();
-        int type = m.getType();
-        if (type == Move.ENPASSANT_ENABLER) {
-            board[targetSquare] = m.getOriginPiece();
-            board[originSquare] = Piece.NO_PIECE;
-            activeColour = Piece.oppositeColour(activeColour);
 
-            if (Piece.getColour(m.getOriginPiece()) == Piece.WHITE) {
-                enPassantSquare = m.getTargetSquare() + Square.N;
-            } else if (Piece.getColour(m.getOriginPiece()) == Piece.BLACK) {
-                enPassantSquare = m.getTargetSquare() + Square.S;
-            } else {
-                throw new IllegalArgumentException();
-            }
-        } else {
-            enPassantSquare = Square.NOSQUARE;
-             if (type == Move.ENPASSANT_CAPTURE) {
-                board[targetSquare] = m.getOriginPiece();
-                board[originSquare] = Piece.NO_PIECE;
-
-                if (Piece.getColour(m.getOriginPiece()) == Piece.WHITE) {
-                    board[targetSquare + Square.S] = Piece.NO_PIECE;
-                } else if (Piece.getColour(m.getOriginPiece()) == Piece.BLACK) {
-                    board[targetSquare + Square.N] = Piece.NO_PIECE;
-                } else {
-                    throw new IllegalArgumentException();
-                }
-
-                activeColour = Piece.oppositeColour(activeColour);
-            } else { //else if (m.getType() == Move.NORMAL) {
-                 board[targetSquare] = m.getOriginPiece();
-                 board[originSquare] = Piece.NO_PIECE;
-                 activeColour = Piece.oppositeColour(activeColour);
-             }
-
-        }
         int type = m.getType();
         if (type == Move.ENPASSANT_ENABLER) {
             board[targetSquare] = m.getOriginPiece();
