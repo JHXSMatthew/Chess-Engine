@@ -1,10 +1,13 @@
 package app.model.game;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
 
 public class GameInfo {
+    @ApiModelProperty(notes = "current game status")
     @JsonProperty("GameStatus")
     private String GameStatus;
+    @ApiModelProperty(notes = "current board state")
     @JsonProperty("BoardState")
     private String BoardState;
 

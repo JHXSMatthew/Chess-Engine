@@ -98,6 +98,11 @@ public class Square {
     static final int WHITE_QUEENSIDE_ROOK_STARTING_SQUARE = 112;
     static final int WHITE_KINGSIDE_ROOK_STARTING_SQUARE = 119;
 
+    static final int BLACK_QUEENSIDE_FINISHING_SQUARE = 2;
+    static final int BLACK_KINGSIDE_FINISHING_SQUARE = 6;
+    static final int WHITE_QUEENSIDE_FINISHING_SQUARE = 114;
+    static final int WHITE_KINGSIDE_FINISHING_SQUARE = 118;
+
     static int[] getDirection(int colour, int pieceType) {
         switch (pieceType) {
             case Piece.PAWN:

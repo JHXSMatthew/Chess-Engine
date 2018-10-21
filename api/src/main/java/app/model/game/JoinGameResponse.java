@@ -1,12 +1,15 @@
 package app.model.game;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.UUID;
 
 public class JoinGameResponse {
+    @ApiModelProperty(notes = "The user's playerType")
     @JsonProperty("playerType")
     private PlayerType playerType;
+    @ApiModelProperty(notes="targeted game id")
     @JsonProperty("gameId")
     private String gameId;
 

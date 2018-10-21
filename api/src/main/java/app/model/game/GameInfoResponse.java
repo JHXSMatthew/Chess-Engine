@@ -5,14 +5,18 @@ import app.model.StateContainer;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.IOException;
 
 public class GameInfoResponse {
+    @ApiModelProperty(notes = "current game status")
     @JsonProperty("status")
     private String status;
+    @ApiModelProperty(notes = "current game state")
     @JsonProperty("state")
     private NetworkedStateContainer state;
+    @ApiModelProperty(notes = "user's playType")
     @JsonProperty("resignedPlayer")
     private String resignedPlayer;
 

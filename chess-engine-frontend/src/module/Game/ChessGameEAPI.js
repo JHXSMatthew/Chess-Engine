@@ -47,6 +47,17 @@ export const NetworkedGameApi = {
   }
 }
 
+export const gameHistoryApi = {
+  getHistory: (token)=>{
+    return axios.get(API_ENDPOINT + `/game?token=${token}`)
+  },
+  getMoveHistory: (gameId) =>{
+    return axios.get(API_ENDPOINT + `/game/${gameId}/moveHistory"`)
+  }
+}
+
+
+
 
 export const QueueApi = {
   post: (gameType, token)=>{

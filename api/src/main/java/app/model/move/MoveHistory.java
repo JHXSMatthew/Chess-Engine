@@ -3,6 +3,7 @@ package app.model.move;
 import app.model.game.GameRoom;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import engine.Game;
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
@@ -10,26 +11,32 @@ import java.io.Serializable;
 
 
 @Entity
-@Table(name = "move_history_new")
+@Table(name = "move_history_final")
 public class MoveHistory  implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty(notes = "This history's id")
     private Integer id;
 
     @OneToOne
+    @ApiModelProperty(notes = "This move history belongs to which games")
     private GameRoom game;
 
     @Column(nullable = false)
+    @ApiModelProperty(notes = "This move's start state")
     private String fromState;
 
     @Column(nullable = false)
+    @ApiModelProperty(notes = "This move's end state")
     private String toState;
 
 
     @JsonProperty("from")
+    @ApiModelProperty(notes = "This move's start position")
     private int locFrom;
 
     @JsonProperty("to")
+    @ApiModelProperty(notes = "This move's end position")
     private int locTo;
 
 
