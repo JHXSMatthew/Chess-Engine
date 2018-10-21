@@ -30,8 +30,7 @@ public class GameRoom implements Serializable {
     private boolean icChecked;
     @ApiModelProperty(notes = "is checkmate or not")
     private boolean isCheckmate;
-
-    private boolean isPromotion;
+    private boolean isPromotion = false;
 
 
     @OneToOne

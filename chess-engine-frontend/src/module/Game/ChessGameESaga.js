@@ -550,12 +550,39 @@ function queueTimer(queueEntryId, token){
   })
 }
 
-function* PromotePawn(piece){
+function* PromotePawn(action){
   try {
+    
     const promoPiece = yield select((state) => state.game.promoSelected) 
     const currentBoardState = yield select((state) => seriliaseState(state.game))
     const to = yield select((state) => state.game.lastMovePair[1])
-    const response = yield call(MoveApi.postPromotion, currentBoardState, to, promoPiece)
+    const gameType = yield select((state) => state.game.gameType)
+
+    let response = undefined;
+    if(gameType === GAME_TYPE.LOCAL_GAME){
+      response = yield call(MoveApi.postPromotion, currentBoardState, to, promoPiece)
+    }else{
+      const id = yield select((state) => {
+        return state.game.lobby.gameId
+      })
+      //check player ==> current turn
+      const playerTypeCheck = yield select((state) => {
+        return {
+          result: state.game.currentTurn === state.game.lobby.playerType,
+          playerType: state.game.currentTurn
+        }
+      })
+      console.log(playerTypeCheck)
+
+    //TODO: a bug with engine, promotion has not done yet, at this line, current player should not change!!!!!!!
+      // if(playerTypeCheck.result === true){
+        response = yield call(NetworkedGameApi.promotionGame, id, playerTypeCheck.playerType,currentBoardState, to, promoPiece)
+      // }
+    }
+
+    if(!response){
+      console.log("promotion failed.")
+    }
     const stateObj = response.data;
 
     yield put(actionUpdateGameStateSuccess({...response.data, state: deserializeState(stateObj.state)}))

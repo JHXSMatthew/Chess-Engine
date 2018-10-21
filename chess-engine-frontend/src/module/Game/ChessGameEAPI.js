@@ -48,6 +48,14 @@ export const NetworkedGameApi = {
   //resign
   resignGame: (id, playerType) => {
     return axios.post(API_ENDPOINT + `/game/${id}/resign?playerType=${playerType}`)
+  },
+  promotionGame: (id, playerType,state, to, promotionPos) => {
+    return axios.patch(API_ENDPOINT + `/game/${id}/promotionMove`, {
+      playerType,
+      state,
+      to,
+      promotionPos
+    })
   }
 }
 

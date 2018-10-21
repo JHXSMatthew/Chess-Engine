@@ -39,6 +39,10 @@ public class MoveHistory  implements Serializable{
     @ApiModelProperty(notes = "This move's end position")
     private int locTo;
 
+    @JsonProperty("promotionPos")
+    @ApiModelProperty(notes = "Promotion to flag. usually empty, has value for promotion move")
+    private String promotion;
+
 
     public int getFrom() {
         return locFrom;
@@ -95,11 +99,33 @@ public class MoveHistory  implements Serializable{
         this.game = game;
     }
 
+    public String getPromotion() {
+        return promotion;
+    }
+
+    public void setPromotion(String promotion) {
+        this.promotion = promotion;
+    }
+
     public static MoveHistory build(GameRoom room, MoveRequest request){
         MoveHistory history = new MoveHistory();
 
         BeanUtils.copyProperties(request, history);
 
+        history.setToState(room.getState().getState());
+        history.setFromState(request.getState());
+        history.setGame(room);
+
+        return history;
+
+    }
+
+    public static MoveHistory build(GameRoom room, NetworkedPromotionMoveRequest request){
+        MoveHistory history = new MoveHistory();
+
+        BeanUtils.copyProperties(request, history);
+
+        history.setPromotion(request.getPromotion());
         history.setToState(room.getState().getState());
         history.setFromState(request.getState());
         history.setGame(room);
