@@ -17,7 +17,7 @@ public class AI {
 
         int value = Integer.MIN_VALUE;
         for (Move m: mg.getMoves()) {
-            copy.applyMove(m);
+            copy.applyMove(m);              //try other values of depth maybe
             Integer boardValue = minimaxHelper(2, copy, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
             copy.restoreBoard(b);
 
@@ -27,6 +27,7 @@ public class AI {
         }
     }
 
+    //uses alpha beta pruning
     public Integer minimaxHelper(int depth, Board b, Integer alpha, Integer beta, boolean isMaximise) {
         if (depth == 0) {
             return -b.evaluateBoard(b.activeColour);
@@ -39,7 +40,7 @@ public class AI {
         if (isMaximise) {
             Integer value = Integer.MIN_VALUE;
             for (Move m: mg.getMoves()) {
-                copy.applyMove(m);
+                copy.psuedoLegalMakeMove(m);
                 if (copy.isValid) {
                     value = Math.max(value, minimaxHelper(depth - 1, copy, alpha, beta, !isMaximise));
                 }
@@ -52,7 +53,7 @@ public class AI {
         } else {
             Integer value = Integer.MAX_VALUE;
             for (Move m: mg.getMoves()) {
-                copy.applyMove(m);
+                copy.psuedoLegalMakeMove(m);
                 if (copy.isValid) {
                     value = Math.min(value, minimaxHelper(depth - 1, copy, alpha, beta, !isMaximise));
                 }
