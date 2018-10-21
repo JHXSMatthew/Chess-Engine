@@ -4,23 +4,15 @@ import java.util.*;
 public class MoveGenerator {
     private List<Move> moves;
 
+    public static int userMode = 0;
+    public static int aiMode = 1;
+
     public int[] targetSquareToIndexArray() {
         int[] targetSquares = new int[moves.size()];
 
         int index = 0;
         for (Move m: moves) {
             targetSquares[index] = Board.toIndex(m.getTargetSquare());
-            index++;
-        }
-        return targetSquares;
-    }
-
-    public int[] targetSquareToSquareArray() {
-        int [] targetSquares = new int [moves.size()];
-
-        int index = 0;
-        for (Move m: moves) {
-            targetSquares[index] = m.getTargetSquare();
             index++;
         }
         return targetSquares;
@@ -39,7 +31,7 @@ public class MoveGenerator {
     }
 
     //Generates all available moves for the currently activeColour
-    public void generateMoves(Board p) {
+    public void generateMoves(Board p, int mode) {
         for (int originSquare: Square.values) {
             int originPiece = p.board[originSquare];
             if (!Piece.isValid(originPiece)) {
@@ -61,8 +53,22 @@ public class MoveGenerator {
                     if (Square.isValid(currentSquare) && p.board[currentSquare] == Piece.NO_PIECE) {
                         //pawn promotion
                         if (p.activeColour == Piece.BLACK && p.rank(currentSquare) == 7 || p.activeColour == Piece.WHITE && p.rank(currentSquare) == 0) {
-                            Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
-                            moves.add(m);
+                            if (mode == userMode) {
+                                Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                                moves.add(m);
+                            } else if (mode == aiMode) {
+                                Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.QUEEN);
+                                moves.add(m);
+                                m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.KNIGHT);
+                                moves.add(m);
+                                m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.ROOK);
+                                moves.add(m);
+                                m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.BISHOP);
+                                moves.add(m);
+                            } else {
+                                throw new IllegalArgumentException();
+                            }
+
                         } else if (multiplier == 2) {
                             Move m = new Move(Move.ENPASSANT_ENABLER, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
                             moves.add(m);
@@ -82,8 +88,22 @@ public class MoveGenerator {
                             moves.add(m);
                         } else if (p.board[currentSquare] != Piece.NO_PIECE && Piece.getColour(p.board[currentSquare]) != p.activeColour) {
                             if (p.activeColour == Piece.BLACK && p.rank(currentSquare) == 7 || p.activeColour == Piece.WHITE && p.rank(currentSquare) == 0) {
-                                Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
-                                moves.add(m);
+                                if (mode == userMode) {
+                                    Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
+                                    moves.add(m);
+                                } else if (mode == aiMode) {
+                                    Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.QUEEN);
+                                    moves.add(m);
+                                    m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.KNIGHT);
+                                    moves.add(m);
+                                    m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.ROOK);
+                                    moves.add(m);
+                                    m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.BISHOP);
+                                    moves.add(m);
+                                } else {
+                                    throw new IllegalArgumentException();
+                                }
+
                             } else {
                                 Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
                                 moves.add(m);
@@ -121,6 +141,8 @@ public class MoveGenerator {
                     }
                 }
             }
+
+            //castling
             if (originType == Piece.KING && !p.isChecked(p.activeColour)) {
                 if (p.getCastleQueenSide(p.activeColour)) {
                     boolean success = true;
@@ -133,7 +155,7 @@ public class MoveGenerator {
                         }
                         if (success) {
                             Board copy = p.copy(p);
-                            for (Move m : Move.generateBlackQueenSideMoves()) {
+                            for (Move m: Move.generateBlackQueenSideMoves()) {
                                 p.applyMove(m);
                                 if (p.isChecked(p.activeColour)) {
                                     success = false;
@@ -156,7 +178,7 @@ public class MoveGenerator {
                         }
                         if (success) {
                             Board copy = p.copy(p);
-                            for (Move m : Move.generateWhiteQueenSideMoves()) {
+                            for (Move m: Move.generateWhiteQueenSideMoves()) {
                                 p.applyMove(m);
                                 if (p.isChecked(p.activeColour)) {
                                     success = false;
@@ -183,7 +205,7 @@ public class MoveGenerator {
                         }
                         if (success) {
                             Board copy = p.copy(p);
-                            for (Move m : Move.generateBlackKingSideMoves()) {
+                            for (Move m: Move.generateBlackKingSideMoves()) {
                                 p.applyMove(m);
                                 if (p.isChecked(p.activeColour)) {
                                     success = false;
@@ -206,7 +228,7 @@ public class MoveGenerator {
                         }
                         if (success) {
                             Board copy = p.copy(p);
-                            for (Move m : Move.generateWhiteKingSideMoves()) {
+                            for (Move m: Move.generateWhiteKingSideMoves()) {
                                 p.applyMove(m);
                                 if (p.isChecked(p.activeColour)) {
                                     success = false;
@@ -227,7 +249,7 @@ public class MoveGenerator {
     }
 
 
-    public void generateMoves(int originSquare, Board p) {
+    public void generateMoves(int originSquare, Board p, int mode) {
         if (!Square.isValid(originSquare)) {
             return;
         }
@@ -251,8 +273,21 @@ public class MoveGenerator {
                 if (Square.isValid(currentSquare) && p.board[currentSquare] == Piece.NO_PIECE) {
                     //pawn promotion
                     if (p.activeColour == Piece.BLACK && p.rank(currentSquare) == 7 || p.activeColour == Piece.WHITE && p.rank(currentSquare) == 0) {
-                        Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
-                        moves.add(m);
+                        if (mode == userMode) {
+                            Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
+                            moves.add(m);
+                        } else if (mode == aiMode) {
+                            Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.QUEEN);
+                            moves.add(m);
+                            m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.KNIGHT);
+                            moves.add(m);
+                            m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.ROOK);
+                            moves.add(m);
+                            m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.BISHOP);
+                            moves.add(m);
+                        } else {
+                            throw new IllegalArgumentException();
+                        }
                     } else if (multiplier == 2) {
                         Move m = new Move(Move.ENPASSANT_ENABLER, originSquare, currentSquare, originPiece, Piece.NO_PIECE, Piece.NO_PIECE_TYPE);
                         moves.add(m);
@@ -272,8 +307,22 @@ public class MoveGenerator {
                         moves.add(m);
                     } else if (p.board[currentSquare] != Piece.NO_PIECE && Piece.getColour(p.board[currentSquare]) != p.activeColour) {
                         if (p.activeColour == Piece.BLACK && p.rank(currentSquare) == 7 || p.activeColour == Piece.WHITE && p.rank(currentSquare) == 0) {
-                            Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
-                            moves.add(m);
+                            if (mode == userMode) {
+                                Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
+                                moves.add(m);
+                            } else if (mode == aiMode) {
+                                Move m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.QUEEN);
+                                moves.add(m);
+                                m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.KNIGHT);
+                                moves.add(m);
+                                m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.ROOK);
+                                moves.add(m);
+                                m = new Move(Move.PROMOTION, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.BISHOP);
+                                moves.add(m);
+                            } else {
+                                throw new IllegalArgumentException();
+                            }
+
                         } else {
                             Move m = new Move(Move.NORMAL, originSquare, currentSquare, originPiece, p.board[currentSquare], Piece.NO_PIECE_TYPE);
                             moves.add(m);
@@ -417,14 +466,7 @@ public class MoveGenerator {
                     }
                 }
             }
-            //to do: if rook moves, then that side loses castle right
-            //       if king moves, both sides (king and queen side) lose castle right
-            //if we're in check, we cannot castle
-            //check if there are any pieces between the king and rook to castle
-            //check if any of the king's movements leave the king in check
-            //
+
         }
-
     }
-
 }

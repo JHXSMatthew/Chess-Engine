@@ -18,7 +18,7 @@ public class ChessEngineDummy implements ChessEngineI {
         b.deserializeBoard(state);
         MoveGenerator m = new MoveGenerator();
         
-        m.generateMoves(Board.toSquare(pieceLoc), b);
+        m.generateMoves(Board.toSquare(pieceLoc), b, MoveGenerator.userMode);
         return m.targetSquareToIndexArray();
     }
 
@@ -36,7 +36,7 @@ public class ChessEngineDummy implements ChessEngineI {
         m.setOriginPiece(b);
         m.setTargetPiece(b);
 
-        return b.psuedoLegalMakeMove(stateString, m);
+        return b.userMakeMove(stateString, m);
     }
 
     @Override
@@ -52,19 +52,26 @@ public class ChessEngineDummy implements ChessEngineI {
         Board b = new Board();
         b.deserializeBoard(stateString);
 
-        MoveGenerator mg = new MoveGenerator();
-        mg.generateMoves(b);
+        AI ai = new AI();
+        try {
+            ai.minimax(b);
+            return b.userMakeMove(stateString, ai.bestMove);
+        } catch (Exception e) {
+            MoveGenerator mg = new MoveGenerator();
+            mg.generateMoves(b, MoveGenerator.aiMode);
 
-        Random r = new Random();
-        int length = mg.getMoves().size();
-        if (length != 0) {
-            Move m = mg.getMoves().get(r.nextInt(length));
-            return b.psuedoLegalMakeMove(stateString, m);
-        } else {
-            State s = new State();
-            s.setBoardRep(stateString);
-            return s;
+            Random r = new Random();
+            int length = mg.getMoves().size();
+            if (length != 0) {
+                Move m = mg.getMoves().get(r.nextInt(length));
+                return b.userMakeMove(stateString, m);
+            } else {
+                State s = new State();
+                s.setBoardRep(stateString);
+                return s;
+            }
         }
     }
+
 
 }
