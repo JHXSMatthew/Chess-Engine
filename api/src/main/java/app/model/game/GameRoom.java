@@ -44,9 +44,11 @@ public class GameRoom implements Serializable {
     //a = black
     //b = white
     @OneToOne
+    @JoinColumn
     private User playerA = null;
 
     @OneToOne
+    @JoinColumn
     private User playerB = null;
 
     public User getPlayerA() {
