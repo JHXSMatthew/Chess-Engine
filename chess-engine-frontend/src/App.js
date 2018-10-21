@@ -17,6 +17,7 @@ import { BrowserRouter, Switch, Route, Link, Redirect} from 'react-router-dom';
 import {connect} from 'react-redux';
 import { actionToggleModal } from './AppReducer';
 import { actionOnLoadCacheLogin } from './module/User/UserReducer';
+import { actionPromotePawn } from './module/Game/ChessGameReducer';
 
 import {
   Collapse,

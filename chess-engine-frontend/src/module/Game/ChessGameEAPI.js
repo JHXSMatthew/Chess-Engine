@@ -15,6 +15,13 @@ import axios from 'axios'
   		state,
   		from
   	})
+  },
+  postPromotion: (state, to, promotionPos) => {
+    return axios.post(API_ENDPOINT + "/move/PromotionMove", {
+      state,
+      to,
+      promotionPos
+    })
   }
 }
 
@@ -41,6 +48,14 @@ export const NetworkedGameApi = {
   //resign
   resignGame: (id, playerType) => {
     return axios.post(API_ENDPOINT + `/game/${id}/resign?playerType=${playerType}`)
+  },
+  promotionGame: (id, playerType,state, to, promotionPos) => {
+    return axios.patch(API_ENDPOINT + `/game/${id}/promotionMove`, {
+      playerType,
+      state,
+      to,
+      promotionPos
+    })
   }
 }
 

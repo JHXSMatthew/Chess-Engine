@@ -20,6 +20,7 @@ export const appReducer = (state = initState, action )=>{
   switch(action.type){
     case UPDATE_MODAL_INFO:
     case TOGGLE_MODAL:
+    case SHOW_PROMOTION_MODAL:
       return Object.assign({}, state, {modal: modalReducer(state.modal, action)})
     case TYPE_REDIRECT_LOGIN:
       return Object.assign({}, state, {
@@ -33,6 +34,7 @@ export const appReducer = (state = initState, action )=>{
 export const modalReducer = (state = {}, action) =>{
   switch(action.type){
     case UPDATE_MODAL_INFO:
+    case SHOW_PROMOTION_MODAL:
       return Object.assign({}, state, action)
 
     case TOGGLE_MODAL:
@@ -64,6 +66,14 @@ export const actionToggleModal = (show)=>{
   return {
     type: TOGGLE_MODAL,
     show
+  }
+}
+
+const SHOW_PROMOTION_MODAL = "SHOW_PROMOTION_MODAL"
+export const actionShowPromotionModal = (modalObj) => {
+  return {
+    ...modalObj,
+    type: SHOW_PROMOTION_MODAL
   }
 }
 

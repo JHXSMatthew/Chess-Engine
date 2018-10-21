@@ -60,7 +60,9 @@ const initState = {
   lobby: lobbyInitState,
   //queue
   queueTimer: undefined,
-  queueTimerDot: 0
+  queueTimerDot: 0,
+
+  promoSelected: ""
 }
 
 
@@ -218,6 +220,11 @@ export const gameReducer  = (state = initState, action)=>{
     case QUEUE_TIMER_LOOP:
       return Object.assign({}, state, {
         queueTimerDot: (state.queueTimerDot+1)%4
+      })
+    case SELECT_PROMOTION:
+      console.log(action.selected)
+      return Object.assign({}, state, {
+        promoSelected: action.selected
       })
     default:
       return state;
@@ -640,5 +647,20 @@ const CANCEL_START_GAME = "CANCEL_START_GAME"
 export const actionCancelStartGame = () =>{
   return {
     type: CANCEL_START_GAME
+  }
+}
+
+const SELECT_PROMOTION = "SELECT_PROMOTION"
+export const actionSelectPromotion = (selected) => {
+  return {
+    type: SELECT_PROMOTION,
+    selected
+  }
+}
+
+export const PROMOTE_PAWN = "PROMOTE_PAWN"
+export const actionPromotePawn = () => {
+  return {
+    type: PROMOTE_PAWN
   }
 }

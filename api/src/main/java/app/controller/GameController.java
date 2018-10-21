@@ -1,6 +1,7 @@
 package app.controller;
 
-import app.model.game.NetworkedMoveRequest;
+import app.model.move.NetworkedPromotionMoveRequest;
+import app.model.move.NetworkedMoveRequest;
 import app.model.move.MoveHistory;
 import app.model.user.Token;
 import engine.ChessEngineDummy;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import app.repository.*;
+import utilities.PromotionRepMapping;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -65,24 +67,24 @@ public class GameController {
     }
 
     @GetMapping("/api/game")
-    public ResponseEntity<List<GameRoom>> gameHistory(@RequestParam String token){
-        if(token == null || token.isEmpty()){
+    public ResponseEntity<List<GameRoom>> gameHistory(@RequestParam String token) {
+        if (token == null || token.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         Optional<Token> tObj = tokenRepository.findByToken(token);
-        if(tObj.isPresent()){
+        if (tObj.isPresent()) {
             tObj.get().getUser();
             Optional<List<GameRoom>> history = grr.findOrderByPlayerAOrPlayerBOrderByIdDesc(tObj.get().getUser(), tObj.get().getUser());
-            if(history.isPresent()){
+            if (history.isPresent()) {
                 List<GameRoom> result = history.get().stream().filter((v) -> {
                     return v.getStatus() == GameRoom.GameStatus.finished;
                 }).collect(Collectors.toList());
 
                 return ResponseEntity.ok(result);
-            }else{
+            } else {
                 return ResponseEntity.ok(new ArrayList<GameRoom>());
             }
-        }else{
+        } else {
             return ResponseEntity.notFound().build();
         }
 
@@ -92,15 +94,16 @@ public class GameController {
     @ApiOperation(value = "Get game's status and state information", response = GameInfoResponse.class)
     // Get status and state
     public GameInfoResponse getGameInfo(@PathVariable String id) {
-        Optional<GameRoom> dbModel = grr .findById(id);
-        if(dbModel.isPresent()){
+        Optional<GameRoom> dbModel = grr.findById(id);
+        if (dbModel.isPresent()) {
             GameInfoResponse info = new GameInfoResponse();
             Optional<MoveHistory> mhs = mhr.findFirstByGameOrderByIdDesc(dbModel.get());
             NetworkedStateContainer networkedStateContainer = null;
-            if(mhs.isPresent()){
+
+            if (mhs.isPresent()) {
                 networkedStateContainer = NetworkedStateContainer.build(dbModel.get().getState(), mhs.get());
 
-            }else{
+            } else {
                 networkedStateContainer = new NetworkedStateContainer();
                 BeanUtils.copyProperties(dbModel.get().getState(), networkedStateContainer);
             }
@@ -110,7 +113,7 @@ public class GameController {
             info.setStatus(dbModel.get().getStatus().toString());
             info.setResignedPlayer(dbModel.get().getResignedPlayer());
             return info;
-        }else {
+        } else {
             throw new ResourceNotFoundException();
         }
     }
@@ -118,28 +121,28 @@ public class GameController {
 
     @CrossOrigin(origins = "*")
     @GetMapping("/api/game/{id}/moveHistory")
-    public ResponseEntity<List<MoveHistory>>getAllMoveHistory(@PathVariable String id) {
+    public ResponseEntity<List<MoveHistory>> getAllMoveHistory(@PathVariable String id) {
         Optional<GameRoom> gameRoom = grr.findById(id);
-        if(gameRoom.isPresent()){
+        if (gameRoom.isPresent()) {
             Optional<List<MoveHistory>> history = mhr.findByGame(gameRoom.get());
             List<MoveHistory> mhst = history.get();
             return history.isPresent() ? (ResponseEntity.ok(mhst)) : ResponseEntity.ok(new ArrayList<MoveHistory>());
-        }else{
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
 
 
     @PatchMapping("/api/game/{id}")
-    @ApiOperation(value="handle the network game",response = NetworkedStateContainer.class)
+    @ApiOperation(value = "handle the network game", response = NetworkedStateContainer.class)
     public NetworkedStateContainer handlePatch(@PathVariable String id, @RequestBody NetworkedMoveRequest request) {
         Optional<GameRoom> dbModel = grr.findById(id);
 
-        if(dbModel.isPresent()){
-            if(dbModel.get().getStatus() == GameRoom.GameStatus.ingame){
-                State s =  engine.move(dbModel.get().getState().getState(),
+        if (dbModel.isPresent()) {
+            if (dbModel.get().getStatus() == GameRoom.GameStatus.ingame) {
+                State s = engine.move(dbModel.get().getState().getState(),
                         request.getFrom(), request.getTo());
-                if(s.isCheckMate()){
+                if (s.isCheckMate()) {
                     dbModel.get().setStatus(GameRoom.GameStatus.finished);
                     handleResult(dbModel.get(), request.getPlyaerType().equals("b"));
 
@@ -147,12 +150,10 @@ public class GameController {
                 //set field
                 dbModel.get().setState(StateContainer.build((s)));
 
-                //save to db by transaction
-
                 try {
                     grr.save(dbModel.get());
                     MoveHistory history = null;
-                    if(!request.getState().equals(s.getBoardRep())){
+                    if (!request.getState().equals(s.getBoardRep())) {
                         //only store legal moves
                         history = MoveHistory.build(dbModel.get(), request);
                         mhr.save(history);
@@ -164,14 +165,67 @@ public class GameController {
 
                     throw new InternalError();
                 }
-            }else{
+            } else {
                 throw new IllegalStateExceptionInternal();
             }
 
-        }else{
+        } else {
             throw new ResourceNotFoundException();
         }
     }
+
+    @PatchMapping("/api/game/{id}/promotionMove")
+    @ApiOperation(value = "handle the network game", response = NetworkedStateContainer.class)
+    public ResponseEntity<NetworkedStateContainer> handlePromotionPatch(@PathVariable String id,
+                                                                        @RequestBody NetworkedPromotionMoveRequest request) {
+        Optional<GameRoom> dbModel = grr.findById(id);
+
+        if (!dbModel.isPresent()) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (dbModel.get().getState().isPromotion()) {
+            if (dbModel.get().getStatus() == GameRoom.GameStatus.ingame) {
+                int promotionPiece = PromotionRepMapping.pieceMapping.get(request.getPromotion());
+                State s = engine.promotionMove(request.getState(), request.getTo(), promotionPiece);
+
+                if (s.isCheckMate()) {
+                    dbModel.get().setStatus(GameRoom.GameStatus.finished);
+                    handleResult(dbModel.get(), request.getPlyaerType().equals("b"));
+                }
+
+                dbModel.get().setState(StateContainer.build((s)));
+
+                try {
+                    grr.save(dbModel.get());
+                    MoveHistory history = null;
+                    if (!request.getState().equals(s.getBoardRep())) {
+                        //only store legal moves
+                        history = MoveHistory.build(dbModel.get(), request);
+//                        mhr.save(history);
+                    }
+
+                    return ResponseEntity.ok(NetworkedStateContainer.build(StateContainer.build(s), history));
+
+                } catch (HibernateException exObj) {
+
+                    throw new InternalError();
+                }
+
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
+
+
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+
+
+
+
+
 
     @PostMapping("/api/game/{id}/resign")
     @ApiOperation(value = "To resign the user's playerType")

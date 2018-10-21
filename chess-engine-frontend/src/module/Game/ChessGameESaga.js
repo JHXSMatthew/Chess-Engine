@@ -46,9 +46,11 @@ import {
   actionMatchGameStartSuccess,
   MATCH_GAME_START,
   actionQueueTimerLoop,
+  PROMOTE_PAWN,
+  actionPromotePawn
 } from './ChessGameReducer'
 
-import { actionUpdateModalInfo,actionToggleModal, actionRedirectLogin } from '../../AppReducer'
+import { actionUpdateModalInfo,actionToggleModal, actionRedirectLogin, actionShowPromotionModal } from '../../AppReducer'
 
 import { MoveApi, NetworkedGameApi, QueueApi, AIAPI} from './ChessGameEAPI'
 
@@ -75,6 +77,7 @@ export function* gameSaga(){
   //queue
   yield takeEvery(JOIN_MATCH_QUEUE, JoinQueue)
   yield takeEvery(MATCH_GAME_START, MatchGameStart)
+  yield takeEvery(PROMOTE_PAWN, PromotePawn)
 }
 
 
@@ -146,6 +149,16 @@ function* MoveRequest(action){
           }
           yield put(actionHighlightLastMove([action.from, action.to]))
         }
+      }
+      console.log("-----", stateObj)
+      if (stateObj.isPromotion){
+        console.log("--- promotion modal:", movedPiece, action.to)
+        yield put(actionShowPromotionModal({
+          content: movedPiece,
+          show: true,
+          title: 'Promotion',
+          action: actionPromotePawn()
+        }))
       }
     }
 
@@ -535,4 +548,55 @@ function queueTimer(queueEntryId, token){
       clearInterval(iv);
     }
   })
+}
+
+function* PromotePawn(action){
+  try {
+    
+    const promoPiece = yield select((state) => state.game.promoSelected) 
+    const currentBoardState = yield select((state) => seriliaseState(state.game))
+    const to = yield select((state) => state.game.lastMovePair[1])
+    const gameType = yield select((state) => state.game.gameType)
+
+    let response = undefined;
+    if(gameType === GAME_TYPE.LOCAL_GAME){
+      response = yield call(MoveApi.postPromotion, currentBoardState, to, promoPiece)
+    }else{
+      const id = yield select((state) => {
+        return state.game.lobby.gameId
+      })
+      //check player ==> current turn
+      const playerTypeCheck = yield select((state) => {
+        return {
+          result: state.game.currentTurn === state.game.lobby.playerType,
+          playerType: state.game.currentTurn
+        }
+      })
+      console.log(playerTypeCheck)
+
+    //TODO: a bug with engine, promotion has not done yet, at this line, current player should not change!!!!!!!
+      // if(playerTypeCheck.result === true){
+        response = yield call(NetworkedGameApi.promotionGame, id, playerTypeCheck.playerType,currentBoardState, to, promoPiece)
+      // }
+    }
+
+    if(!response){
+      console.log("promotion failed.")
+    }
+    const stateObj = response.data;
+
+    yield put(actionUpdateGameStateSuccess({...response.data, state: deserializeState(stateObj.state)}))
+    yield put(actionAddMoveHistory({piece: promoPiece, from: to , to: to}))
+
+    if (stateObj.isChecked && !stateObj.isCheckmate){
+       yield put(actionUpdateModalInfo({
+        content: '',
+        show: true,
+        title: 'Check',
+        action: actionToggleModal(false)
+      }))
+    }
+  } catch (e) {
+    console.log("error", e)
+  }
 }

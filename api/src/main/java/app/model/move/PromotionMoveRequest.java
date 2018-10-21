@@ -2,7 +2,7 @@ package app.model.move;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class PromotionMove {
+public class PromotionMoveRequest {
     @JsonProperty("state")
     private String state ;
     @JsonProperty("to")
@@ -10,7 +10,7 @@ public class PromotionMove {
     @JsonProperty("promotionPos")
     private String promotion;
 
-    public PromotionMove() {
+    public PromotionMoveRequest() {
     }
 
     public String getState() {
