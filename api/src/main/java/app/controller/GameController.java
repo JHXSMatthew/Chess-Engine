@@ -91,7 +91,7 @@ public class GameController {
         Optional<GameRoom> dbModel = grr .findById(id);
         if(dbModel.isPresent()){
             GameInfoResponse info = new GameInfoResponse();
-            Optional<MoveHistory> mhs = mhr.findLastHistoryByGameId(id);
+            Optional<MoveHistory> mhs = mhr.findFirstByGameOrderByIdDesc(dbModel.get());
             NetworkedStateContainer networkedStateContainer = null;
             if(mhs.isPresent()){
                 networkedStateContainer = NetworkedStateContainer.build(dbModel.get().getState(), mhs.get());

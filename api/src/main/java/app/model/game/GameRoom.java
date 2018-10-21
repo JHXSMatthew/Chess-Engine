@@ -37,7 +37,7 @@ public class GameRoom implements Serializable {
         return status;
     }
 
-    public String resignedPlayer;
+    private String resignedPlayer;
 
     @Column(nullable = false)
     private GameType gameType = GameType.networkedInvited;
@@ -48,11 +48,9 @@ public class GameRoom implements Serializable {
     //a = black
     //b = white
     @OneToOne
-    @JoinColumn
     private User playerA = null;
 
     @OneToOne
-    @JoinColumn
     private User playerB = null;
 
     public User getPlayerA() {

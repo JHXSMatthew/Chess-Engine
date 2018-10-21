@@ -38,7 +38,8 @@ class UserCenter extends React.Component{
       case 0:
         return <Profile {...props.info} />
       case 1:
-        return <GameHistory loadGameHistory={props.loadGameHistory} loadGameHistoryMove={props.loadGameHistoryMove} {...props.info}/>
+        props.loadGameHistory();
+        return <GameHistory loadGameHistoryMove={props.loadGameHistoryMove} {...props.info}/>
       default:
         return <Profile {...props.info} />
     }
@@ -58,7 +59,7 @@ class UserCenter extends React.Component{
         </Row>
         <Row className='mt-3'>
           <Col xs="3">
-            <UserCenterSideBar onSelect={this.updateSelect} logoff={logoff}/>
+            <UserCenterSideBar onSelect={this.updateSelect} logoff={logoff} select={select}/>
           </Col>
           <Col xs="9">
             <Card>
@@ -92,13 +93,11 @@ const columns = [{
 
 class GameHistory extends React.Component{
   
-  componentDidMount(){
-    this.props.loadGameHistory();
-  }
+
 
   render(){
     return (
-      <BootstrapTable keyField='id' data={ products } columns={ columns } />
+      <BootstrapTable keyField='id' data={ this.props.gameHistory } columns={ columns } />
     )
   }
 
@@ -159,15 +158,15 @@ class Profile extends React.Component{
 class UserCenterSideBar extends React.Component{
 
   render(){
-    const {logoff, onSelect} = this.props;
+    const {logoff, onSelect, select} = this.props;
 
     return (
       <div>
         <ListGroup>
-          <ListGroupItem tag="button" action onClick={ () => onSelect(0) }>Profile</ListGroupItem>
-          <ListGroupItem tag="button" action onClick={ () => onSelect(1) }>Game History</ListGroupItem>
-          <ListGroupItem tag="button" action disabled>Friend</ListGroupItem>
-          <ListGroupItem tag="button" action onClick={logoff}>Log off</ListGroupItem>
+          <ListGroupItem active={select === 0} tag="button" action onClick={ () => onSelect(0) }>Profile</ListGroupItem>
+          <ListGroupItem active={select === 1} tag="button" action onClick={ () => onSelect(1) }>Game History</ListGroupItem>
+          <ListGroupItem active={select === 2} tag="button" action disabled>Friend</ListGroupItem>
+          <ListGroupItem active={select === 3} tag="button" action onClick={logoff}>Log off</ListGroupItem>
       </ListGroup>
      </div>
     )
