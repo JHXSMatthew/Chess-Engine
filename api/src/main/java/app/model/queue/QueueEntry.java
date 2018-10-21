@@ -4,6 +4,7 @@ import app.model.game.GameRoom;
 import app.model.game.JoinGameResponse;
 import app.model.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 
@@ -16,17 +17,21 @@ public class QueueEntry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty(value = "current queue id")
     private int id;
 
     @JsonIgnore
+    @ApiModelProperty(value = "current user")
     @OneToOne
     private User user = null;
 
 
     @Column( nullable = false)
+    @ApiModelProperty(value = "current game type")
     private GameRoom.GameType gameType;
 
     @OneToOne
+    @ApiModelProperty(value = "the game that was assigned")
     private GameRoom assignedGame = null;
 
 

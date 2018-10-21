@@ -1,5 +1,6 @@
 package app.model.user;
 
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
@@ -13,13 +14,16 @@ public class Token {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty(notes = "This token's id")
     private int id;
 
     @OneToOne
     @JoinColumn(unique = true)
+    @ApiModelProperty(notes = "This token's belongs to ")
     private User user = null;
 
     @Column( nullable = false)
+    @ApiModelProperty(notes = "Token value")
     private String token;
 
     public User getUser() {

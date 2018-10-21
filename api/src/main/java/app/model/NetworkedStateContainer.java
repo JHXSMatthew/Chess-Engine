@@ -3,6 +3,7 @@ package app.model;
 import app.model.move.MoveHistory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import engine.State;
+import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;
 
 /**
@@ -10,7 +11,7 @@ import org.springframework.beans.BeanUtils;
  */
 public class NetworkedStateContainer extends StateContainer {
 
-
+    @ApiModelProperty(notes = "User's move history")
     @JsonProperty("lastMove")
     private MoveHistory history;
 
