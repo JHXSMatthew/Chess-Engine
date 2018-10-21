@@ -208,16 +208,16 @@ public class Board {
                 board[targetSquare] = m.getOriginPiece();
                 board[originSquare] = Piece.NO_PIECE;
 
-                if (board[targetSquare] == Square.BLACK_KINGSIDE_FINISHING_SQUARE) {
+                if (targetSquare == Square.BLACK_KINGSIDE_FINISHING_SQUARE) {
                     board[Square.BLACK_KINGSIDE_ROOK_STARTING_SQUARE] = Piece.NO_PIECE;
                     board[Square.BLACK_KINGSIDE_FINISHING_SQUARE + Square.W] = Piece.valueOf(activeColour, Piece.ROOK);
-                } else if (board[targetSquare] == Square.BLACK_QUEENSIDE_FINISHING_SQUARE) {
+                } else if (targetSquare == Square.BLACK_QUEENSIDE_FINISHING_SQUARE) {
                     board[Square.BLACK_QUEENSIDE_ROOK_STARTING_SQUARE] = Piece.NO_PIECE;
                     board[Square.BLACK_QUEENSIDE_FINISHING_SQUARE + Square.E] = Piece.valueOf(activeColour, Piece.ROOK);
-                } else if (board[targetSquare] == Square.WHITE_KINGSIDE_FINISHING_SQUARE) {
+                } else if (targetSquare == Square.WHITE_KINGSIDE_FINISHING_SQUARE) {
                     board[Square.WHITE_KINGSIDE_ROOK_STARTING_SQUARE] = Piece.NO_PIECE;
                     board[Square.WHITE_KINGSIDE_FINISHING_SQUARE + Square.W] = Piece.valueOf(activeColour, Piece.ROOK);
-                } else if (board[targetSquare] == Square.WHITE_QUEENSIDE_FINISHING_SQUARE) {
+                } else if (targetSquare == Square.WHITE_QUEENSIDE_FINISHING_SQUARE) {
                     board[Square.WHITE_QUEENSIDE_ROOK_STARTING_SQUARE] = Piece.NO_PIECE;
                     board[Square.WHITE_QUEENSIDE_FINISHING_SQUARE + Square.E] = Piece.valueOf(activeColour, Piece.ROOK);
                 } else {
