@@ -3,9 +3,13 @@ import { take , cancel, fork, call, put, takeEvery, select, cancelled } from 're
 import { TYPE_USER_LOGIN, actionUserLoginFail, actionUserLoginSuccess, TYPE_USER_REGISTER,
   actionUserRegisterSuccess, actionUserLogin, actionUserRegisterFail, TYPE_GET_USER_INFO,
   actionGetUserInfo, actionGetUserInfoSuccess, actionGetuserInfoFail, TYPE_LOAD_CACHE_LOGIN,
-  actionLoadLeaderboard, LOAD_LEADERBOARD, actionGetLeaderboard, GET_LEADERBOARD,
+  actionLoadLeaderboard, LOAD_LEADERBOARD, actionGetLeaderboard, GET_LEADERBOARD,TYPE_LOAD_USER_GAME_HISTORY,
+  TYPE_LOAD_MOVE_HISTORY_FOR_GAME,actionLoadUserGameHistorySuccess, actionLoadGameMoveHistorySuccess,
   CHANGE_PASSWORD, actionU, actionUserLogoff } from './UserReducer';
 import { UserApi, AuthApi, RankApi } from './UserEAPI';
+import { gameHistoryApi } from '../Game/ChessGameEAPI';
+
+
 
 
 
@@ -33,6 +37,8 @@ function* changePassword(action){
     alert(e);
 
   }
+  yield takeEvery(TYPE_LOAD_USER_GAME_HISTORY, getGameHistory)
+  yield takeEvery(TYPE_LOAD_MOVE_HISTORY_FOR_GAME, getMoveHistory)
 }
 
 function* login(action){
@@ -48,6 +54,26 @@ function* login(action){
 
   }catch(e){
     yield put(actionUserLoginFail(e))
+  }
+}
+
+function* getGameHistory(action){
+  try{
+    const userToken = yield select((state) => state.user.auth.token)
+    const response= yield call(gameHistoryApi.getHistory, userToken)
+    yield put(actionLoadUserGameHistorySuccess(response.data))
+  }catch(err){
+    yield put(actionUserLogin(err)) //todo change this
+  }
+}
+
+function* getMoveHistory(action){
+  try{
+    const response= yield call(gameHistoryApi.getMoveHistory, action.gameId)
+    
+    yield put(actionLoadGameMoveHistorySuccess(action.gameId,response.data))
+  }catch(err){
+    yield put(actionUserLogin(err)) //todo change this
   }
 }
 
