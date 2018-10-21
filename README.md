@@ -40,5 +40,6 @@ then return to the project root
 
 ### Run frontend API
 	cd chess-engine-frontend
+	yarn install
 	yarn start
 
