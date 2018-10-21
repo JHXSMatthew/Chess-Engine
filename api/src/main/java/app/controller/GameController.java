@@ -139,16 +139,20 @@ public class GameController {
             if(dbModel.get().getStatus() == GameRoom.GameStatus.ingame){
                 State s =  engine.move(dbModel.get().getState().getState(),
                         request.getFrom(), request.getTo());
+
                 if(s.isCheckMate()){
                     dbModel.get().setStatus(GameRoom.GameStatus.finished);
                     handleResult(dbModel.get(), request.getPlyaerType().equals("b"));
-
                 }
                 //set field
-                dbModel.get().setState(StateContainer.build((s)));
+                StateContainer resultState = new StateContainer();
+                resultState.setPromotion(s.isPromotion());
+                resultState.setCheckmate(s.isCheckMate());
+                resultState.setChecked(s.isCheck());
+                resultState.setState(s.getBoardRep());
+                dbModel.get().setState(resultState);
 
-                //save to db by transaction
-
+                //save to db by transaction  
                 try {
                     grr.save(dbModel.get());
                     MoveHistory history = null;
