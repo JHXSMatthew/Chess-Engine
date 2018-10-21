@@ -13,8 +13,6 @@ public class MoveRequest {
     @ApiModelProperty(notes = "requested to position")
     @JsonProperty("to")
     private int to;
-
-
     public MoveRequest() {
     }
 
@@ -41,4 +39,6 @@ public class MoveRequest {
     public void setState(String state) {
         this.state = state;
     }
+
+
 }
