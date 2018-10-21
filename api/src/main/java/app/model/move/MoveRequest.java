@@ -4,17 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class MoveRequest {
     @JsonProperty("state")
-    private String state;
+    private String state ;
     @JsonProperty("from")
     private int from;
     @JsonProperty("to")
     private int to;
-
-    public MoveRequest(String state, int start, int end) {
-        this.state = state;
-        this.from = start;
-        this.to = end;
-    }
+    @JsonProperty("promotionPos")
+    private String promotion;
 
     public MoveRequest() {
     }
@@ -31,7 +27,23 @@ public class MoveRequest {
         return to;
     }
 
+    public void setFrom(int from) {
+        this.from = from;
+    }
+
+    public void setTo(int to) {
+        this.to = to;
+    }
+
     public void setState(String state) {
         this.state = state;
+    }
+
+    public String getPromotion() {
+        return promotion;
+    }
+
+    public void setPromotion(String promotion) {
+        this.promotion = promotion;
     }
 }

@@ -11,6 +11,8 @@ import InvitedNetworkedGamePanel from './SidebarNetworkedGamePanel'
 
 import { connect } from 'react-redux'
 
+import { indexToCoord } from './Utils';
+
 import {
   actionLoadInitState,
   actionSaveLocalGame,
@@ -25,6 +27,12 @@ import { actionUpdateModalInfo } from '../../AppReducer';
 
 class Sidebar extends React.Component{
 
+  componentDidUpdate(){
+    var el = this.refs.historyList;
+    if (el){
+      el.scrollTop = el.scrollHeight;
+    }
+  }
 
   getMoveHistoryView = (data)=>{
     if(data.length <= 0){
@@ -36,13 +44,29 @@ class Sidebar extends React.Component{
     const f = (a,b)=>{
       return (
         <div key={UUID()} className='d-flex flex-row flex-fill'>
-          <div className='pl-3'>
-            {a.from}:{a.to}
+          <div className="w-50 p-1 d-flex flex-row">
+            <div className="w-50">
+              {PiecesSVG[a.piece]}
+            </div>
+            <div className="w-50 py-4">
+              {indexToCoord(a.from)}:{indexToCoord(a.to)}
+            </div>
           </div>
-          <div className='pl-4'>
-            {b? b.from+ ":" + b.to: ""}
-          </div>
+          {b?
+            <div className="w-50 p-1 d-flex flex-row">
+              <div className="w-50">
+                {PiecesSVG[b.piece]}
+              </div>
+              <div className="w-50 py-4">
+                {indexToCoord(b.from)}:{indexToCoord(b.to)}
+              </div>
+            </div>
+          : ""
+          }
         </div>)
+          // <div className='pl-5'>
+          //   {b? PiecesSVG[b.piece]+";"+ indexToCoord(b.from)+ ":" + indexToCoord(b.to): ""}
+          // </div>
     }
 
     for(let i in data){
@@ -95,7 +119,11 @@ class Sidebar extends React.Component{
           <div className="d-flex flex-row flex-fill">
             <div className="p-2">Move History: </div>
           </div>
-          <div className='history'>
+          {/*<div className="d-flex flex-row flex-fill">
+                      <div className="pl-3">White </div>
+                      <div className="pl-5">Black</div>
+                    </div>*/}
+          <div className='history' ref='historyList'>
             {moveHistoryView}
           </div>
           <div className="d-flex flex-row flex-fill">
@@ -118,10 +146,10 @@ class Sidebar extends React.Component{
             <div className="p-2">Timer: </div>
             <div className="p-2">5:00/60:00</div>
           </div> */}
-          <div className="d-flex flex-row flex-fill">
+          {gameType != GAME_TYPE.LOCAL_GAME && <div className="d-flex flex-row flex-fill">
             <div className="p-2">You: </div>
             <div className="p-2">{PiecesSVG[opponentColor=== 'w'? 'p' : 'P']}</div>
-          </div>
+          </div>}
         </div>
     }
   

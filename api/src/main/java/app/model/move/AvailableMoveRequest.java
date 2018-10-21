@@ -9,10 +9,6 @@ public class AvailableMoveRequest {
     @JsonProperty("from")
     private int from;
 
-    public AvailableMoveRequest(String State, int from) {
-        this.State = State;
-        this.from = from;
-    }
 
     public AvailableMoveRequest() {
     }
@@ -23,5 +19,13 @@ public class AvailableMoveRequest {
 
     public int getFrom() {
         return from;
+    }
+
+    public void setState(String state) {
+        State = state;
+    }
+
+    public void setFrom(int from) {
+        this.from = from;
     }
 }

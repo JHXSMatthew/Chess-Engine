@@ -1,6 +1,7 @@
 package app.controller;
 
 import app.model.game.NetworkedMoveRequest;
+import app.model.move.MoveHistory;
 import engine.ChessEngineDummy;
 import engine.ChessEngineI;
 import app.exception.*;
@@ -10,7 +11,12 @@ import app.model.game.GameRoom;
 import app.model.game.JoinGameResponse;
 import app.model.move.MoveRequest;
 import engine.State;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.annotations.Parameter;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import app.repository.*;
@@ -25,6 +31,8 @@ public class GameController {
 
     @Autowired
     private GameRoomRepository grr;
+    @Autowired
+    private MoveHistoryRepository mhr;
 
     @PostMapping("/api/game")
     public JoinGameResponse newGame() {
@@ -54,7 +62,18 @@ public class GameController {
         Optional<GameRoom> dbModel = grr.findById(id);
         if(dbModel.isPresent()){
             GameInfoResponse info = new GameInfoResponse();
-            info.setState(dbModel.get().getState());
+            Optional<MoveHistory> mhs = mhr.findLastHistoryByGameId(id);
+            NetworkedStateContainer networkedStateContainer = null;
+            if(mhs.isPresent()){
+                networkedStateContainer = NetworkedStateContainer.build(dbModel.get().getState(), mhs.get());
+
+            }else{
+                networkedStateContainer = new NetworkedStateContainer();
+                BeanUtils.copyProperties(dbModel.get().getState(), networkedStateContainer);
+            }
+
+            info.setState(networkedStateContainer);
+
             info.setStatus(dbModel.get().getStatus().toString());
             info.setResignedPlayer(dbModel.get().getResignedPlayer());
             return info;
@@ -64,7 +83,7 @@ public class GameController {
     }
 
     @PatchMapping("/api/game/{id}")
-    public StateContainer handlePatch(@PathVariable String id, @RequestBody NetworkedMoveRequest request) {
+    public NetworkedStateContainer handlePatch(@PathVariable String id, @RequestBody NetworkedMoveRequest request) {
         Optional<GameRoom> dbModel = grr.findById(id);
 
         if(dbModel.isPresent()){
@@ -74,10 +93,26 @@ public class GameController {
                 if(s.isCheckMate()){
                     dbModel.get().setStatus(GameRoom.GameStatus.finished);
                 }
+                //set field
                 dbModel.get().setState(StateContainer.build((s)));
 
-                grr.save(dbModel.get());
-                return StateContainer.build(s);
+                //save to db by transaction
+
+                try {
+                    grr.save(dbModel.get());
+                    MoveHistory history = null;
+                    if(!request.getState().equals(s.getBoardRep())){
+                        //only store legal moves
+                        history = MoveHistory.build(dbModel.get(), request);
+                        mhr.save(history);
+                    }
+
+                    return NetworkedStateContainer.build(StateContainer.build(s), history);
+
+                } catch (HibernateException exObj) {
+
+                    throw new InternalError();
+                }
             }else{
                 throw new IllegalStateExceptionInternal();
             }
@@ -121,4 +156,6 @@ public class GameController {
         }
 
     }
+
+
 }
