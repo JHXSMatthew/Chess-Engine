@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 
 @Entity
-@Table(name = "move_history_new")
+@Table(name = "move_history_final")
 public class MoveHistory  implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

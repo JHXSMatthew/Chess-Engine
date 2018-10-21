@@ -12,8 +12,7 @@ import java.util.Optional;
 @Repository
 public interface MoveHistoryRepository extends CrudRepository<MoveHistory, Integer> {
 
-    @Query(value = "SELECT * FROM move_history_new WHERE game_id= ?1 ORDER BY id DESC LIMIT 1;", nativeQuery=true)
-    Optional<MoveHistory> findLastHistoryByGameId(String gameId);
+    Optional<MoveHistory> findFirstByGameOrderByIdDesc(GameRoom gameRoom);
 
     Optional<List<MoveHistory>> findByGame(GameRoom gameRoom);
 

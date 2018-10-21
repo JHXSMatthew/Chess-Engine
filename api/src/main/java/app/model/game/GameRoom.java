@@ -10,6 +10,7 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.UUID;
 
 @Entity
@@ -31,6 +32,10 @@ public class GameRoom implements Serializable {
     private boolean isCheckmate;
 
 
+    @OneToOne
+    private User Winner = null;
+
+
     @Column(nullable = false)
     private Integer numOfUser;
 
@@ -41,10 +46,13 @@ public class GameRoom implements Serializable {
         return status;
     }
 
-    public String resignedPlayer;
+    private String resignedPlayer;
 
     @Column(nullable = false)
     private GameType gameType = GameType.networkedInvited;
+
+    @Column (nullable = false)
+    private Calendar date = Calendar.getInstance();
 
     //a = black
     //b = white
@@ -119,6 +127,22 @@ public class GameRoom implements Serializable {
 
     public void setResignedPlayer(String resignedPlayer) {
         this.resignedPlayer = resignedPlayer;
+    }
+
+    public Calendar getDate() {
+        return date;
+    }
+
+    public void setDate(Calendar date) {
+        this.date = date;
+    }
+
+    public User getWinner() {
+        return Winner;
+    }
+
+    public void setWinner(User winner) {
+        Winner = winner;
     }
 
     public enum GameStatus {

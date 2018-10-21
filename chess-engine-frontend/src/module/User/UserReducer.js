@@ -3,7 +3,13 @@ const initState = {
   auth: undefined,
   info: {
 
-  }
+  },
+
+  //ui state
+  gameHistory: [],
+  currentSelectGame: undefined,
+  //{gameId: moveHistory}
+  moveHisotry: {}
 }
 
 
@@ -26,9 +32,55 @@ export const userReducer  = (state=initState, action) =>{
       return Object.assign({}, state, {
         info: action.info
       })
+    case TYPE_LOAD_MOVE_HISTORY_FOR_GAME_SUCCESS:
+      return Object.assign({}, state, {
+        moveHisotry: Object.assign({}, state.moveHisotry, {
+          [action.gameId]: action.moveHisotry
+        })
+      })
+    case TYPE_LOAD_USER_GAME_HISTORY_SUCCESS:
+      return Object.assign({}, state, {
+        gameHistory: action.gameHistory
+      })
     default:
       return state;
 
+  }
+}
+
+export const TYPE_LOAD_USER_GAME_HISTORY = "TYPE_LOAD_USER_GAME_HISTORY"
+export const TYPE_LOAD_USER_GAME_HISTORY_SUCCESS= "TYPE_LOAD_USER_GAME_HISTORY_SUCCESS"
+
+export const TYPE_LOAD_MOVE_HISTORY_FOR_GAME = "TYPE_LOAD_MOVE_HISTORY_FOR_GAME"
+export const TYPE_LOAD_MOVE_HISTORY_FOR_GAME_SUCCESS = "TYPE_LOAD_MOVE_HISTORY_FOR_GAME_SUCCESS"
+
+export const actionLoadUserGameHistory = ()=>{
+  return {
+    type: TYPE_LOAD_USER_GAME_HISTORY
+  }
+}
+
+
+export const actionLoadUserGameHistorySuccess = (gameHistory)=>{
+  return {
+    type: TYPE_LOAD_USER_GAME_HISTORY_SUCCESS,
+    gameHistory
+  }
+}
+
+
+export const actionLoadGameMoveHistory = (gameId)=>{
+  return {
+    type: TYPE_LOAD_MOVE_HISTORY_FOR_GAME,
+    gameId
+  }
+}
+
+export const actionLoadGameMoveHistorySuccess = (gameId, moveHistory)=>{
+  return {
+    type: TYPE_LOAD_MOVE_HISTORY_FOR_GAME_SUCCESS,
+    gameId,
+    moveHistory
   }
 }
 
@@ -44,6 +96,7 @@ export const actionUserLogin = (model) =>{
     model
   }
 }
+
 
 export const actionUserLogoff = () => {
   localStorage.setItem('auth', null);
