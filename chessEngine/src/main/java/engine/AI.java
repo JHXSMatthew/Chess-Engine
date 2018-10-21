@@ -1,11 +1,9 @@
 package engine;
 
 public class AI {
-    public Integer value;
     public Move bestMove;
 
     public AI() {
-        value = Integer.MIN_VALUE;
         bestMove = new Move();
     }
 
@@ -17,12 +15,17 @@ public class AI {
 
         int value = Integer.MIN_VALUE;
         for (Move m: mg.getMoves()) {
-            copy.applyMove(m);              //try other values of depth maybe
-            Integer boardValue = minimaxHelper(2, copy, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
-            copy.restoreBoard(b);
+            copy.psuedoLegalMakeMove(m);
+            if (copy.isValid) {//try other values of depth maybe
+                Integer boardValue = minimaxHelper(2, copy, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
+                copy.restoreBoard(b);
 
-            if (boardValue >= this.value) {
-                bestMove = m;
+                if (boardValue >= value) {
+                    value = boardValue;
+                    bestMove = m;
+                }
+            } else {
+              copy.restoreBoard(b);
             }
         }
     }
@@ -37,30 +40,35 @@ public class AI {
         MoveGenerator mg = new MoveGenerator();
         mg.generateMoves(copy, MoveGenerator.aiMode);
 
+        Integer value = 0;
         if (isMaximise) {
-            Integer value = Integer.MIN_VALUE;
+            value = Integer.MIN_VALUE;
             for (Move m: mg.getMoves()) {
                 copy.psuedoLegalMakeMove(m);
                 if (copy.isValid) {
                     value = Math.max(value, minimaxHelper(depth - 1, copy, alpha, beta, !isMaximise));
-                }
-                copy.restoreBoard(b);
-                alpha = Math.max(alpha, value);
-                if (beta <= alpha) {
-                    return value;
+                    copy.restoreBoard(b);
+                    alpha = Math.max(alpha, value);
+                    if (beta <= alpha) {
+                        return value;
+                    }
+                } else {
+                    copy.restoreBoard(b);
                 }
             }
         } else {
-            Integer value = Integer.MAX_VALUE;
+            value = Integer.MAX_VALUE;
             for (Move m: mg.getMoves()) {
                 copy.psuedoLegalMakeMove(m);
                 if (copy.isValid) {
                     value = Math.min(value, minimaxHelper(depth - 1, copy, alpha, beta, !isMaximise));
-                }
-                copy.restoreBoard(b);
-                beta = Math.min(beta, value);
-                if (beta <= alpha) {
-                    return value;
+                    copy.restoreBoard(b);
+                    beta = Math.min(beta, value);
+                    if (beta <= alpha) {
+                        return value;
+                    }
+                } else {
+                    copy.restoreBoard(b);
                 }
             }
         }

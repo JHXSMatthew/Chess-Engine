@@ -25,7 +25,7 @@ public class Board {
         whiteKingCastle = false;
         blackQueenCastle = false;
         blackKingCastle = false;
-        isValid = false;
+        isValid = true;
     }
 
     public Board copy(Board b) {
@@ -289,7 +289,7 @@ public class Board {
 
         MoveGenerator mg = new MoveGenerator();
         mg.generateMoves(m.getOriginSquare(), this, MoveGenerator.userMode);
-
+        System.out.println("User move!!! origin: " + m.getOriginSquare() + " target: " + m.getTargetSquare() + " piece: " + m.getOriginPiece());
         Move match = new Move();
         for (Move moves: mg.getMoves()) {
             if (moves.getTargetSquare() == m.getTargetSquare()) {
@@ -299,6 +299,7 @@ public class Board {
         }
 
         if (match.getType() != Move.EMPTY) {
+            System.out.println("found a match! origin: " + match.getOriginSquare() + " target: " + match.getTargetSquare() + " piece: " + match.getOriginPiece());
             Board copy = copy(this);
             applyMove(match);
 
@@ -326,6 +327,7 @@ public class Board {
                 boardRep.setCheckMate(isCheckMate(checkMateMoves, activeColour));
             }
         }
+        boardRep.setBoardRep(serializeBoard());
         return boardRep;
     }
 
