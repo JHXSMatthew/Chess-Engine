@@ -178,7 +178,7 @@ class Sidebar extends React.Component{
               <button className='btn btn-success' onClick={newRankGame} > Play Rank Game </button>
           </div>
           <div className="d-flex flex-row flex-fill align-items-start">
-            <button className='btn btn-primary' onClick={newNetworkedGame} > Create Game Room </button>
+            <button className='btn btn-primary' onClick={newNetworkedGame} >Game Room</button>
           </div>
           <h5>AI Games</h5>
           <div className="d-flex flex-row flex-fill align-items-start">

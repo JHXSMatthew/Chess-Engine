@@ -62,9 +62,9 @@ class Header extends Component{
             <Nav className="mr-auto" navbar>
               <NavItem>
                 <Link className="nav-link" to="/">Game <span className="sr-only">(current)</span></Link>              </NavItem>
-              <NavItem>
+              {/* <NavItem>
                 <Link className="nav-link" to="/tute">Tutorial</Link>
-              </NavItem>
+              </NavItem> */}
               <NavItem>
                 <Link className="nav-link" to="/about">About</Link>
               </NavItem>
