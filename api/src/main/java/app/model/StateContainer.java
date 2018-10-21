@@ -19,6 +19,18 @@ public class StateContainer {
     @JsonProperty("isResigned")
     private boolean isResigned;
 
+    public boolean isPromotion() {
+        return isPromotion;
+    }
+
+    public void setPromotion(boolean promotion) {
+        isPromotion = promotion;
+    }
+
+    @ApiModelProperty(notes = "Does current state is promotion")
+    @JsonProperty("isPromotion")
+    private boolean isPromotion;
+
     public StateContainer() {
 
     }
