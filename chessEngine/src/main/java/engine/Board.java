@@ -13,6 +13,8 @@ public class Board {
     public boolean blackQueenCastle;
     public boolean blackKingCastle;
 
+    public boolean isValid;
+
     public Board() {
         for (int value: Square.values) {
             board[value] = Piece.NO_PIECE;
@@ -23,6 +25,7 @@ public class Board {
         whiteKingCastle = false;
         blackQueenCastle = false;
         blackKingCastle = false;
+        isValid = false;
     }
 
     public Board copy(Board b) {
@@ -36,7 +39,7 @@ public class Board {
         copy.whiteKingCastle = b.whiteKingCastle;
         copy.blackQueenCastle = b.blackQueenCastle;
         copy.blackKingCastle = b.blackKingCastle;
-
+        copy.isValid = b.isValid;
         return copy;
     }
 
@@ -280,9 +283,7 @@ public class Board {
         return boardRep;
     }
 
-    //will need to implement check statemate
-    public State psuedoLegalMakeMove(String stateString, Move m) {
-        //is the move valid
+    public State userMakeMove(String stateString, Move m) {
         State boardRep = new State();
         boardRep.setBoardRep(stateString);
 
@@ -298,7 +299,6 @@ public class Board {
         }
 
         if (match.getType() != Move.EMPTY) {
-            //lets apply the move
             Board copy = copy(this);
             applyMove(match);
 
@@ -311,15 +311,13 @@ public class Board {
                     checkMateMoves.generateMoves(this, MoveGenerator.userMode);
                     boardRep.setCheckMate(isCheckMate(checkMateMoves, activeColour));
                 }
-
-                boardRep.setBoardRep(serializeBoard());
                 return boardRep;
             }
 
             //if the move is a promotion, we first must get user input for the type of promotion Piece, then we check if isCheck and isCheckMate
-            if (match.getType() == Move.PROMOTION) {
+            if (match.getType() == Move.PROMOTION && match.getPromotion() == Piece.NO_PIECE_TYPE) {
                 boardRep.setPromotion(true);
-            //does the move check the other player
+                //does the move check the other player
             } else if (isChecked(activeColour)) {
                 boardRep.setCheck(true);
                 //does the move checkmate the other player?
@@ -328,8 +326,16 @@ public class Board {
                 boardRep.setCheckMate(isCheckMate(checkMateMoves, activeColour));
             }
         }
-        boardRep.setBoardRep(serializeBoard());
         return boardRep;
+    }
+
+    //will need to implement check stalemate
+    public void psuedoLegalMakeMove(Move m) {
+        applyMove(m);
+        if (isChecked(Piece.oppositeColour(activeColour))) {
+            isValid = false;
+        }
+        return;
     }
 
     public boolean isCheckMate(MoveGenerator mg, int colour) {
@@ -373,6 +379,7 @@ public class Board {
         whiteKingCastle = copy.whiteKingCastle;
         blackQueenCastle = copy.blackQueenCastle;
         blackKingCastle = copy.blackKingCastle;
+        isValid = copy.isValid;
     }
 
     public int findKing(int colour) {

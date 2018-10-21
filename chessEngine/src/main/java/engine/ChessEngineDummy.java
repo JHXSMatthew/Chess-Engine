@@ -36,7 +36,7 @@ public class ChessEngineDummy implements ChessEngineI {
         m.setOriginPiece(b);
         m.setTargetPiece(b);
 
-        return b.psuedoLegalMakeMove(stateString, m);
+        return b.userMakeMove(stateString, m);
     }
 
     @Override
@@ -52,6 +52,11 @@ public class ChessEngineDummy implements ChessEngineI {
         Board b = new Board();
         b.deserializeBoard(stateString);
 
+        AI ai = new AI();
+        ai.minimax(b);
+
+        return b.userMakeMove(stateString, ai.bestMove);
+        /*
         MoveGenerator mg = new MoveGenerator();
         mg.generateMoves(b, MoveGenerator.aiMode);
 
@@ -64,7 +69,8 @@ public class ChessEngineDummy implements ChessEngineI {
             State s = new State();
             s.setBoardRep(stateString);
             return s;
-        }
+        }*/
     }
+
 
 }
