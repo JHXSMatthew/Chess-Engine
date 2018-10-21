@@ -6,7 +6,6 @@ import './Board.less';
 
 export default class Board extends React.Component{
 
-
   getCellStyle = (gameType, index, selected, highlight,lastMove)=>{
     const f = (Math.floor(index/8 % 2) === 0 ) ? (a,b)=> a===b : (a,b)=> a!==b;
     if (gameType) {
@@ -25,12 +24,20 @@ export default class Board extends React.Component{
 
   render(){
     const {rep,select,highlight,onCellClick,availableMove,lastMove,gameType} = this.props;
+    const BOARD_LETTERS = ['8','','','','','','','',
+                       '7','','','','','','','',
+                       '6','','','','','','','',
+                       '5','','','','','','','',
+                       '4','','','','','','','',
+                       '3','','','','','','','',
+                       '2','','','','','','','',
+                       '1A','B','C','D','E','F','G','H']
     let boardRep = [];
     for(let i = 0 ; i < 64 ; i ++){
       boardRep.push(
       <div className={this.getCellStyle(gameType, i, select, highlight, lastMove)} key={i} 
         onClick={()=>{onCellClick(i); if(gameType && rep[i] && select.length === 0){availableMove(i)}}}>
-          {PiecesSVG[rep[i]]}
+          <div className="board-letter">{BOARD_LETTERS[i]}</div>{PiecesSVG[rep[i]]}
       </div>)
     }
     return (

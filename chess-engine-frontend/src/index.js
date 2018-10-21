@@ -12,12 +12,17 @@ import { applyMiddleware, createStore, combineReducers} from 'redux'
 //middlewares
 import logger from 'redux-logger'
 import createSaga from 'redux-saga'
+import { fork } from 'redux-saga/effects'
 
 //reducers
 import {gameReducer} from './module/Game/ChessGameReducer'
 import { appReducer } from './AppReducer'
+import { userReducer } from './module/User/UserReducer';
+
 //sagas
 import { gameSaga} from './module/Game/ChessGameESaga'
+import { userSaga } from './module/User/UserESaga';
+
 
 //mock
 import { Server } from 'react-mock'
@@ -32,24 +37,33 @@ import { DEBUG } from './config'
 //css
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+
 const saga = createSaga(); 
+
 
 
 const store = createStore(
   combineReducers({
     game: gameReducer,
-    app: appReducer
+    app: appReducer,
+    user: userReducer
   }),
   applyMiddleware(logger, saga)
 );
 
-saga.run(gameSaga);
+
+function* rootSaga() {
+  yield [
+    fork(gameSaga),
+    fork(userSaga)
+  ]
+}
+
+saga.run(rootSaga);
 
 ReactDOM.render(
 <Provider store={store}>
-  <BrowserRouter>
     <App />
-  </BrowserRouter>
 </Provider>, document.getElementById('root'));
 
 

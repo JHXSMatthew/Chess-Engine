@@ -15,6 +15,13 @@ import axios from 'axios'
   		state,
   		from
   	})
+  },
+  postPromotion: (state, to, promotionPos) => {
+    return axios.post(API_ENDPOINT + "/move/PromotionMove", {
+      state,
+      to,
+      promotionPos
+    })
   }
 }
 
@@ -41,10 +48,50 @@ export const NetworkedGameApi = {
   //resign
   resignGame: (id, playerType) => {
     return axios.post(API_ENDPOINT + `/game/${id}/resign?playerType=${playerType}`)
+  },
+  promotionGame: (id, playerType,state, to, promotionPos) => {
+    return axios.patch(API_ENDPOINT + `/game/${id}/promotionMove`, {
+      playerType,
+      state,
+      to,
+      promotionPos
+    })
+  }
+}
+
+export const gameHistoryApi = {
+  getHistory: (token)=>{
+    return axios.get(API_ENDPOINT + `/game?token=${token}`)
+  },
+  getMoveHistory: (gameId) =>{
+    return axios.get(API_ENDPOINT + `/game/${gameId}/moveHistory"`)
   }
 }
 
 
 
 
+export const QueueApi = {
+  post: (gameType, token)=>{
+    return axios.post(API_ENDPOINT + '/queue', {
+      gameType,
+      token
+    })
+  },
+  get: (id,token)=>{
+    return axios.get(API_ENDPOINT + `/queue/${id}?token=${token}`)
+  }
+}
 
+
+
+
+export const AIAPI = {
+  postMove : (state, from , to)=>{
+    return axios.post(API_ENDPOINT + "/ai", {
+      state,
+      from,
+      to
+    });
+  }
+}

@@ -1,13 +1,16 @@
 import {boardStrToRepArray, indexMorphism} from './Utils'
+import moment from 'moment'
 
 const INIT_BOARD_STATE_STR = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
 const LOCAL_SAVED_GAME_INDEX = "savedLocalGame"
 const LOCAL_SAVED_GAME_LASTMOVE = "savedLocalLastMove"
 
-
 export const GAME_TYPE = {
   LOCAL_GAME: 'LocalGame',
-  INVITE_NETWOKRED: 'InviteNetworked'
+  INVITE_NETWOKRED: 'InviteNetworked',
+  RANKED: 'rank',
+  MATCH: 'match',
+  AI: 'AI'
 }
 
 export const GAME_STATUS = {
@@ -50,10 +53,16 @@ const initState = {
   history: [],
   //the real move history
   moveHistory: [],
-
+  // piece that just moved
+  movePiece: '',
   //networked game
   //game lobby (before game start)
-  lobby: lobbyInitState
+  lobby: lobbyInitState,
+  //queue
+  queueTimer: undefined,
+  queueTimerDot: 0,
+
+  promoSelected: ""
 }
 
 
@@ -72,6 +81,10 @@ export const gameReducer  = (state = initState, action)=>{
           isChecked,
           boardRep: boardStrToRepArray(newGameState.boardStr),
       });
+    case UPDATE_GAME_TYPE: 
+      return Object.assign({}, state, {
+        gameType: action.gameType
+      })
     case MOVE_FAIL:
       return Object.assign({}, state, {
         boardHightLight: []
@@ -97,11 +110,34 @@ export const gameReducer  = (state = initState, action)=>{
       // if clicked on empty squere initially, do nothing
       let newSelectListRep = [];
       let highlight = state.boardHightLight;
+      let selectPiece = ''
+
+      if (state.gameType === GAME_TYPE.INVITE_NETWOKRED){
+        if (state.currentTurn !== state.lobby.playerType){
+          return Object.assign({}, state, {
+            select: newSelectListRep,
+            boardHightLight: [],
+            movePiece: selectPiece
+          })
+        }
+      }
+
       if (state.gameType) {
         if (state.select.length === 0 && state.boardRep[action.index]){
-          newSelectListRep = state.select.concat([action.index])
+          // select a piece
+          if (state.currentTurn !== 'w' && state.boardRep[action.index].charCodeAt(0) >= 97) {
+            // select black piece and black's turn
+            newSelectListRep = state.select.concat([action.index])
+            selectPiece = state.boardRep[action.index]
+          } else if (state.currentTurn === 'w' && state.boardRep[action.index].charCodeAt(0) <= 90){
+            // select white piece and white's turn
+            newSelectListRep = state.select.concat([action.index])
+            selectPiece = state.boardRep[action.index]
+          }
         } else if (state.select.length === 1 && state.select[0] !== action.index) {
+          // select available square
           newSelectListRep = state.select.concat([action.index])
+          selectPiece = state.movePiece
         } else {
           // Empty square initially, or deselect piece
           highlight = []
@@ -109,9 +145,17 @@ export const gameReducer  = (state = initState, action)=>{
       }
       return Object.assign({}, state, {
         select: newSelectListRep,
-        boardHightLight: highlight
+        boardHightLight: highlight,
+        movePiece: selectPiece
       })
     case HIGHLIGHT_AVAILABLE:
+      if (state.gameType === GAME_TYPE.INVITE_NETWOKRED){
+        if (state.currentTurn !== state.lobby.playerType){
+          return Object.assign({}, state, {
+            boardHightLight: [],
+          })
+        }
+      }
       return Object.assign({}, state, {
         boardHightLight: action.available
       })
@@ -159,8 +203,28 @@ export const gameReducer  = (state = initState, action)=>{
     case NETWORKED_JOIN_GAME_SUCCESS:
     case NETWORKED_JOIN_GAME_FAIL:
     case NETWORKED_TIMER_DESTORY_SUCCESS:
+    case MATCH_GAME_START_SUCCESS:
       return Object.assign({}, state, {
         lobby: invitedNetowkredLobbyReducer(state.lobby,action)
+      })
+    case JOIN_MATCH_QUEUE_SUCCESS:
+      return Object.assign({}, state, {
+        queueStartDateTime: moment().format(),
+        gameStatus: GAME_STATUS.INIT,
+        gameType: action.gameType
+      })
+    case CANCEL_START_GAME:
+      return Object.assign({}, state, {
+        gameType: ""
+      })
+    case QUEUE_TIMER_LOOP:
+      return Object.assign({}, state, {
+        queueTimerDot: (state.queueTimerDot+1)%4
+      })
+    case SELECT_PROMOTION:
+      console.log(action.selected)
+      return Object.assign({}, state, {
+        promoSelected: action.selected
       })
     default:
       return state;
@@ -169,6 +233,7 @@ export const gameReducer  = (state = initState, action)=>{
  
 const invitedNetowkredLobbyReducer = (state, action) =>{
   switch(action.type){
+    case MATCH_GAME_START_SUCCESS:
     case NETWORKED_CREATE_LOBBY_SUCCESS:
       return Object.assign({}, state, {
         ...action.data,
@@ -217,6 +282,66 @@ const newGameReducer = (state, action) => {
       };
     default:
       return state;
+  }
+}
+
+
+
+export const QUEUE_TIMER_LOOP = "QUEUE_TIMER_LOOP"
+export const actionQueueTimerLoop = ()=>{
+  return {
+    type: QUEUE_TIMER_LOOP
+  }
+}
+
+export const MATCH_GAME_START_SUCCESS = "MATCH_GAME_START_SUCCESS"
+export const actionMatchGameStartSuccess = (data, timerTask)=>{
+  return {
+    type: MATCH_GAME_START_SUCCESS,
+    data,
+    timerTask
+  }
+}
+
+export const MATCH_GAME_START_FAIL = "MATCH_GAME_START_FAIL"
+export const actionMatchGameStartFail = (err)=>{
+  return {
+    type: MATCH_GAME_START_FAIL,
+    err
+  }
+}
+export const MATCH_GAME_START = "MATCH_GAME_START"
+export const actionMatchGameStart = (gameId, playerType)=>{
+  return {
+    type: MATCH_GAME_START,
+    gameId,
+    playerType
+  }
+}
+
+export const JOIN_MATCH_QUEUE_SUCCESS = "JOIN_MATCH_QUEUE_SUCCESS"
+export const actionJoinMatchQueueSuccess = (data, task, gameType)=>{
+  return {
+    type: JOIN_MATCH_QUEUE_SUCCESS,
+    data,
+    task,
+    gameType
+  }
+}
+
+export const JOIN_MATCH_QUEUE_FAIL = "JOIN_MATCH_QUEUE_FAIL"
+export const actionJoinMatchQueueFail = (err)=>{
+  return {
+    type: JOIN_MATCH_QUEUE_FAIL,
+    err
+  }
+}
+
+export const JOIN_MATCH_QUEUE = "JOIN_MATCH_QUEUE"
+export const actionJoinQueue = (gameType) =>{
+  return {
+    type: JOIN_MATCH_QUEUE,
+    gameType
   }
 }
 
@@ -502,6 +627,14 @@ export const actionNewLocalGame = () =>{
   }
 }
 
+const UPDATE_GAME_TYPE = "UPDATE_GAME_TYPE"
+export const actionUpdateGameType = (gameType) =>{
+  return {
+    type: UPDATE_GAME_TYPE,
+    gameType
+  }
+}
+
 
 const NEW_NETWORKED_GAME = "NEW_NETWORKED_GAME"
 export const actionNewNetworkedGame = () =>{
@@ -510,3 +643,24 @@ export const actionNewNetworkedGame = () =>{
   }
 }
 
+const CANCEL_START_GAME = "CANCEL_START_GAME"
+export const actionCancelStartGame = () =>{
+  return {
+    type: CANCEL_START_GAME
+  }
+}
+
+const SELECT_PROMOTION = "SELECT_PROMOTION"
+export const actionSelectPromotion = (selected) => {
+  return {
+    type: SELECT_PROMOTION,
+    selected
+  }
+}
+
+export const PROMOTE_PAWN = "PROMOTE_PAWN"
+export const actionPromotePawn = () => {
+  return {
+    type: PROMOTE_PAWN
+  }
+}

@@ -271,12 +271,14 @@ public class Board {
 
             //does the move check the other player
             if (isChecked(activeColour)) {
+
                 //does the move checkmate the other player?
                 boardRep.setCheck(true);
                 MoveGenerator mg = new MoveGenerator();
                 mg.generateMoves(this, MoveGenerator.userMode);
                 boardRep.setCheckMate(isCheckMate(mg, activeColour));
             }
+
 
             boardRep.setBoardRep(serializeBoard());
         }
@@ -300,11 +302,13 @@ public class Board {
 
         if (match.getType() != Move.EMPTY) {
             System.out.println("found a match! origin: " + match.getOriginSquare() + " target: " + match.getTargetSquare() + " piece: " + match.getOriginPiece());
+
             Board copy = copy(this);
             applyMove(match);
 
             //no move is allowed to leave us in check
             if (isChecked(Piece.oppositeColour(activeColour))) {
+
                 restoreBoard(copy);
                 if (isChecked(activeColour)) {
                     boardRep.setCheck(true);
@@ -320,6 +324,7 @@ public class Board {
                 boardRep.setPromotion(true);
                 //does the move check the other player
             } else if (isChecked(activeColour)) {
+
                 boardRep.setCheck(true);
                 //does the move checkmate the other player?
                 MoveGenerator checkMateMoves = new MoveGenerator();
@@ -697,6 +702,7 @@ public class Board {
             throw new IllegalArgumentException();
         }
     }
+
 }
 
 
