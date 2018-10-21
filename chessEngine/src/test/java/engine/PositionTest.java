@@ -189,7 +189,35 @@ public class PositionTest {
         //Check illegal moves (moves that put yourself in check)
         State illegalMove = engine.move("rnbqkbnr/8/8/8/8/8/8/RNBQKBNR b KQkq - 0 1", 4, 11);
         Assert.assertEquals(illegalMove.getBoardRep(), "rnbqkbnr/8/8/8/8/8/8/RNBQKBNR b KQkq - 0 1");
+        State illegalMove2 = engine.move("8/2p3k1/1p6/8/8/1B6/7P/7K b - - 0 1", 14, 6);
+        Assert.assertEquals(illegalMove2.getBoardRep(), "8/2p3k1/1p6/8/8/1B6/7P/7K b  - 0 1");
+        State illegalMove3 = engine.move("8/8/8/3k4/8/4K3/8/8 w - - 0 1", 27, 44);
+        Assert.assertEquals(illegalMove3.getBoardRep(), "8/8/8/3k4/8/4K3/8/8 w  - 0 1");
+        State illegalMove4 = engine.move("8/R3qk2/7p/5N2/8/2P5/4N3/2K5 b - - 0 1", 12, 52);
+        Assert.assertEquals(illegalMove4.getBoardRep(), "8/R3qk2/7p/5N2/8/2P5/4N3/2K5 b  - 0 1");
 
+
+        //Check en passant moves
+        State enPassantMove = engine.move("k7/5p2/8/4P3/8/8/8/K7 b - 0 0 1", 13, 29);
+        Assert.assertEquals(enPassantMove.getBoardRep(), "k7/8/8/4Pp2/8/8/8/K7 w  37 0 1");
+        State enPassantMove2 = engine.move("k7/8/8/4Pp2/8/8/8/K7 w - 37 0 1", 28, 21);
+        Assert.assertEquals(enPassantMove2.getBoardRep(), "k7/8/5P2/8/8/8/8/K7 b  - 0 1");
+
+        State enPassantMove3 = engine.move("k7/8/8/8/4p3/8/5P2/K7 w - 0 0 1", 53, 37);
+        Assert.assertEquals(enPassantMove3.getBoardRep(), "k7/8/8/8/4pP2/8/8/K7 b  85 0 1");
+        State enPassantMove4 = engine.move("k7/8/8/8/4pP2/8/8/K7 b - 85 0 1", 36, 45);
+        Assert.assertEquals(enPassantMove4.getBoardRep(), "k7/8/8/8/8/5p2/8/K7 w  - 0 1");
+
+
+        //Check castling moves
+        State castlingMove1 = engine.move("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1", 4, 2);
+        Assert.assertEquals(castlingMove1.getBoardRep(), "2kr3r/8/8/8/8/8/8/R3K2R w KQ - 0 1");
+        State castlingMove2 = engine.move("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1", 4, 6);
+        Assert.assertEquals(castlingMove2.getBoardRep(), "r4rk1/8/8/8/8/8/8/R3K2R w KQ - 0 1");
+        State castlingMove3 = engine.move("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1", 60, 62);
+        Assert.assertEquals(castlingMove3.getBoardRep(), "r3k2r/8/8/8/8/8/8/R4RK1 b kq - 0 1");
+        State castlingMove4 = engine.move("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1", 60, 58);
+        Assert.assertEquals(castlingMove4.getBoardRep(), "r3k2r/8/8/8/8/8/8/2KR3R b kq - 0 1");
     }
 
     @Test
