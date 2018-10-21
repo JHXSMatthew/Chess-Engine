@@ -162,7 +162,7 @@ public class Board {
         }
 
         if (!enPassant.equals("-")) {
-            int square = toSquare(Integer.parseInt(enPassant));
+            int square = Integer.parseInt(enPassant);
             if (Square.isValid(square)) {
                 enPassantSquare = square;
             } else {
