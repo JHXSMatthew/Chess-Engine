@@ -31,6 +31,8 @@ public class GameRoom implements Serializable {
     @ApiModelProperty(notes = "is checkmate or not")
     private boolean isCheckmate;
 
+    private boolean isPromotion;
+
 
     @OneToOne
     private User Winner = null;
@@ -96,6 +98,7 @@ public class GameRoom implements Serializable {
         container.setChecked(icChecked);
         container.setCheckmate(isCheckmate);
         container.setState(state);
+        container.setPromotion(isPromotion);
         return container;
     }
 
@@ -103,6 +106,7 @@ public class GameRoom implements Serializable {
         this.state = state.getState();
         this.isCheckmate = state.isCheckmate();
         this.icChecked = state.isChecked();
+        this.isPromotion = state.isPromotion();
     }
 
     public GameType getGameType() {

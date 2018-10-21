@@ -43,6 +43,7 @@ public class StateContainer {
         setState(s.getBoardRep());
         setChecked(s.isCheck());
         setCheckmate(s.isCheckMate());
+        setPromotion(s.isPromotion());
 
     }
 
